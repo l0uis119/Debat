@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Miroir de Débat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ========== SCREEN 1 : ACCUEIL ========== -->
+  <div id="screen-home" class="screen active">
+    <div class="noise"></div>
+
+    <header class="home-header">
+      <span class="logo-mark">⚖</span>
+      <span class="logo-text">Miroir de Débat</span>
+    </header>
+
+    <main class="home-main">
+      <div class="home-intro">
+        <p class="eyebrow">L'arène des idées</p>
+        <h1 class="home-title">
+          Défends ce que<br />
+          tu <em>crois vraiment.</em>
+        </h1>
+        <p class="home-sub">
+          Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout — ou s'effondre.
+        </p>
+      </div>
+
+      <div class="setup-card">
+
+        <!-- Conviction -->
+        <div class="field-group">
+          <label class="field-label" for="conviction">Ta conviction</label>
+          <textarea
+            id="conviction"
+            class="conviction-input"
+            placeholder="Ex : La peine de mort est moralement justifiable dans certains cas…"
+            rows="3"
+          ></textarea>
+          <div class="char-count"><span id="charCount">0</span> / 300</div>
+        </div>
+
+        <!-- Contradicteur -->
+        <div class="field-group">
+          <label class="field-label">Contradicteur</label>
+          <div class="persona-grid" id="personaGrid">
+            <button class="persona-btn active" data-persona="philosopher">
+              <span class="persona-icon">🏛</span>
+              <span class="persona-name">Philosophe</span>
+              <span class="persona-hint">Socrate · Nietzsche</span>
+            </button>
+            <button class="persona-btn" data-persona="economist">
+              <span class="persona-icon">📊</span>
+              <span class="persona-name">Économiste</span>
+              <span class="persona-hint">Données · Marchés</span>
+            </button>
+            <button class="persona-btn" data-persona="scientist">
+              <span class="persona-icon">🔬</span>
+              <span class="persona-name">Scientifique</span>
+              <span class="persona-hint">Preuves · Méthode</span>
+            </button>
+            <button class="persona-btn" data-persona="lawyer">
+              <span class="persona-icon">⚖</span>
+              <span class="persona-name">Juriste</span>
+              <span class="persona-hint">Précision · Droit</span>
+            </button>
+            <button class="persona-btn" data-persona="activist">
+              <span class="persona-icon">✊</span>
+              <span class="persona-name">Militant</span>
+              <span class="persona-hint">Impact · Humain</span>
+            </button>
+            <button class="persona-btn" data-persona="devil">
+              <span class="persona-icon">👁</span>
+              <span class="persona-name">Avocat du diable</span>
+              <span class="persona-hint">Aucune limite</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="options-row">
+          <div class="field-group">
+            <label class="field-label">Férocité</label>
+            <div class="toggle-group" id="ferocityGroup">
+              <button class="toggle-btn" data-value="soft">Douce</button>
+              <button class="toggle-btn active" data-value="normal">Vive</button>
+              <button class="toggle-btn" data-value="brutal">Brutale</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Stratégie</label>
+            <div class="toggle-group" id="modeGroup">
+              <button class="toggle-btn active" data-value="attack">Attaque</button>
+              <button class="toggle-btn" data-value="steelman">Steel Man</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="cta-btn" id="startBtn" disabled>
+          <span>Entrer dans l'arène</span>
+          <span class="cta-arrow">→</span>
+        </button>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ========== SCREEN 2 : DÉBAT ========== -->
+  <div id="screen-debate" class="screen">
+    <div class="noise"></div>
+
+    <header class="debate-header">
+      <button class="back-btn" id="backBtn" aria-label="Retour">←</button>
+      <div class="debate-meta">
+        <span class="debate-persona-badge" id="personaBadge"></span>
+        <span class="debate-ferocity-badge" id="ferocityBadge"></span>
+      </div>
+      <button class="verdict-trigger-btn" id="verdictTriggerBtn" disabled>
+        Verdict
+      </button>
+    </header>
+
+    <div class="conviction-banner" id="convictionBanner"></div>
+
+    <div class="messages" id="messages" role="log" aria-live="polite"></div>
+
+    <div class="input-dock">
+      <textarea
+        id="userInput"
+        class="user-input"
+        placeholder="Défends ta position…"
+        rows="1"
+        disabled
+      ></textarea>
+      <button class="send-btn" id="sendBtn" disabled aria-label="Envoyer">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="turn-counter" id="turnCounter">0 échange</div>
+  </div>
+
+  <!-- ========== SCREEN 3 : VERDICT ========== -->
+  <div id="screen-verdict" class="screen">
+    <div class="noise"></div>
+
+    <header class="verdict-header">
+      <button class="back-btn" id="backToDebateBtn">← Retour au débat</button>
+      <button class="new-btn" id="newDebateBtn">Nouveau débat</button>
+    </header>
+
+    <main class="verdict-main">
+      <div class="verdict-title-block">
+        <p class="eyebrow">Verdict final</p>
+        <h2 class="verdict-title">Le tribunal a tranché.</h2>
+        <p class="verdict-conviction-recap" id="verdictConviction"></p>
+      </div>
+
+      <div class="verdict-body" id="verdictBody">
+        <div class="verdict-loading">
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <p>Analyse du débat en cours…</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
