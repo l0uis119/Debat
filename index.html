@@ -9,177 +9,68 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --night:#07090F;
-  --night2:#0D1120;
-  --night3:#141829;
-  --night4:#1C2235;
-  --gold:#8B6914;
-  --gold2:#A07820;
-  --gold3:#C49A30;
-  --goldg:rgba(139,105,20,0.18);
-  --goldb:rgba(139,105,20,0.3);
-  --w:#E8E2D4;
-  --w2:rgba(232,226,212,0.65);
-  --w3:rgba(232,226,212,0.35);
-  --w4:rgba(232,226,212,0.08);
-  --w5:rgba(232,226,212,0.04);
+  --night:#07090F;--night2:#0D1120;--night3:#141829;--night4:#1C2235;
+  --gold:#8B6914;--gold2:#A07820;--gold3:#C49A30;
+  --goldg:rgba(139,105,20,0.18);--goldb:rgba(139,105,20,0.3);
+  --w:#E8E2D4;--w2:rgba(232,226,212,0.65);--w3:rgba(232,226,212,0.35);
+  --w4:rgba(232,226,212,0.08);--w5:rgba(232,226,212,0.04);
   --r:12px;--r2:8px;--r3:20px;
-  --fT:'Bebas Neue',sans-serif;
-  --fU:'DM Sans',sans-serif;
+  --fT:'Bebas Neue',sans-serif;--fU:'DM Sans',sans-serif;
 }
 html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .screen{display:none;min-height:100vh}.screen.active{display:block}
 
-/* ══ LANDING ══ */
+/* LANDING */
 #landing{display:none}
-#landing.active{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;text-align:center;padding:2rem;position:relative;overflow:hidden;
-  background:radial-gradient(ellipse 70% 50% at 50% 60%,rgba(20,24,41,0.95) 0%,var(--night) 100%);
-}
-#landing::before{
-  content:'';position:absolute;inset:0;
-  background-image:linear-gradient(rgba(139,105,20,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,105,20,0.04) 1px,transparent 1px);
-  background-size:60px 60px;
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
-}
-#landing::after{
-  content:'';position:absolute;width:600px;height:300px;
-  background:radial-gradient(ellipse,rgba(139,105,20,0.1) 0%,transparent 70%);
-  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
-}
+#landing.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 60%,rgba(20,24,41,0.95) 0%,var(--night) 100%)}
+#landing::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(139,105,20,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,105,20,0.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+#landing::after{content:'';position:absolute;width:600px;height:300px;background:radial-gradient(ellipse,rgba(139,105,20,0.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 .l-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
-.l-eye{
-  font-family:var(--fU);font-size:0.62rem;font-weight:500;
-  letter-spacing:0.35em;text-transform:uppercase;color:var(--gold3);
-  margin-bottom:1.25rem;opacity:0;animation:fs .8s ease .2s forwards;
-}
-.l-name{
-  font-family:var(--fT);
-  font-size:clamp(5rem,14vw,10rem);
-  line-height:0.9;letter-spacing:0.05em;
-  color:var(--gold3);
-  margin-bottom:2rem;
-  opacity:0;animation:fs .9s ease .4s forwards;
-}
-.l-desc{
-  font-size:1rem;line-height:1.6;color:var(--w2);
-  max-width:440px;margin-bottom:2.75rem;
-  opacity:0;animation:fs .9s ease .6s forwards;
-}
-.l-btn{
-  padding:14px 44px;background:transparent;
-  border:1.5px solid var(--gold);border-radius:50px;
-  color:var(--gold3);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.12em;
-  cursor:pointer;transition:all .22s;
-  opacity:0;animation:fs .9s ease .8s forwards;
-  position:relative;overflow:hidden;
-}
+.l-eye{font-family:var(--fU);font-size:0.62rem;font-weight:500;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold3);margin-bottom:1.25rem;opacity:0;animation:fs .8s ease .2s forwards}
+.l-name{font-family:var(--fT);font-size:clamp(5rem,14vw,10rem);line-height:0.9;letter-spacing:0.05em;color:var(--gold3);margin-bottom:2rem;opacity:0;animation:fs .9s ease .4s forwards}
+.l-desc{font-size:1rem;line-height:1.6;color:var(--w2);max-width:440px;margin-bottom:2.75rem;opacity:0;animation:fs .9s ease .6s forwards}
+.l-btn{padding:14px 44px;background:transparent;border:1.5px solid var(--gold);border-radius:50px;color:var(--gold3);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.12em;cursor:pointer;transition:all .22s;opacity:0;animation:fs .9s ease .8s forwards;position:relative;overflow:hidden}
 .l-btn::before{content:'';position:absolute;inset:0;background:var(--goldb);opacity:0;transition:opacity .22s}
 .l-btn:hover{color:var(--w);border-color:var(--gold3);box-shadow:0 0 28px rgba(139,105,20,0.22);transform:translateY(-2px)}
 .l-btn:hover::before{opacity:1}
 @keyframes fs{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-/* ══ HOME — deux colonnes full-height ══ */
+/* HOME */
 #home{display:none}
-#home.active{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  min-height:100vh;
-  background:var(--night);
-}
-
-/* Colonne gauche */
-.h-left{
-  display:flex;flex-direction:column;justify-content:center;
-  padding:3rem 3.5rem 3rem 4rem;
-  border-right:1px solid var(--w5);
-  background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(20,24,41,0.8) 0%,transparent 70%);
-}
-.h-title{
-  font-family:var(--fT);
-  font-size:clamp(3.5rem,6vw,5.5rem);
-  line-height:0.95;letter-spacing:0.04em;
-  color:var(--gold3);
-  margin-bottom:1.25rem;
-}
-.h-sub{
-  font-size:0.97rem;line-height:1.65;color:var(--w2);
-  max-width:340px;
-}
+#home.active{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;background:var(--night)}
+.h-left{display:flex;flex-direction:column;justify-content:center;padding:3rem 3.5rem 3rem 4rem;border-right:1px solid var(--w5);background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(20,24,41,0.8) 0%,transparent 70%)}
+.h-title{font-family:var(--fT);font-size:clamp(3.5rem,6vw,5.5rem);line-height:0.95;letter-spacing:0.04em;color:var(--gold3);margin-bottom:1.25rem}
+.h-sub{font-size:0.97rem;line-height:1.65;color:var(--w2);max-width:340px}
 .h-prompts{margin-top:2.5rem}
-.h-prompts-title{
-  font-size:0.6rem;font-weight:500;letter-spacing:0.2em;
-  text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;
-}
-.prompt-item{
-  display:flex;gap:8px;align-items:flex-start;
-  padding:0.5rem 0;
-  border-bottom:1px solid var(--w5);
-  font-size:0.78rem;color:var(--w3);line-height:1.4;
-}
+.h-prompts-title{font-size:0.6rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
+.prompt-item{display:flex;gap:8px;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--w5);font-size:0.78rem;color:var(--w3);line-height:1.4}
 .prompt-item:last-child{border-bottom:none}
 .prompt-icon{font-size:0.9rem;flex-shrink:0;margin-top:1px}
 .prompt-name{color:var(--gold3);font-weight:500;font-size:0.72rem;display:block;margin-bottom:2px}
-
-/* Colonne droite — formulaire */
-.h-right{
-  display:flex;flex-direction:column;justify-content:center;
-  padding:2.5rem 3.5rem 2.5rem 3rem;
-  overflow-y:auto;
-}
-
+.h-right{display:flex;flex-direction:column;justify-content:center;padding:2.5rem 3.5rem 2.5rem 3rem;overflow-y:auto}
 .lbl{font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.5rem;display:block}
-
-.conv{
-  width:100%;min-height:72px;
-  background:var(--night3);border:1px solid rgba(232,226,212,0.09);
-  border-radius:var(--r);color:var(--w);
-  font-family:var(--fU);font-size:0.95rem;line-height:1.6;
-  padding:0.8rem 1rem;resize:none;outline:none;transition:border-color .2s;
-}
-.conv::placeholder{color:var(--w3)}
-.conv:focus{border-color:var(--goldb)}
+.conv{width:100%;min-height:72px;background:var(--night3);border:1px solid rgba(232,226,212,0.09);border-radius:var(--r);color:var(--w);font-family:var(--fU);font-size:0.95rem;line-height:1.6;padding:0.8rem 1rem;resize:none;outline:none;transition:border-color .2s}
+.conv::placeholder{color:var(--w3)}.conv:focus{border-color:var(--goldb)}
 .hint{font-size:0.58rem;color:var(--w3);text-align:right;margin-top:0.3rem}
-
 .sec{margin-top:1.4rem}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.pbtn{
-  background:var(--night3);border:1px solid rgba(232,226,212,0.08);
-  border-radius:var(--r2);padding:10px 9px 8px;
-  cursor:pointer;text-align:left;transition:all .15s;
-}
+.pbtn{background:var(--night3);border:1px solid rgba(232,226,212,0.08);border-radius:var(--r2);padding:10px 9px 8px;cursor:pointer;text-align:left;transition:all .15s}
 .pbtn:hover{background:var(--night4);border-color:rgba(232,226,212,0.18);transform:translateY(-1px)}
 .pbtn.on{background:var(--goldg);border-color:var(--goldb)}
 .pi{font-size:1.1rem;display:block;margin-bottom:4px;line-height:1}
 .pn{font-family:var(--fU);font-size:0.7rem;font-weight:500;color:var(--w);display:block}
 .pd{font-size:0.57rem;color:var(--w3);margin-top:1px}
-
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
 .trow{display:flex;gap:5px;flex-wrap:wrap;margin-top:0.45rem}
-.tbtn{
-  padding:5px 13px;background:var(--night3);
-  border:1px solid rgba(232,226,212,0.08);border-radius:50px;
-  color:var(--w3);font-family:var(--fU);font-size:0.7rem;font-weight:500;
-  cursor:pointer;transition:all .15s;
-}
+.tbtn{padding:5px 13px;background:var(--night3);border:1px solid rgba(232,226,212,0.08);border-radius:50px;color:var(--w3);font-family:var(--fU);font-size:0.7rem;font-weight:500;cursor:pointer;transition:all .15s}
 .tbtn:hover{color:var(--w);border-color:rgba(232,226,212,0.2)}
 .tbtn.on{background:var(--goldg);border-color:var(--goldb);color:var(--gold3)}
-
-.cta{
-  width:100%;margin-top:1.5rem;padding:14px 20px;
-  background:var(--gold);border:none;border-radius:var(--r);
-  color:var(--night);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.06em;
-  cursor:pointer;transition:all .18s;
-  display:flex;align-items:center;justify-content:space-between;
-}
+.cta{width:100%;margin-top:1.5rem;padding:14px 20px;background:var(--gold);border:none;border-radius:var(--r);color:var(--night);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.06em;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:space-between}
 .cta:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,105,20,0.28)}
-.cta:active{transform:translateY(0)}
-.cta:disabled{opacity:0.28;cursor:not-allowed;transform:none;box-shadow:none}
-.arr{transition:transform .15s}
-.cta:not(:disabled):hover .arr{transform:translateX(5px)}
+.cta:active{transform:translateY(0)}.cta:disabled{opacity:0.28;cursor:not-allowed;transform:none;box-shadow:none}
+.arr{transition:transform .15s}.cta:not(:disabled):hover .arr{transform:translateX(5px)}
 
-/* ══ DÉBAT ══ */
+/* DÉBAT */
 #debate{display:none;height:100vh;flex-direction:column}
 #debate.active{display:flex;background:var(--night)}
 .dbar{display:flex;align-items:center;gap:10px;padding:0.8rem 1.5rem;background:rgba(0,0,0,0.3);flex-shrink:0;border-bottom:1px solid var(--w4)}
@@ -195,8 +86,7 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 .msgs::-webkit-scrollbar-thumb{background:var(--w4);border-radius:3px}
 .msg{display:flex;flex-direction:column;max-width:78%;animation:fu .25s ease forwards}
 @keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-.msg.u{align-self:flex-end;align-items:flex-end}
-.msg.a{align-self:flex-start;align-items:flex-start}
+.msg.u{align-self:flex-end;align-items:flex-end}.msg.a{align-self:flex-start;align-items:flex-start}
 .mwho{font-size:0.6rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;opacity:0.5}
 .msg.u .mwho{color:var(--w)}.msg.a .mwho{color:var(--gold3)}
 .mbub{padding:0.85rem 1.1rem;border-radius:var(--r);font-size:0.97rem;line-height:1.7}
@@ -208,10 +98,8 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 @keyframes pu{0%,80%,100%{opacity:.25;transform:scale(1)}40%{opacity:1;transform:scale(1.4)}}
 .binwrap{display:flex;gap:10px;animation:fu .2s ease forwards}
 .binbtn{flex:1;padding:12px;border-radius:var(--r);font-family:var(--fT);font-size:1.1rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s;border:1px solid}
-.boui{background:var(--goldg);border-color:var(--goldb);color:var(--gold3)}
-.boui:hover{background:var(--gold);color:var(--night);border-color:var(--gold)}
-.bnon{background:rgba(180,50,50,0.08);border-color:rgba(180,50,50,0.3);color:rgba(220,100,100,0.9)}
-.bnon:hover{background:rgba(160,40,40,0.5);color:var(--w);border-color:rgba(160,40,40,0.5)}
+.boui{background:var(--goldg);border-color:var(--goldb);color:var(--gold3)}.boui:hover{background:var(--gold);color:var(--night);border-color:var(--gold)}
+.bnon{background:rgba(180,50,50,0.08);border-color:rgba(180,50,50,0.3);color:rgba(220,100,100,0.9)}.bnon:hover{background:rgba(160,40,40,0.5);color:var(--w);border-color:rgba(160,40,40,0.5)}
 .izone{padding:0.9rem 1.5rem;background:rgba(0,0,0,0.2);border-top:1px solid var(--w4);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
 .uinp{flex:1;background:var(--night3);border:1px solid rgba(232,226,212,0.1);border-radius:var(--r);color:var(--w);font-family:var(--fU);font-size:0.95rem;line-height:1.5;min-height:42px;max-height:120px;padding:9px 13px;resize:none;outline:none;transition:border-color .2s}
 .uinp::placeholder{color:var(--w3)}.uinp:focus{border-color:var(--goldb)}.uinp:disabled{opacity:0.28}
@@ -220,23 +108,37 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 .sbtn svg{width:15px;height:15px}
 .dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1.5rem;background:rgba(0,0,0,0.15);border-top:1px solid var(--w5);flex-shrink:0}
 .tc{font-size:0.6rem;color:var(--w3);font-weight:500;letter-spacing:0.08em}
+.vhint{font-size:0.58rem;color:var(--w3);opacity:0.6;margin-left:8px}
+.dfooter-right{display:flex;align-items:center;gap:10px}
 .vbtn{font-size:0.68rem;font-weight:500;padding:6px 16px;background:var(--goldg);border:1px solid var(--goldb);border-radius:50px;color:var(--w3);cursor:pointer;transition:all .15s}
 .vbtn:not(:disabled):hover{color:var(--gold3);border-color:var(--gold3)}.vbtn:disabled{opacity:0.25;cursor:not-allowed}
 
-/* ══ VERDICT ══ */
+/* VERDICT */
 #verdict{display:none;min-height:100vh}
 #verdict.active{display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem 4rem;background:var(--night)}
-.vpage{width:100%;max-width:680px;padding:0.5rem 0 2rem}
-.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem}
+.vpage{width:100%;max-width:720px;padding:0.5rem 0 2rem}
+.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem}
 .bnew{padding:8px 20px;background:var(--gold);border:none;border-radius:50px;color:var(--night);font-family:var(--fT);font-size:1rem;letter-spacing:0.06em;cursor:pointer;transition:all .15s}
 .bnew:hover{background:var(--gold2);transform:translateY(-1px)}
 .vey{font-size:0.6rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.6rem}
 .vh{font-family:var(--fT);font-size:clamp(3rem,7vw,5rem);letter-spacing:0.04em;line-height:1;color:var(--gold3);margin-bottom:0.8rem}
 .vq{font-size:0.95rem;color:var(--w2);padding:0.7rem 1rem;background:var(--night2);border-left:2px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0;margin-bottom:2rem}
 .vs{background:var(--night2);border:1px solid rgba(232,226,212,0.07);border-radius:var(--r);padding:1.4rem;margin-bottom:0.85rem;animation:fu .4s ease forwards}
+.vsf{background:var(--goldg);border-color:var(--goldb)}
 .vsl{font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.6rem}
-.vst{font-size:0.97rem;line-height:1.7;color:var(--w2)}
-.vsf{background:var(--goldg);border-color:var(--goldb)}.vsf .vst{color:var(--w)}
+.vst{font-size:0.97rem;line-height:1.7;color:var(--w2)}.vsf .vst{color:var(--w)}
+.vst-big{font-family:var(--fT);font-size:1.8rem;letter-spacing:0.04em;color:var(--gold3)}
+.vcats{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
+.vcat{background:var(--night2);border:1px solid rgba(232,226,212,0.07);border-radius:var(--r);padding:1rem 1.2rem}
+.vcat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+.vcat-label{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--w3)}
+.vcat-winner{font-size:0.7rem;font-weight:500;color:var(--gold3)}
+.vbar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
+.vbar-name{font-size:0.6rem;color:var(--w3);width:64px;flex-shrink:0}
+.vbar{flex:1;height:5px;background:rgba(232,226,212,0.08);border-radius:3px;overflow:hidden}
+.vbar-fill{height:100%;background:var(--gold3);border-radius:3px;transition:width .6s ease}
+.vbar-pct{font-size:0.6rem;color:var(--gold3);width:28px;flex-shrink:0;text-align:right}
+.vcat-comment{font-size:0.8rem;color:var(--w3);line-height:1.5}
 .vload{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:5rem 0;color:var(--w3)}
 .vdots{display:flex;gap:7px}
 .vdots span{width:6px;height:6px;background:var(--gold3);border-radius:50%;animation:pu 1.3s infinite}
@@ -245,11 +147,8 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 @media(max-width:768px){
   #home.active{grid-template-columns:1fr}
   .h-left{padding:2rem 1.5rem;border-right:none;border-bottom:1px solid var(--w5);justify-content:flex-start}
-  .h-prompts{display:none}
-  .h-right{padding:1.5rem}
-  .pgrid{grid-template-columns:repeat(2,1fr)}
-  .opts{grid-template-columns:1fr}
-  .msg{max-width:92%}
+  .h-prompts{display:none}.h-right{padding:1.5rem}
+  .pgrid{grid-template-columns:repeat(2,1fr)}.opts{grid-template-columns:1fr}.msg{max-width:92%}
 }
 </style>
 </head>
@@ -267,47 +166,23 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 
 <!-- HOME -->
 <div id="home" class="screen">
-
-  <!-- Gauche : titre + prompts cachés -->
   <div class="h-left">
     <h2 class="h-title">Entrer<br>dans<br>l'arène</h2>
     <p class="h-sub">Choisis ta conviction, ton contradicteur, et prépare-toi à défendre chaque mot.</p>
-
     <div class="h-prompts">
       <p class="h-prompts-title">Ce que cache chaque bouton</p>
-      <div class="prompt-item">
-        <span class="prompt-icon">🏛</span>
-        <div><span class="prompt-name">Philosophe</span>Utilise la maïeutique de Socrate pour révéler les contradictions internes. Déconstruit les prémisses avant d'attaquer la conclusion.</div>
-      </div>
-      <div class="prompt-item">
-        <span class="prompt-icon">📊</span>
-        <div><span class="prompt-name">Économiste</span>Exige des données empiriques, montre les incentives ignorés et les corrélations confondues avec des causalités.</div>
-      </div>
-      <div class="prompt-item">
-        <span class="prompt-icon">🔬</span>
-        <div><span class="prompt-name">Scientifique</span>Réclame des preuves reproductibles, identifie les biais cognitifs, distingue corrélation et causalité.</div>
-      </div>
-      <div class="prompt-item">
-        <span class="prompt-icon">⚖</span>
-        <div><span class="prompt-name">Juriste</span>Relève chaque imprécision sémantique, généralisation abusive, exception non prise en compte.</div>
-      </div>
-      <div class="prompt-item">
-        <span class="prompt-icon">✊</span>
-        <div><span class="prompt-name">Militant</span>Ramène chaque argument à ses conséquences humaines concrètes. Interpelle la conscience morale.</div>
-      </div>
-      <div class="prompt-item">
-        <span class="prompt-icon">👁</span>
-        <div><span class="prompt-name">Avocat du diable</span>Défend l'opposé avec une logique implacable et cynique. Aucune limite rhétorique.</div>
-      </div>
+      <div class="prompt-item"><span class="prompt-icon">🏛</span><div><span class="prompt-name">Philosophe</span>Maïeutique socratique. Déconstruit les prémisses avant d'attaquer la conclusion.</div></div>
+      <div class="prompt-item"><span class="prompt-icon">📊</span><div><span class="prompt-name">Économiste</span>Exige des données chiffrées. Vérifie tes sources. Refuse les approximations.</div></div>
+      <div class="prompt-item"><span class="prompt-icon">🔬</span><div><span class="prompt-name">Scientifique</span>Preuves reproductibles uniquement. Démonte les biais cognitifs. Conteste les sources non académiques.</div></div>
+      <div class="prompt-item"><span class="prompt-icon">⚖</span><div><span class="prompt-name">Juriste</span>Précision sémantique totale. Chaque généralisation est une faille.</div></div>
+      <div class="prompt-item"><span class="prompt-icon">✊</span><div><span class="prompt-name">Militant</span>Ramène tout aux conséquences humaines concrètes. Interpelle la conscience morale.</div></div>
+      <div class="prompt-item"><span class="prompt-icon">👁</span><div><span class="prompt-name">Avocat du diable</span>Retourne tes propres arguments contre toi. Aucune limite rhétorique. Le plus difficile à battre.</div></div>
     </div>
   </div>
-
-  <!-- Droite : formulaire -->
   <div class="h-right">
     <label class="lbl" for="conviction">Ta conviction</label>
     <textarea id="conviction" class="conv" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="3" maxlength="300"></textarea>
     <div class="hint"><span id="charCount">0</span> / 300</div>
-
     <div class="sec">
       <label class="lbl">Contradicteur</label>
       <div class="pgrid" id="personaGrid">
@@ -319,7 +194,6 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
         <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>
       </div>
     </div>
-
     <div class="opts">
       <div>
         <label class="lbl">Férocité</label>
@@ -337,7 +211,6 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
         </div>
       </div>
     </div>
-
     <button class="cta" id="startBtn" disabled>
       <span>Entrer dans l'arène</span>
       <span class="arr">→</span>
@@ -357,13 +230,16 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
   <div class="cstrip" id="convictionStrip"></div>
   <div class="msgs" id="messages" role="log"></div>
   <div class="izone">
-    <textarea class="uinp" id="userInput" placeholder="Défends ta position…" rows="1" disabled></textarea>
+    <textarea class="uinp" id="userInput" placeholder="Défends ta position… (ou clique Oui / Non)" rows="1" disabled></textarea>
     <button class="sbtn" id="sendBtn" disabled>
       <svg viewBox="0 0 20 20" fill="none"><path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
     </button>
   </div>
   <div class="dfooter">
-    <span class="tc" id="turnCount">0 échange</span>
+    <div style="display:flex;align-items:center">
+      <span class="tc" id="turnCount">0 échange</span>
+      <span class="vhint" id="verdictHint">Verdict disponible dans 5 échanges</span>
+    </div>
     <button class="vbtn" id="verdictBtn" disabled>Demander le verdict</button>
   </div>
 </div>
@@ -386,21 +262,21 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
 
 <script>
 const PERSONAS = {
-  philosopher:{label:'Philosophe',icon:'🏛',prompt:`Tu es un philosophe socratique. Tu utilises la maïeutique pour révéler les contradictions internes. Tu t'appuies sur Socrate, Nietzsche, Kant. Tu déconstruis les prémisses avant d'attaquer la conclusion.`},
-  economist:  {label:'Économiste',icon:'📊',prompt:`Tu es un économiste rigoureux. Tu exiges des données empiriques, tu montres les incentives ignorés, les externalités, les corrélations confondues avec des causalités.`},
-  scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu réclames des preuves reproductibles, identifies les biais cognitifs, distingues corrélation et causalité.`},
-  lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte.`},
-  activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Tu interpelles la conscience morale.`},
-  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es l'avocat du diable absolu. Tu défends l'opposé de toute conviction avec une logique implacable et cynique. Tu n'as aucune limite rhétorique.`},
+  philosopher:{label:'Philosophe',icon:'🏛',prompt:`Tu es un philosophe socratique. Tu utilises la maïeutique pour révéler les contradictions internes. Tu t'appuies sur Socrate, Nietzsche, Kant. Tu démontres les failles dans les prémisses avant d'attaquer la conclusion.`},
+  economist:  {label:'Économiste',icon:'📊',prompt:`Tu es un économiste rigoureux. Tu exiges des données empiriques chiffrées. Tu identifies les incentives ignorés, les externalités, les corrélations confondues avec des causalités. Si l'adversaire cite des chiffres, tu vérifies leur cohérence et tu demandes la source précise.`},
+  scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu exiges des preuves reproductibles. Tu identifies les biais cognitifs. Si l'adversaire cite une étude ou un chiffre, tu demandes la source. Si la source est un forum, un blog ou un média non scientifique, tu le signales clairement et tu refuses de l'accepter comme preuve.`},
+  lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte. Si l'adversaire cite une loi ou un chiffre, tu demandes la référence exacte.`},
+  activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Si l'adversaire cite des chiffres qui semblent contredire ta position, tu demandes d'où ils viennent et tu peux en contester la méthodologie.`},
+  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es l'avocat du diable. Tu défends l'opposé de toute conviction avec une logique implacable. Tu exploites chaque faille rhétorique, retournes les arguments, utilises l'ironie si nécessaire. Tu es redoutable : tu retournes les propres arguments de l'adversaire contre lui. Si l'adversaire cite des chiffres douteux, tu les démolis avec précision.`},
 };
 const FEROCITY = {
-  soft:  {label:'Douce',  prompt:'Ton ton est stimulant mais bienveillant. Tu reconnais les points valides avant de les nuancer.'},
-  normal:{label:'Vive',   prompt:'Ton ton est ferme et direct. Tu attaques les failles sans ménagement.'},
-  brutal:{label:'Brutale',prompt:"Ton ton est implacable. Tu n'accordes aucune concession."},
+  soft:  {label:'Douce',  prompt:'Ton ton est direct mais pas agressif. Tu poses des questions qui poussent à réfléchir.'},
+  normal:{label:'Vive',   prompt:'Ton ton est ferme. Tu attaques les failles sans ménagement, mais restes factuel.'},
+  brutal:{label:'Brutale',prompt:"Ton ton est implacable. Aucune concession. Tu frappes sur les points les plus faibles avec précision."},
 };
 const MODE = {
-  attack:  {prompt:"STRATÉGIE : identifie la faille la plus profonde et exploite-la."},
-  steelman:{prompt:"STRATÉGIE : formule d'abord la version la plus solide de l'argument adverse, puis montre pourquoi elle reste insuffisante."},
+  attack:  {prompt:"STRATÉGIE : identifie la faille principale et exploite-la directement. Priorité aux prémisses."},
+  steelman:{prompt:"STRATÉGIE : formule d'abord la meilleure version possible de l'argument adverse, puis montre pourquoi même cette version ne tient pas."},
 };
 
 let S={conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false};
@@ -409,7 +285,6 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 
 $('exploreBtn').addEventListener('click',()=>showScreen('home'));
-
 const convEl=$('conviction'),charEl=$('charCount'),startEl=$('startBtn');
 convEl.addEventListener('input',()=>{charEl.textContent=convEl.value.length;startEl.disabled=convEl.value.trim().length<10});
 document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.persona=b.dataset.persona}));
@@ -432,6 +307,7 @@ async function startDebate(){
   $('ferocityBadge').textContent=FEROCITY[S.ferocity].label;
   $('convictionStrip').textContent=S.conviction;
   $('messages').innerHTML='';$('turnCount').textContent='0 échange';$('verdictBtn').disabled=true;
+  $('verdictHint').textContent='Verdict disponible dans 5 échanges';
   showScreen('debate');setLoading(true);
   S.history.push({role:'user',content:`Je soutiens que : ${S.conviction}`});
   try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns=1;refreshTurns()}
@@ -445,7 +321,7 @@ async function sendMsg(override){
   if(!override){inputEl.value='';inputEl.style.height='auto'}
   removeBinary();S.waitingBinary=false;
   renderUser(txt);S.history.push({role:'user',content:txt});setLoading(true);
-  try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns++;refreshTurns();if(S.turns>=3)$('verdictBtn').disabled=false}
+  try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns++;refreshTurns();if(S.turns>=5)$('verdictBtn').disabled=false}
   catch(e){hideTyping();renderAI('Erreur réseau. Réessaie.');console.error(e)}
   setLoading(false);
 }
@@ -460,7 +336,37 @@ async function requestVerdict(){
 
 function buildSystemPrompt(){
   const p=PERSONAS[S.persona],f=FEROCITY[S.ferocity],m=MODE[S.mode];
-  return `${p.prompt}\n\n${f.prompt}\n\n${m.prompt}\n\nFORMAT STRICT : Chaque réplique suit exactement ce schéma :\n1. Une ou deux phrases qui répondent directement à ce que vient de dire l'interlocuteur.\n2. Un argument court et percutant.\n3. UNE seule question fermée piège (si oui ça contredit sa thèse, si non ça révèle une incohérence).\n4. Termine par exactement : [Réponds par oui ou non]\n\nINTERDICTIONS ABSOLUES : jamais "Bonne question" "Certainement" "Tout à fait" "En effet" "Absolument". Jamais de listes à tirets. Jamais de markdown. Jamais "En tant que..." ou "Selon ma perspective...". Maximum 160 mots. Une seule question par réplique. Tu parles comme un humain dans un vrai débat.\n\nConviction de l'adversaire : "${S.conviction}"`;
+  return `${p.prompt}
+
+${f.prompt}
+
+${m.prompt}
+
+VÉRIFICATION DES SOURCES :
+Si l'adversaire cite un chiffre, une étude ou une statistique sans source, demande-lui la source précise.
+Si la source citée est Reddit, un blog, un forum ou un article de presse généraliste, signale explicitement que ce n'est pas une source fiable et refuse de l'accepter comme preuve.
+Si tu as un contre-exemple ou une étude contradictoire crédible, utilise-le.
+
+SUJETS HORS DÉBAT :
+Si la conviction soumise n'est pas débattable (météo, fait divers, goût personnel, question sans position défendable), réponds uniquement : "Ce n'est pas un sujet à débattre." et rien d'autre.
+
+FORMAT STRICT :
+Chaque réplique :
+1. Une ou deux phrases qui répondent directement à ce qui vient d'être dit.
+2. Un argument court et factuel.
+3. Une question fermée piège — si oui ça contredit la thèse adverse, si non ça révèle une incohérence. La question doit être précise. Termine alors par exactement : [Réponds par oui ou non]
+Si une réponse textuelle libre est plus pertinente qu'une question binaire, omets le marqueur [Réponds par oui ou non].
+
+INTERDICTIONS :
+Jamais "Bonne question", "Certainement", "Tout à fait", "En effet", "Absolument", "Il est indéniable que", "Force est de constater".
+Jamais de listes à tirets dans les réponses.
+Jamais de mise en forme markdown.
+Jamais "En tant que..." ou "Selon ma perspective...".
+Jamais de formulations lyriques ou emphatiques.
+Maximum 150 mots. Une seule question par réplique.
+Tu parles comme un humain dans un vrai débat.
+
+Conviction défendue par l'adversaire : "${S.conviction}"`;
 }
 
 async function api(history){
@@ -478,6 +384,7 @@ async function verdictApi(){
 }
 
 function renderUser(text){const msgs=$('messages'),div=document.createElement('div');div.className='msg u';div.innerHTML=`<div class="mwho">Toi</div><div class="mbub">${esc(text)}</div>`;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight}
+
 function renderAI(raw){
   const msgs=$('messages'),p=PERSONAS[S.persona];
   const hasBin=raw.includes('[Réponds par oui ou non]');
@@ -485,18 +392,23 @@ function renderAI(raw){
   const div=document.createElement('div');div.className='msg a';
   div.innerHTML=`<div class="mwho">${p.icon} ${p.label}</div><div class="mbub">${esc(display)}</div>`;
   msgs.appendChild(div);
-  if(hasBin){S.waitingBinary=true;showBinary();inputEl.disabled=true;sendEl.disabled=true}
+  if(hasBin){S.waitingBinary=true;showBinary();}
+  else{S.waitingBinary=false;}
   msgs.scrollTop=msgs.scrollHeight;
 }
+
 function showBinary(){
-  removeBinary();
+  removeBinaryOnly();
   const msgs=$('messages'),wrap=document.createElement('div');
   wrap.id='binaryWrap';wrap.className='binwrap';
   const oui=document.createElement('button');oui.className='binbtn boui';oui.textContent='Oui';oui.onclick=()=>sendMsg('Oui.');
   const non=document.createElement('button');non.className='binbtn bnon';non.textContent='Non';non.onclick=()=>sendMsg('Non.');
   wrap.appendChild(oui);wrap.appendChild(non);msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
 }
-function removeBinary(){const el=$('binaryWrap');if(el)el.remove();if(!S.loading){inputEl.disabled=false;sendEl.disabled=false}}
+
+function removeBinaryOnly(){const el=$('binaryWrap');if(el)el.remove()}
+function removeBinary(){removeBinaryOnly();inputEl.disabled=S.loading;sendEl.disabled=S.loading}
+
 function showTyping(){
   const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
   div.className='msg a';div.id='typing';
@@ -504,15 +416,46 @@ function showTyping(){
   msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
 }
 function hideTyping(){const t=$('typing');if(t)t.remove()}
-function setLoading(on){S.loading=on;if(!S.waitingBinary){inputEl.disabled=on;sendEl.disabled=on}if(!on&&!S.waitingBinary)inputEl.focus()}
-function refreshTurns(){$('turnCount').textContent=`${S.turns} échange${S.turns>1?'s':''}`}
+function setLoading(on){S.loading=on;inputEl.disabled=on;sendEl.disabled=on;if(!on)inputEl.focus()}
+function refreshTurns(){
+  const t=S.turns;
+  $('turnCount').textContent=`${t} échange${t>1?'s':''}`;
+  if(t<5){const r=5-t;$('verdictHint').textContent=`Verdict dans ${r} échange${r>1?'s':''}`}
+  else{$('verdictHint').textContent=''}
+}
+
 function renderVerdict(raw){
-  let d;try{d=JSON.parse(raw.replace(/```json|```/g,'').trim())}catch{$('verdictBody').innerHTML=`<div class="vs"><p class="vst">${esc(raw)}</p></div>`;return}
-  const secs=[{key:'strengths',label:'Tes arguments solides'},{key:'weaknesses',label:'Tes failles exposées'},{key:'fatal',label:"L'argument que tu n'as pas su contrer"}];
-  let html=secs.map(({key,label})=>d[key]?`<div class="vs"><p class="vsl">${label}</p><p class="vst">${esc(d[key])}</p></div>`:'').join('');
-  if(d.verdict)html+=`<div class="vs vsf"><p class="vsl">Verdict global</p><p class="vst">${esc(d.verdict)}</p></div>`;
+  let d;
+  try{d=JSON.parse(raw.replace(/```json|```/g,'').trim())}
+  catch{$('verdictBody').innerHTML=`<div class="vs"><p class="vst">${esc(raw)}</p></div>`;return}
+
+  let html='';
+  if(d.winner_overall){
+    html+=`<div class="vs vsf"><p class="vsl">Vainqueur global</p><p class="vst vst-big">${esc(d.winner_overall)}</p></div>`;
+  }
+  if(d.categories&&d.categories.length){
+    html+='<div class="vcats">';
+    d.categories.forEach(cat=>{
+      const pct=cat.pct||50;
+      const defPct=cat.winner==='Défenseur'?pct:100-pct;
+      html+=`<div class="vcat">
+        <div class="vcat-header"><span class="vcat-label">${esc(cat.label)}</span><span class="vcat-winner">${esc(cat.winner)}</span></div>
+        <div class="vbar-wrap">
+          <span class="vbar-name">Défenseur</span>
+          <div class="vbar"><div class="vbar-fill" style="width:${defPct}%"></div></div>
+          <span class="vbar-pct">${defPct}%</span>
+        </div>
+        <p class="vcat-comment">${esc(cat.comment||'')}</p>
+      </div>`;
+    });
+    html+='</div>';
+  }
+  if(d.summary){
+    html+=`<div class="vs" style="margin-top:1rem"><p class="vsl">Analyse</p><p class="vst">${esc(d.summary)}</p></div>`;
+  }
   $('verdictBody').innerHTML=html;
 }
+
 function resetState(){S={conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}}
 </script>
 </body>
