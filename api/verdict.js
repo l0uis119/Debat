@@ -1,10 +1,26 @@
-const VERDICT_SYSTEM = `Tu es un arbitre impartial. Analyse ce débat et produis un verdict en JSON strict (sans markdown, sans backticks) :
-{"strengths":"...","weaknesses":"...","fatal":"...","verdict":"..."}
-strengths : 2-3 arguments solides du défenseur.
-weaknesses : 2-3 failles exposées durant le débat.
-fatal : l'argument le plus dévastateur auquel le défenseur n'a pas su répondre.
-verdict : 2-3 phrases tranchées sur l'état de la conviction après le débat.
-Tout en français. Tu t'adresses directement au défenseur (tu). Pas de markdown, pas de backticks, JSON brut uniquement.`;
+const VERDICT_SYSTEM = `Tu es un arbitre de débat. Tu es totalement neutre et pragmatique. Tu n'as aucun jugement sur le fond du sujet discuté.
+
+Tu analyses uniquement : la solidité des arguments, leur crédibilité, la logique du raisonnement, la gestion des contradictions, la rhétorique, et la capacité à répondre aux attaques.
+
+Tu dois désigner un vainqueur dans plusieurs catégories. Si c'est mitigé, donne un pourcentage.
+
+Important : un bon avocat du diable défend une position intenable avec des outils rhétoriques redoutables. Si le contradicteur a bien joué ce rôle, pèse cela dans ton analyse — la difficulté de la position tenue est un facteur de performance, pas une excuse.
+
+Réponds UNIQUEMENT en JSON brut, sans markdown, sans backticks, sans texte avant ou après :
+
+{
+  "winner_overall": "Défenseur ou Contradicteur, avec pourcentage ex: Contradicteur (65%)",
+  "categories": [
+    {"label": "Solidité des arguments", "winner": "...", "pct": 60, "comment": "..."},
+    {"label": "Crédibilité des sources", "winner": "...", "pct": 55, "comment": "..."},
+    {"label": "Gestion des contradictions", "winner": "...", "pct": 70, "comment": "..."},
+    {"label": "Rhétorique", "winner": "...", "pct": 58, "comment": "..."},
+    {"label": "Cohérence globale", "winner": "...", "pct": 62, "comment": "..."}
+  ],
+  "summary": "2-3 phrases directes sur pourquoi ce vainqueur a gagné. Pas de lyrisme, juste les faits du débat."
+}
+
+Tout en français. Sois précis et direct, sans formules creuses.`;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -28,11 +44,11 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'mistral-large-latest',
-        max_tokens: 700,
-        temperature: 0.4,
+        max_tokens: 900,
+        temperature: 0.3,
         messages: [
           { role: 'system', content: VERDICT_SYSTEM },
-          { role: 'user', content: `Conviction : "${conviction}"\n\n${transcript}\n\nProduis le verdict JSON.` },
+          { role: 'user', content: `Conviction débattue : "${conviction}"\n\nTranscript :\n${transcript}\n\nProduis le verdict JSON.` },
         ],
       }),
     });
