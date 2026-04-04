@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Miroir de Débat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#080808;
+  --black2:#111111;
+  --black3:#1a1a1a;
+  --black4:#242424;
+  --gold:#D4A843;
+  --gold2:#B8902E;
+  --gold-glow:rgba(212,168,67,0.12);
+  --gold-border:rgba(212,168,67,0.25);
+  --white:#F5F0E8;
+  --white2:#C8C0B0;
+  --white3:#7a7468;
+  --font-title:'Syne',sans-serif;
+  --font-body:'Instrument Serif',serif;
+  --font-mono:'DM Mono',monospace;
+}
+
+html,body{
+  min-height:100%;
+  background:var(--black);
+  color:var(--white);
+  font-family:var(--font-body);
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  cursor:default;
+}
+
+/* ── ÉCRANS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+
+/* ══════════════════════════════════════
+   ACCUEIL
+══════════════════════════════════════ */
+#home{
+  display:none;
+  padding:0;
+  position:relative;
+  overflow:hidden;
+}
+#home.active{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+
+/* Colonne gauche — hero */
+.hero{
+  padding:3rem 3rem 3rem 4rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border-right:1px solid rgba(255,255,255,0.06);
+  position:relative;
+}
+
+.hero-top{}
+
+.logo{
+  font-family:var(--font-mono);
+  font-size:0.65rem;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--white3);
+  margin-bottom:5rem;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo-dot{
+  width:6px;height:6px;
+  background:var(--gold);
+  border-radius:50%;
+}
+
+.hero-title{
+  font-family:var(--font-title);
+  font-size:clamp(3.5rem,6vw,5.5rem);
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.03em;
+  color:var(--white);
+  margin-bottom:1.5rem;
+}
+.hero-title span{color:var(--gold)}
+
+.hero-sub{
+  font-size:1.1rem;
+  line-height:1.65;
+  color:var(--white2);
+  font-style:italic;
+  max-width:360px;
+  margin-bottom:4rem;
+}
+
+.hero-bottom{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  color:var(--white3);
+  letter-spacing:0.15em;
+}
+
+/* Colonne droite — form */
+.form-col{
+  padding:3rem 4rem 3rem 3rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2.5rem;
+}
+
+.field-label{
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.75rem;
+  display:block;
+}
+
+/* Textarea conviction */
+.conviction-wrap{position:relative}
+.conviction-input{
+  width:100%;
+  min-height:110px;
+  background:var(--black2);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:2px;
+  color:var(--white);
+  font-family:var(--font-body);
+  font-size:1.05rem;
+  font-style:italic;
+  line-height:1.6;
+  padding:1rem 1.1rem;
+  resize:none;
+  outline:none;
+  transition:border-color .2s;
+}
+.conviction-input::placeholder{color:var(--white3);font-style:italic}
+.conviction-input:focus{border-color:var(--gold-border)}
+
+.char-hint{
+  font-family:var(--font-mono);
+  font-size:0.55rem;
+  color:var(--white3);
+  text-align:right;
+  margin-top:0.4rem;
+  letter-spacing:0.1em;
+}
+
+/* Grille personas */
+.persona-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.persona-btn{
+  background:var(--black2);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:2px;
+  padding:12px 10px 10px;
+  cursor:pointer;
+  text-align:left;
+  transition:all .15s;
+  position:relative;
+}
+.persona-btn:hover{border-color:var(--gold-border);background:var(--black3)}
+.persona-btn.active{
+  border-color:var(--gold);
+  background:var(--gold-glow);
+}
+.persona-btn.active::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:var(--gold);
+}
+.p-icon{font-size:1.1rem;display:block;margin-bottom:6px;line-height:1}
+.p-name{
+  font-family:var(--font-title);
+  font-size:0.72rem;
+  font-weight:700;
+  color:var(--white);
+  display:block;
+  letter-spacing:0.02em;
+}
+.p-desc{
+  font-family:var(--font-mono);
+  font-size:0.52rem;
+  color:var(--white3);
+  margin-top:2px;
+  line-height:1.3;
+}
+
+/* Options row */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+
+.toggle-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.toggle-btn{
+  padding:6px 14px;
+  background:var(--black2);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:2px;
+  color:var(--white3);
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  transition:all .15s;
+}
+.toggle-btn:hover{color:var(--white);border-color:rgba(255,255,255,0.2)}
+.toggle-btn.active{
+  background:var(--gold-glow);
+  border-color:var(--gold);
+  color:var(--gold);
+}
+
+/* CTA */
+.cta{
+  width:100%;
+  padding:16px 24px;
+  background:var(--gold);
+  border:none;
+  border-radius:2px;
+  color:var(--black);
+  font-family:var(--font-title);
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:0.04em;
+  cursor:pointer;
+  transition:all .15s;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.cta:hover{background:var(--gold2)}
+.cta:disabled{opacity:0.3;cursor:not-allowed}
+.cta-arrow{font-size:1.2rem;transition:transform .15s}
+.cta:not(:disabled):hover .cta-arrow{transform:translateX(4px)}
+
+/* ══════════════════════════════════════
+   DÉBAT
+══════════════════════════════════════ */
+#debate{
+  display:none;
+  flex-direction:column;
+  height:100vh;
+}
+#debate.active{display:flex}
+
+.debate-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:1rem 2rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  flex-shrink:0;
+}
+.btn-back{
+  background:none;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:2px;
+  color:var(--white3);
+  font-family:var(--font-mono);
+  font-size:0.65rem;
+  padding:5px 12px;
+  cursor:pointer;
+  transition:all .15s;
+  letter-spacing:0.1em;
+}
+.btn-back:hover{color:var(--white);border-color:rgba(255,255,255,0.25)}
+
+.debate-meta{flex:1;display:flex;gap:8px;align-items:center}
+.badge{
+  font-family:var(--font-mono);
+  font-size:0.58rem;
+  letter-spacing:0.1em;
+  padding:3px 10px;
+  border-radius:20px;
+  border:1px solid var(--gold-border);
+  color:var(--gold);
+}
+
+.conviction-strip{
+  padding:0.6rem 2rem;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  font-style:italic;
+  font-size:0.88rem;
+  color:var(--white3);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  flex-shrink:0;
+}
+.conviction-strip::before{content:'"';margin-right:3px;color:var(--gold)}
+.conviction-strip::after{content:'"';margin-left:3px;color:var(--gold)}
+
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:1.25rem;
+  scroll-behavior:smooth;
+}
+.messages::-webkit-scrollbar{width:3px}
+.messages::-webkit-scrollbar-thumb{background:rgba(212,168,67,0.2);border-radius:2px}
+
+.msg{
+  display:flex;
+  flex-direction:column;
+  max-width:75%;
+  animation:fadeUp .25s ease forwards;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.ai{align-self:flex-start;align-items:flex-start}
+
+.msg-who{
+  font-family:var(--font-mono);
+  font-size:0.55rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+.msg.user .msg-who{color:var(--white3)}
+.msg.ai .msg-who{color:var(--gold2)}
+
+.msg-bubble{
+  padding:.85rem 1.1rem;
+  border-radius:2px;
+  font-size:1rem;
+  line-height:1.7;
+}
+.msg.user .msg-bubble{
+  background:var(--black3);
+  border:1px solid rgba(255,255,255,0.07);
+  color:var(--white);
+  border-bottom-right-radius:0;
+}
+.msg.ai .msg-bubble{
+  background:var(--black2);
+  border:1px solid var(--gold-border);
+  color:var(--white);
+  font-style:italic;
+  font-size:1.05rem;
+  border-bottom-left-radius:0;
+  border-left:3px solid var(--gold);
+}
+
+/* Typing */
+.typing{
+  display:flex;gap:5px;
+  padding:.85rem 1.1rem;
+  background:var(--black2);
+  border:1px solid var(--gold-border);
+  border-left:3px solid var(--gold);
+  border-radius:2px;
+  border-bottom-left-radius:0;
+  align-items:center;
+}
+.dot{
+  width:5px;height:5px;
+  background:var(--gold2);
+  border-radius:50%;
+  animation:pulse 1.3s infinite;
+}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{
+  0%,80%,100%{opacity:.3;transform:scale(1)}
+  40%{opacity:1;transform:scale(1.4)}
+}
+
+/* Boutons oui/non */
+.binary-wrap{
+  display:flex;gap:10px;
+  animation:fadeUp .2s ease forwards;
+}
+.binary-btn{
+  flex:1;
+  padding:12px;
+  border-radius:2px;
+  font-family:var(--font-title);
+  font-size:.95rem;
+  font-weight:700;
+  letter-spacing:.05em;
+  cursor:pointer;
+  transition:all .15s;
+  border:1px solid;
+}
+.b-oui{background:transparent;border-color:var(--gold);color:var(--gold)}
+.b-oui:hover{background:var(--gold);color:var(--black)}
+.b-non{background:transparent;border-color:rgba(180,60,60,.7);color:#c55}
+.b-non:hover{background:rgba(160,40,40,.8);color:var(--white);border-color:rgba(160,40,40,.8)}
+
+/* Input zone */
+.input-zone{
+  padding:1rem 2rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+  flex-shrink:0;
+  background:var(--black);
+}
+.user-input{
+  flex:1;
+  background:var(--black2);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:2px;
+  color:var(--white);
+  font-family:var(--font-body);
+  font-size:1rem;
+  line-height:1.5;
+  min-height:42px;
+  max-height:120px;
+  padding:9px 14px;
+  resize:none;
+  outline:none;
+  transition:border-color .2s;
+}
+.user-input::placeholder{color:var(--white3);font-style:italic}
+.user-input:focus{border-color:var(--gold-border)}
+.user-input:disabled{opacity:.35}
+
+.send-btn{
+  width:42px;height:42px;
+  background:var(--gold);
+  border:none;border-radius:2px;
+  color:var(--black);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:opacity .15s;
+}
+.send-btn:hover{opacity:.8}
+.send-btn:disabled{opacity:.3;cursor:not-allowed}
+.send-btn svg{width:16px;height:16px}
+
+.debate-footer{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:.5rem 2rem;
+  flex-shrink:0;
+}
+.turn-count{
+  font-family:var(--font-mono);
+  font-size:.55rem;
+  color:var(--white3);
+  letter-spacing:.15em;
+  opacity:.5;
+}
+.verdict-btn{
+  font-family:var(--font-mono);
+  font-size:.6rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  padding:6px 16px;
+  background:transparent;
+  border:1px solid var(--gold-border);
+  border-radius:2px;
+  color:var(--white3);
+  cursor:pointer;
+  transition:all .15s;
+}
+.verdict-btn:not(:disabled):hover{background:var(--gold-glow);color:var(--gold);border-color:var(--gold)}
+.verdict-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ══════════════════════════════════════
+   VERDICT
+══════════════════════════════════════ */
+#verdict{display:none}
+#verdict.active{display:block}
+
+.verdict-page{
+  max-width:760px;
+  margin:0 auto;
+  padding:4rem 2rem;
+}
+.verdict-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:4rem;
+}
+.verdict-eyebrow{
+  font-family:var(--font-mono);
+  font-size:.6rem;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:1rem;
+}
+.verdict-h{
+  font-family:var(--font-title);
+  font-size:3rem;
+  font-weight:800;
+  line-height:1.05;
+  color:var(--white);
+  margin-bottom:.75rem;
+  letter-spacing:-.02em;
+}
+.verdict-quote{
+  font-style:italic;
+  color:var(--white3);
+  font-size:.95rem;
+  padding-left:1rem;
+  border-left:2px solid var(--gold-border);
+  margin-bottom:3rem;
+}
+.v-section{
+  margin-bottom:2rem;
+  padding-bottom:2rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  animation:fadeUp .4s ease forwards;
+}
+.v-section:last-child{border-bottom:none}
+.v-label{
+  font-family:var(--font-mono);
+  font-size:.58rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:.75rem;
+}
+.v-text{
+  font-size:1.05rem;
+  line-height:1.75;
+  color:var(--white2);
+  font-weight:300;
+}
+.v-final{
+  background:var(--gold-glow);
+  border:1px solid var(--gold-border);
+  border-radius:2px;
+  padding:1.5rem;
+  margin-top:.5rem;
+}
+.v-final .v-text{color:var(--white);font-style:italic}
+
+.v-loading{
+  display:flex;flex-direction:column;
+  align-items:center;gap:1.5rem;
+  padding:5rem 0;
+  color:var(--white3);font-style:italic;
+}
+.v-dots{display:flex;gap:6px}
+.v-dots span{
+  width:6px;height:6px;
+  background:var(--gold2);border-radius:50%;
+  animation:pulse 1.3s infinite;
+}
+.v-dots span:nth-child(2){animation-delay:.2s}
+.v-dots span:nth-child(3){animation-delay:.4s}
+
+/* btn-new */
+.btn-new{
+  padding:12px 24px;
+  background:var(--gold);
+  border:none;border-radius:2px;
+  color:var(--black);
+  font-family:var(--font-title);
+  font-size:.9rem;
+  font-weight:800;
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.btn-new:hover{opacity:.85}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  #home.active{grid-template-columns:1fr}
+  .hero{padding:2rem 1.5rem;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}
+  .hero-sub{margin-bottom:2rem}
+  .form-col{padding:2rem 1.5rem}
+  .persona-grid{grid-template-columns:repeat(2,1fr)}
+  .debate-bar{padding:1rem}
+  .messages{padding:1rem}
+  .input-zone{padding:.75rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ ACCUEIL ══ -->
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo"><div class="logo-dot"></div>Miroir de Débat</div>
+      <h1 class="hero-title">Défends ce<br>que tu<br><span>crois.</span></h1>
+      <p class="hero-sub">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout — ou s'effondre.</p>
+    </div>
+    <div class="hero-bottom">v1.0 &nbsp;·&nbsp; Propulsé par l'IA</div>
+  </div>
+
+  <div class="form-col">
+
+    <!-- Conviction -->
+    <div>
+      <label class="field-label" for="conviction">Ta conviction</label>
+      <div class="conviction-wrap">
+        <textarea id="conviction" class="conviction-input" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="4" maxlength="300"></textarea>
+      </div>
+      <div class="char-hint"><span id="charCount">0</span> / 300</div>
+    </div>
+
+    <!-- Contradicteur -->
+    <div>
+      <label class="field-label">Contradicteur</label>
+      <div class="persona-grid" id="personaGrid">
+        <button class="persona-btn active" data-persona="philosopher">
+          <span class="p-icon">🏛</span>
+          <span class="p-name">Philosophe</span>
+          <span class="p-desc">Socrate · Nietzsche</span>
+        </button>
+        <button class="persona-btn" data-persona="economist">
+          <span class="p-icon">📊</span>
+          <span class="p-name">Économiste</span>
+          <span class="p-desc">Données · Marchés</span>
+        </button>
+        <button class="persona-btn" data-persona="scientist">
+          <span class="p-icon">🔬</span>
+          <span class="p-name">Scientifique</span>
+          <span class="p-desc">Preuves · Méthode</span>
+        </button>
+        <button class="persona-btn" data-persona="lawyer">
+          <span class="p-icon">⚖</span>
+          <span class="p-name">Juriste</span>
+          <span class="p-desc">Précision · Droit</span>
+        </button>
+        <button class="persona-btn" data-persona="activist">
+          <span class="p-icon">✊</span>
+          <span class="p-name">Militant</span>
+          <span class="p-desc">Impact · Humain</span>
+        </button>
+        <button class="persona-btn" data-persona="devil">
+          <span class="p-icon">👁</span>
+          <span class="p-name">Avocat du diable</span>
+          <span class="p-desc">Aucune limite</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="opts">
+      <div>
+        <label class="field-label">Férocité</label>
+        <div class="toggle-row" id="ferocityGroup">
+          <button class="toggle-btn" data-val="soft">Douce</button>
+          <button class="toggle-btn active" data-val="normal">Vive</button>
+          <button class="toggle-btn" data-val="brutal">Brutale</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Stratégie</label>
+        <div class="toggle-row" id="modeGroup">
+          <button class="toggle-btn active" data-val="attack">Attaque</button>
+          <button class="toggle-btn" data-val="steelman">Steel Man</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta" id="startBtn" disabled>
+      <span>Entrer dans l'arène</span>
+      <span class="cta-arrow">→</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- ══ DÉBAT ══ -->
+<div id="debate" class="screen">
+  <div class="debate-bar">
+    <button class="btn-back" id="backBtn">← Quitter</button>
+    <div class="debate-meta">
+      <span class="badge" id="personaBadge"></span>
+      <span class="badge" id="ferocityBadge"></span>
+    </div>
+  </div>
+  <div class="conviction-strip" id="convictionStrip"></div>
+  <div class="messages" id="messages" role="log"></div>
+  <div class="input-zone">
+    <textarea class="user-input" id="userInput" placeholder="Défends ta position…" rows="1" disabled></textarea>
+    <button class="send-btn" id="sendBtn" disabled>
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="debate-footer">
+    <span class="turn-count" id="turnCount">0 échange</span>
+    <button class="verdict-btn" id="verdictBtn" disabled>Demander le verdict</button>
+  </div>
+</div>
+
+<!-- ══ VERDICT ══ -->
+<div id="verdict" class="screen">
+  <div class="verdict-page">
+    <div class="verdict-nav">
+      <button class="btn-back" id="backToDebate">← Retour au débat</button>
+      <button class="btn-new" id="newDebate">Nouveau débat</button>
+    </div>
+    <p class="verdict-eyebrow">Verdict final</p>
+    <h2 class="verdict-h">Le tribunal<br>a tranché.</h2>
+    <p class="verdict-quote" id="verdictQuote"></p>
+    <div id="verdictBody">
+      <div class="v-loading">
+        <div class="v-dots"><span></span><span></span><span></span></div>
+        <p>Analyse du débat…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const MISTRAL_API_KEY = 'REMPLACE_PAR_TA_CLE_MISTRAL'; // ← insère ta clé ici
+
+const PERSONAS = {
+  philosopher:{label:'Philosophe',icon:'🏛',prompt:`Tu es un philosophe socratique. Tu utilises la maïeutique pour révéler les contradictions internes. Tu t'appuies sur Socrate, Nietzsche, Kant. Tu déconstruis les prémisses avant d'attaquer la conclusion.`},
+  economist:  {label:'Économiste',icon:'📊',prompt:`Tu es un économiste rigoureux. Tu exiges des données empiriques, tu montres les incentives ignorés, les externalités, les corrélations confondues avec des causalités.`},
+  scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu réclames des preuves reproductibles, identifies les biais cognitifs, distingues corrélation et causalité.`},
+  lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte. Tu construis des contre-arguments béton.`},
+  activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes — qui en souffre, qui en profite. Tu interpelles la conscience morale.`},
+  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es l'avocat du diable absolu. Tu défends l'opposé de toute conviction avec une logique implacable et cynique. Tu n'as aucune limite rhétorique. Tu peux être provocateur et déstabilisant.`},
+};
+
+const FEROCITY = {
+  soft:  {label:'Douce',  prompt:'Ton ton est stimulant mais bienveillant. Tu reconnais les points valides avant de les nuancer.'},
+  normal:{label:'Vive',   prompt:'Ton ton est ferme et direct. Tu attaques les failles sans ménagement.'},
+  brutal:{label:'Brutale',prompt:'Ton ton est implacable. Tu n\'accordes aucune concession. Tu frappes sur les contradictions les plus profondes.'},
+};
+
+const MODE = {
+  attack:   {prompt:'STRATÉGIE : identifie la faille la plus profonde et exploite-la. Attaque d\'abord les prémisses, puis la logique, puis les conséquences.'},
+  steelman: {prompt:'STRATÉGIE : formule d\'abord la version la plus solide de l\'argument adverse, puis explique pourquoi même cette version reste insuffisante.'},
+};
+
+// ══════════════════════════════════════
+// ÉTAT
+// ══════════════════════════════════════
+let S = {
+  conviction:'', persona:'philosopher', ferocity:'normal', mode:'attack',
+  history:[], turns:0, loading:false, waitingBinary:false,
+};
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// ══════════════════════════════════════
+// SETUP — interactions
+// ══════════════════════════════════════
+const convEl = $('conviction');
+const charEl = $('charCount');
+const startEl= $('startBtn');
+
+convEl.addEventListener('input',()=>{
+  charEl.textContent = convEl.value.length;
+  startEl.disabled = convEl.value.trim().length < 10;
+});
+
+document.querySelectorAll('.persona-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.persona-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    S.persona = btn.dataset.persona;
+  });
+});
+
+document.querySelectorAll('#ferocityGroup .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#ferocityGroup .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    S.ferocity = btn.dataset.val;
+  });
+});
+
+document.querySelectorAll('#modeGroup .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#modeGroup .toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    S.mode = btn.dataset.val;
+  });
+});
+
+startEl.addEventListener('click', startDebate);
+
+// ══════════════════════════════════════
+// DÉBAT — interactions
+// ══════════════════════════════════════
+$('backBtn').addEventListener('click',()=>{
+  if(confirm('Abandonner ce débat ?')){ resetState(); showScreen('home'); }
+});
+
+$('verdictBtn').addEventListener('click', requestVerdict);
+
+const inputEl = $('userInput');
+const sendEl  = $('sendBtn');
+
+inputEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMsg(); }
+});
+inputEl.addEventListener('input',function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,120)+'px';
+});
+sendEl.addEventListener('click',()=>sendMsg());
+
+// VERDICT
+$('backToDebate').addEventListener('click',()=>showScreen('debate'));
+$('newDebate').addEventListener('click',()=>{
+  resetState();
+  convEl.value=''; charEl.textContent='0'; startEl.disabled=true;
+  showScreen('home');
+});
+
+// ══════════════════════════════════════
+// LOGIQUE PRINCIPALE
+// ══════════════════════════════════════
+async function startDebate(){
+  S.conviction = convEl.value.trim();
+  S.history=[]; S.turns=0; S.waitingBinary=false;
+
+  const p = PERSONAS[S.persona];
+  $('personaBadge').textContent  = `${p.icon} ${p.label}`;
+  $('ferocityBadge').textContent = FEROCITY[S.ferocity].label;
+  $('convictionStrip').textContent = S.conviction;
+  $('messages').innerHTML='';
+  $('turnCount').textContent='0 échange';
+  $('verdictBtn').disabled=true;
+
+  showScreen('debate');
+  setLoading(true);
+
+  const opening = `Je soutiens que : ${S.conviction}`;
+  S.history.push({role:'user',content:opening});
+
+  try{
+    const reply = await callMistral(S.history);
+    S.history.push({role:'assistant',content:reply});
+    hideTyping();
+    renderAI(reply);
+    S.turns=1;
+    refreshTurns();
+  }catch(e){
+    hideTyping();
+    renderAI('Erreur de connexion. Vérifie ta clé API et ta connexion.');
+    console.error(e);
+  }
+  setLoading(false);
+}
+
+async function sendMsg(override){
+  const txt = override ?? inputEl.value.trim();
+  if(!txt||S.loading) return;
+
+  if(!override){ inputEl.value=''; inputEl.style.height='auto'; }
+
+  removeBinary();
+  S.waitingBinary=false;
+
+  renderUser(txt);
+  S.history.push({role:'user',content:txt});
+  setLoading(true);
+
+  try{
+    const reply = await callMistral(S.history);
+    S.history.push({role:'assistant',content:reply});
+    hideTyping();
+    renderAI(reply);
+    S.turns++;
+    refreshTurns();
+    if(S.turns>=3) $('verdictBtn').disabled=false;
+  }catch(e){
+    hideTyping();
+    renderAI('Erreur réseau. Réessaie.');
+    console.error(e);
+  }
+  setLoading(false);
+}
+
+async function requestVerdict(){
+  $('verdictQuote').textContent = S.conviction;
+  $('verdictBody').innerHTML=`<div class="v-loading"><div class="v-dots"><span></span><span></span><span></span></div><p>Analyse du débat…</p></div>`;
+  showScreen('verdict');
+  try{
+    const v = await callVerdictMistral();
+    renderVerdict(v);
+  }catch(e){
+    $('verdictBody').innerHTML=`<p style="color:var(--white3);font-style:italic">Erreur lors du verdict.</p>`;
+  }
+}
+
+// ══════════════════════════════════════
+// API MISTRAL
+// ══════════════════════════════════════
+function buildSystemPrompt(){
+  const p = PERSONAS[S.persona];
+  const f = FEROCITY[S.ferocity];
+  const m = MODE[S.mode];
+  return `${p.prompt}
+
+${f.prompt}
+
+${m.prompt}
+
+FORMAT STRICT :
+Chaque réplique suit ce schéma :
+1. Une ou deux phrases qui répondent directement à ce que vient de dire l'interlocuteur.
+2. Un argument court et percutant.
+3. UNE seule question fermée piège — si l'interlocuteur répond oui, ça contredit sa thèse. Si non, ça révèle une incohérence.
+4. Termine par exactement : [Réponds par oui ou non]
+
+INTERDICTIONS :
+- Jamais "Bonne question", "Certainement", "Tout à fait", "En effet", "Absolument", "Je comprends"
+- Jamais de listes à tirets ou numérotées
+- Jamais de gras, italique ou markdown
+- Jamais "En tant que..." ou "Selon ma perspective..."
+- Maximum 160 mots par réponse
+- Une seule question par réplique
+- Pas de méta-commentaire sur le débat
+- Ne jamais répéter un argument déjà utilisé
+- Tu parles comme un humain dans un vrai débat, pas comme une IA
+
+Conviction de l'adversaire à démolir : "${S.conviction}"`;
+}
+
+async function callMistral(history){
+  showTyping();
+  const res = await fetch('https://api.mistral.ai/v1/chat/completions',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':`Bearer ${MISTRAL_API_KEY}`,
+    },
+    body:JSON.stringify({
+      model:'mistral-large-latest',
+      max_tokens:400,
+      temperature:0.85,
+      messages:[
+        {role:'system',content:buildSystemPrompt()},
+        ...history,
+      ],
+    }),
+  });
+  if(!res.ok) throw new Error(`Mistral ${res.status}`);
+  const d = await res.json();
+  return d.choices?.[0]?.message?.content ?? '';
+}
+
+async function callVerdictMistral(){
+  const transcript = S.history
+    .map(m=>`${m.role==='user'?'DÉFENSEUR':'CONTRADICTEUR'} : ${m.content}`)
+    .join('\n\n');
+
+  const system=`Tu es un arbitre impartial. Analyse ce débat et produis un verdict en JSON strict (sans markdown, sans backticks) :
+{"strengths":"...","weaknesses":"...","fatal":"...","verdict":"..."}
+- strengths : 2-3 arguments solides du défenseur
+- weaknesses : 2-3 failles exposées
+- fatal : l'argument le plus dévastateur non contré
+- verdict : 2-3 phrases tranchées sur l'état de la conviction
+Tout en français. Adresse-toi directement au défenseur (tu).`;
+
+  const res = await fetch('https://api.mistral.ai/v1/chat/completions',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':`Bearer ${MISTRAL_API_KEY}`,
+    },
+    body:JSON.stringify({
+      model:'mistral-large-latest',
+      max_tokens:700,
+      temperature:0.4,
+      messages:[
+        {role:'system',content:system},
+        {role:'user',content:`Conviction : "${S.conviction}"\n\n${transcript}\n\nProduis le verdict JSON.`},
+      ],
+    }),
+  });
+  if(!res.ok) throw new Error(`Verdict ${res.status}`);
+  const d = await res.json();
+  return d.choices?.[0]?.message?.content ?? '{}';
+}
+
+// ══════════════════════════════════════
+// DOM
+// ══════════════════════════════════════
+function renderUser(text){
+  const msgs=$('messages');
+  const div=document.createElement('div');
+  div.className='msg user';
+  div.innerHTML=`<div class="msg-who">Toi</div><div class="msg-bubble">${esc(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function renderAI(raw){
+  const msgs=$('messages');
+  const p=PERSONAS[S.persona];
+  const hasBinary=raw.includes('[Réponds par oui ou non]');
+  const display=raw.replace('[Réponds par oui ou non]','').trim();
+
+  const div=document.createElement('div');
+  div.className='msg ai';
+  div.innerHTML=`<div class="msg-who">${p.icon} ${p.label}</div><div class="msg-bubble">${esc(display)}</div>`;
+  msgs.appendChild(div);
+
+  if(hasBinary){
+    S.waitingBinary=true;
+    showBinary();
+    inputEl.disabled=true;
+    sendEl.disabled=true;
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showBinary(){
+  removeBinary();
+  const msgs=$('messages');
+  const wrap=document.createElement('div');
+  wrap.id='binaryWrap';
+  wrap.className='binary-wrap';
+
+  const oui=document.createElement('button');
+  oui.className='binary-btn b-oui';
+  oui.textContent='Oui';
+  oui.onclick=()=>sendMsg('Oui.');
+
+  const non=document.createElement('button');
+  non.className='binary-btn b-non';
+  non.textContent='Non';
+  non.onclick=()=>sendMsg('Non.');
+
+  wrap.appendChild(oui);
+  wrap.appendChild(non);
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function removeBinary(){
+  const el=$('binaryWrap');
+  if(el) el.remove();
+  if(!S.loading){
+    inputEl.disabled=false;
+    sendEl.disabled=false;
+  }
+}
+
+function showTyping(){
+  const msgs=$('messages');
+  const p=PERSONAS[S.persona];
+  const div=document.createElement('div');
+  div.className='msg ai'; div.id='typing';
+  div.innerHTML=`<div class="msg-who">${p.icon} ${p.label}</div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function hideTyping(){
+  const t=$('typing');
+  if(t) t.remove();
+}
+
+function setLoading(on){
+  S.loading=on;
+  if(!S.waitingBinary){
+    inputEl.disabled=on;
+    sendEl.disabled=on;
+  }
+  if(!on&&!S.waitingBinary) inputEl.focus();
+}
+
+function refreshTurns(){
+  const t=S.turns;
+  $('turnCount').textContent=`${t} échange${t>1?'s':''}`;
+}
+
+function renderVerdict(raw){
+  let d;
+  try{ d=JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+  catch{ $('verdictBody').innerHTML=`<div class="v-section"><p class="v-text">${esc(raw)}</p></div>`; return; }
+
+  const sections=[
+    {key:'strengths',label:'Tes arguments solides'},
+    {key:'weaknesses',label:'Tes failles exposées'},
+    {key:'fatal',label:'L\'argument que tu n\'as pas su contrer'},
+  ];
+  let html=sections.map(({key,label})=>
+    d[key]?`<div class="v-section"><p class="v-label">${label}</p><p class="v-text">${esc(d[key])}</p></div>`:''
+  ).join('');
+  if(d.verdict) html+=`<div class="v-section v-final"><p class="v-label">Verdict global</p><p class="v-text">${esc(d.verdict)}</p></div>`;
+  $('verdictBody').innerHTML=html;
+}
+
+function resetState(){
+  S={conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false};
+}
+</script>
+</body>
+</html>
