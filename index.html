@@ -5,184 +5,318 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Objection</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --night:#07090F;--night2:#0D1120;--night3:#141829;--night4:#1C2235;
-  --gold:#8B6914;--gold2:#A07820;--gold3:#C49A30;
-  --goldg:rgba(139,105,20,0.18);--goldb:rgba(139,105,20,0.3);
-  --w:#E8E2D4;--w2:rgba(232,226,212,0.65);--w3:rgba(232,226,212,0.35);
-  --w4:rgba(232,226,212,0.08);--w5:rgba(232,226,212,0.04);
-  --r:12px;--r2:8px;--r3:20px;
-  --fT:'Bebas Neue',sans-serif;--fU:'DM Sans',sans-serif;
+  --cream:#FAF7F2;
+  --cream2:#F2EDE4;
+  --cream3:#E8E0D4;
+  --terra:#C4613A;
+  --terra2:#A84E2D;
+  --terra3:#E8856A;
+  --terra-soft:rgba(196,97,58,0.1);
+  --terra-border:rgba(196,97,58,0.25);
+  --sage:#5B7C6B;
+  --sage2:#3D5C4D;
+  --sage-soft:rgba(91,124,107,0.1);
+  --sage-border:rgba(91,124,107,0.25);
+  --ink:#1A1208;
+  --ink2:#3D2E1A;
+  --ink3:rgba(26,18,8,0.55);
+  --ink4:rgba(26,18,8,0.12);
+  --ink5:rgba(26,18,8,0.05);
+  --white:#FFFFFF;
+  --r:14px;--r2:10px;--r3:24px;--r4:50px;
+  --fT:'Fraunces',serif;
+  --fU:'Nunito',sans-serif;
+  --shadow:0 2px 16px rgba(26,18,8,0.08);
+  --shadow2:0 4px 32px rgba(26,18,8,0.12);
 }
-html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── MODAL OVERLAY ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(26,18,8,0.45);z-index:100;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--r3);padding:2.25rem;width:100%;max-width:420px;box-shadow:var(--shadow2);animation:popIn .2s ease forwards}
+@keyframes popIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-family:var(--fT);font-size:1.6rem;font-weight:700;color:var(--ink);margin-bottom:0.4rem}
+.modal-sub{font-size:0.88rem;color:var(--ink3);margin-bottom:1.75rem;line-height:1.5}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink3);transition:color .15s}
+.modal-close:hover{color:var(--ink)}
+.modal-inner{position:relative}
+.inp{width:100%;padding:11px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);font-family:var(--fU);font-size:0.95rem;color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:0.75rem}
+.inp::placeholder{color:var(--ink3)}
+.inp:focus{border-color:var(--terra);background:var(--white)}
+.inp-error{border-color:var(--terra)!important;background:#fff5f2!important}
+.field-err{font-size:0.75rem;color:var(--terra);margin-top:-0.5rem;margin-bottom:0.75rem;display:none}
+.field-err.show{display:block}
+.btn-primary{width:100%;padding:13px;background:var(--terra);border:none;border-radius:var(--r);color:var(--white);font-family:var(--fU);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .18s;margin-top:0.25rem}
+.btn-primary:hover{background:var(--terra2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(196,97,58,0.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
+.modal-switch{text-align:center;margin-top:1.25rem;font-size:0.85rem;color:var(--ink3)}
+.modal-switch a{color:var(--terra);text-decoration:none;font-weight:600;cursor:pointer}
+.modal-switch a:hover{text-decoration:underline}
+.modal-divider{border:none;border-top:1px solid var(--cream3);margin:1.25rem 0}
+
+/* ── CONFIRM MODAL ── */
+.confirm-modal{max-width:360px;text-align:center}
+.confirm-modal .modal-title{font-size:1.3rem;margin-bottom:0.75rem}
+.confirm-modal p{font-size:0.9rem;color:var(--ink3);margin-bottom:1.5rem;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.btn-ghost{flex:1;padding:11px;background:transparent;border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink2);font-family:var(--fU);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-ghost:hover{border-color:var(--ink3);background:var(--cream2)}
+.btn-danger{flex:1;padding:11px;background:var(--terra);border:none;border-radius:var(--r);color:var(--white);font-family:var(--fU);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-danger:hover{background:var(--terra2)}
+
+/* ── SCREENS ── */
 .screen{display:none;min-height:100vh}.screen.active{display:block}
 
-/* LANDING */
+/* ── TOPBAR (global) ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.9rem 1.5rem;
+  background:rgba(250,247,242,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--ink4);
+}
+.topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;letter-spacing:-0.01em}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-menu{position:relative}
+.menu-trigger{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r4);transition:background .15s;color:var(--ink2);font-family:var(--fU);font-size:0.85rem;font-weight:600}
+.menu-trigger:hover{background:var(--ink5)}
+.menu-trigger svg{width:18px;height:18px;color:var(--ink2)}
+.menu-dropdown{
+  display:none;position:absolute;top:calc(100% + 8px);left:0;
+  background:var(--white);border-radius:var(--r2);
+  box-shadow:var(--shadow2);border:1px solid var(--ink4);
+  min-width:200px;overflow:hidden;z-index:200;
+}
+.menu-dropdown.open{display:block;animation:fadeDown .15s ease}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.menu-item{display:block;width:100%;padding:10px 16px;background:none;border:none;text-align:left;font-family:var(--fU);font-size:0.88rem;color:var(--ink2);cursor:pointer;transition:background .12s}
+.menu-item:hover{background:var(--cream2)}
+.menu-sep{border:none;border-top:1px solid var(--cream3);margin:4px 0}
+.menu-item-red{color:var(--terra)}
+
+.auth-btn{padding:8px 18px;border-radius:var(--r4);font-family:var(--fU);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-login{background:transparent;border:1.5px solid var(--ink4);color:var(--ink2)}
+.btn-login:hover{border-color:var(--ink3);background:var(--ink5)}
+.btn-signup{background:var(--terra);border:none;color:var(--white)}
+.btn-signup:hover{background:var(--terra2)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r4)}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--sage);color:var(--white);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.user-name{font-size:0.82rem;font-weight:600;color:var(--sage2)}
+
+/* ── LANDING ── */
 #landing{display:none}
-#landing.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 60%,rgba(20,24,41,0.95) 0%,var(--night) 100%)}
-#landing::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(139,105,20,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,105,20,0.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
-#landing::after{content:'';position:absolute;width:600px;height:300px;background:radial-gradient(ellipse,rgba(139,105,20,0.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-.l-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
-.l-eye{font-family:var(--fU);font-size:0.62rem;font-weight:500;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold3);margin-bottom:1.25rem;opacity:0;animation:fs .8s ease .2s forwards}
-.l-name{font-family:var(--fT);font-size:clamp(5rem,14vw,10rem);line-height:0.9;letter-spacing:0.05em;color:var(--gold3);margin-bottom:2rem;opacity:0;animation:fs .9s ease .4s forwards}
-.l-desc{font-size:1rem;line-height:1.6;color:var(--w2);max-width:440px;margin-bottom:2.75rem;opacity:0;animation:fs .9s ease .6s forwards}
-.l-btn{padding:14px 44px;background:transparent;border:1.5px solid var(--gold);border-radius:50px;color:var(--gold3);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.12em;cursor:pointer;transition:all .22s;opacity:0;animation:fs .9s ease .8s forwards;position:relative;overflow:hidden}
-.l-btn::before{content:'';position:absolute;inset:0;background:var(--goldb);opacity:0;transition:opacity .22s}
-.l-btn:hover{color:var(--w);border-color:var(--gold3);box-shadow:0 0 28px rgba(139,105,20,0.22);transform:translateY(-2px)}
-.l-btn:hover::before{opacity:1}
-@keyframes fs{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+#landing.active{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:7rem 1.5rem 3rem;
+  text-align:center;
+  background:radial-gradient(ellipse 60% 40% at 50% 30%,rgba(196,97,58,0.07) 0%,transparent 70%),var(--cream);
+}
+.l-tag{display:inline-block;padding:5px 14px;background:var(--terra-soft);border:1px solid var(--terra-border);border-radius:var(--r4);font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terra);margin-bottom:2rem;animation:fadeUp .6s ease .1s both}
+.l-title{font-family:var(--fT);font-size:clamp(3.5rem,9vw,7rem);font-weight:900;line-height:0.95;letter-spacing:-0.03em;color:var(--ink);margin-bottom:1.5rem;animation:fadeUp .7s ease .25s both}
+.l-title span{color:var(--terra);font-style:italic}
+.l-desc{font-size:1.1rem;line-height:1.65;color:var(--ink3);max-width:500px;margin:0 auto 2.5rem;animation:fadeUp .7s ease .4s both}
+.l-cta{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:var(--terra);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;animation:fadeUp .7s ease .55s both;box-shadow:0 4px 20px rgba(196,97,58,0.3)}
+.l-cta:hover{background:var(--terra2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,97,58,0.35)}
+.l-cta:active{transform:translateY(0)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* HOME */
+/* ── HOME ── */
 #home{display:none}
-#home.active{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;background:var(--night)}
-.h-left{display:flex;flex-direction:column;justify-content:center;padding:3rem 3.5rem 3rem 4rem;border-right:1px solid var(--w5);background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(20,24,41,0.8) 0%,transparent 70%)}
-.h-title{font-family:var(--fT);font-size:clamp(3.5rem,6vw,5.5rem);line-height:0.95;letter-spacing:0.04em;color:var(--gold3);margin-bottom:1.25rem}
-.h-sub{font-size:0.97rem;line-height:1.65;color:var(--w2);max-width:340px}
-.h-prompts{margin-top:2.5rem}
-.h-prompts-title{font-size:0.6rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
-.prompt-item{display:flex;gap:8px;align-items:flex-start;padding:0.5rem 0;border-bottom:1px solid var(--w5);font-size:0.78rem;color:var(--w3);line-height:1.4}
-.prompt-item:last-child{border-bottom:none}
-.prompt-icon{font-size:0.9rem;flex-shrink:0;margin-top:1px}
-.prompt-name{color:var(--gold3);font-weight:500;font-size:0.72rem;display:block;margin-bottom:2px}
-.h-right{display:flex;flex-direction:column;justify-content:center;padding:2.5rem 3.5rem 2.5rem 3rem;overflow-y:auto}
-.lbl{font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.5rem;display:block}
-.conv{width:100%;min-height:72px;background:var(--night3);border:1px solid rgba(232,226,212,0.09);border-radius:var(--r);color:var(--w);font-family:var(--fU);font-size:0.95rem;line-height:1.6;padding:0.8rem 1rem;resize:none;outline:none;transition:border-color .2s}
-.conv::placeholder{color:var(--w3)}.conv:focus{border-color:var(--goldb)}
-.hint{font-size:0.58rem;color:var(--w3);text-align:right;margin-top:0.3rem}
-.sec{margin-top:1.4rem}
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.pbtn{background:var(--night3);border:1px solid rgba(232,226,212,0.08);border-radius:var(--r2);padding:10px 9px 8px;cursor:pointer;text-align:left;transition:all .15s}
-.pbtn:hover{background:var(--night4);border-color:rgba(232,226,212,0.18);transform:translateY(-1px)}
-.pbtn.on{background:var(--goldg);border-color:var(--goldb)}
-.pi{font-size:1.1rem;display:block;margin-bottom:4px;line-height:1}
-.pn{font-family:var(--fU);font-size:0.7rem;font-weight:500;color:var(--w);display:block}
-.pd{font-size:0.57rem;color:var(--w3);margin-top:1px}
-.opts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
-.trow{display:flex;gap:5px;flex-wrap:wrap;margin-top:0.45rem}
-.tbtn{padding:5px 13px;background:var(--night3);border:1px solid rgba(232,226,212,0.08);border-radius:50px;color:var(--w3);font-family:var(--fU);font-size:0.7rem;font-weight:500;cursor:pointer;transition:all .15s}
-.tbtn:hover{color:var(--w);border-color:rgba(232,226,212,0.2)}
-.tbtn.on{background:var(--goldg);border-color:var(--goldb);color:var(--gold3)}
-.cta{width:100%;margin-top:1.5rem;padding:14px 20px;background:var(--gold);border:none;border-radius:var(--r);color:var(--night);font-family:var(--fT);font-size:1.2rem;letter-spacing:0.06em;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:space-between}
-.cta:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,105,20,0.28)}
-.cta:active{transform:translateY(0)}.cta:disabled{opacity:0.28;cursor:not-allowed;transform:none;box-shadow:none}
-.arr{transition:transform .15s}.cta:not(:disabled):hover .arr{transform:translateX(5px)}
+#home.active{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:7rem 1.5rem 3rem;background:var(--cream)}
+.home-card{background:var(--white);border-radius:var(--r3);padding:2.5rem;width:100%;max-width:580px;box-shadow:var(--shadow2)}
+.home-title{font-family:var(--fT);font-size:2.2rem;font-weight:900;color:var(--ink);margin-bottom:0.4rem;line-height:1.1}
+.home-title span{color:var(--terra);font-style:italic}
+.home-sub{font-size:0.9rem;color:var(--ink3);margin-bottom:2rem;line-height:1.55}
+.lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terra);margin-bottom:0.5rem;display:block}
+.conv{width:100%;min-height:80px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink);font-family:var(--fU);font-size:0.95rem;line-height:1.6;padding:0.85rem 1rem;resize:none;outline:none;transition:border-color .2s,background .2s}
+.conv::placeholder{color:var(--ink3)}
+.conv:focus{border-color:var(--terra-border);background:var(--white)}
+.hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:0.3rem}
+.char-hint{font-size:0.6rem;color:var(--ink3)}
+.sec{margin-top:1.5rem}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pbtn{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);padding:12px 10px 10px;cursor:pointer;text-align:left;transition:all .16s}
+.pbtn:hover{background:var(--cream);border-color:var(--terra-border);transform:translateY(-2px);box-shadow:var(--shadow)}
+.pbtn.on{background:var(--terra-soft);border-color:var(--terra)}
+.pi{font-size:1.2rem;display:block;margin-bottom:5px}
+.pn{font-family:var(--fU);font-size:0.72rem;font-weight:700;color:var(--ink);display:block}
+.pd{font-size:0.58rem;color:var(--ink3);margin-top:2px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.trow{display:flex;gap:6px;flex-wrap:wrap;margin-top:0.45rem}
+.tbtn{padding:6px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r4);color:var(--ink3);font-family:var(--fU);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s}
+.tbtn:hover{color:var(--ink);border-color:var(--ink4)}
+.tbtn.on{background:var(--terra-soft);border-color:var(--terra);color:var(--terra)}
+.cta{width:100%;margin-top:1.75rem;padding:15px 22px;background:var(--terra);border:none;border-radius:var(--r);color:var(--white);font-family:var(--fU);font-size:1rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:space-between}
+.cta:hover{background:var(--terra2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,97,58,0.3)}
+.cta:active{transform:translateY(0)}
+.cta:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none}
+.cta-arr{font-size:1.1rem;transition:transform .15s}
+.cta:not(:disabled):hover .cta-arr{transform:translateX(5px)}
 
-/* DÉBAT */
+/* ── DÉBAT ── */
 #debate{display:none;height:100vh;flex-direction:column}
-#debate.active{display:flex;background:var(--night)}
-.dbar{display:flex;align-items:center;gap:10px;padding:0.8rem 1.5rem;background:rgba(0,0,0,0.3);flex-shrink:0;border-bottom:1px solid var(--w4)}
-.bback{background:var(--w4);border:none;border-radius:50px;color:var(--w2);font-family:var(--fU);font-weight:500;font-size:0.75rem;padding:6px 14px;cursor:pointer;transition:all .15s}
-.bback:hover{background:rgba(232,226,212,0.12);color:var(--w)}
-.dmeta{flex:1;display:flex;gap:7px;align-items:center}
-.bdg{font-size:0.65rem;font-weight:500;padding:3px 11px;border-radius:50px;background:var(--goldg);border:1px solid var(--goldb);color:var(--gold3)}
-.cstrip{padding:0.55rem 1.5rem;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--w4);font-size:0.85rem;color:var(--w3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
-.cstrip::before{content:'"';color:var(--gold3);margin-right:3px}
-.cstrip::after{content:'"';color:var(--gold3);margin-left:3px}
+#debate.active{display:flex;background:var(--cream)}
+.dbar{display:flex;align-items:center;gap:10px;padding:0.8rem 1.5rem;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);flex-shrink:0;border-bottom:1px solid var(--ink4);position:sticky;top:0;z-index:10}
+.dbar-left{display:flex;align-items:center;gap:10px;flex:1}
+.dbar-back{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-weight:600;font-size:0.8rem;padding:6px 14px;cursor:pointer;transition:all .15s}
+.dbar-back:hover{background:var(--cream3);color:var(--ink)}
+.dbadge{font-size:0.68rem;font-weight:700;padding:4px 12px;border-radius:var(--r4);background:var(--terra-soft);border:1px solid var(--terra-border);color:var(--terra)}
+.dbadge.sage{background:var(--sage-soft);border-color:var(--sage-border);color:var(--sage2)}
+.cstrip{padding:0.6rem 1.5rem;background:var(--cream2);border-bottom:1px solid var(--ink4);font-size:0.85rem;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.cstrip::before{content:'"';color:var(--terra);margin-right:3px}
+.cstrip::after{content:'"';color:var(--terra);margin-left:3px}
 .msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;scroll-behavior:smooth}
-.msgs::-webkit-scrollbar{width:3px}
-.msgs::-webkit-scrollbar-thumb{background:var(--w4);border-radius:3px}
-.msg{display:flex;flex-direction:column;max-width:78%;animation:fu .25s ease forwards}
-@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-.msg.u{align-self:flex-end;align-items:flex-end}.msg.a{align-self:flex-start;align-items:flex-start}
-.mwho{font-size:0.6rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;opacity:0.5}
-.msg.u .mwho{color:var(--w)}.msg.a .mwho{color:var(--gold3)}
-.mbub{padding:0.85rem 1.1rem;border-radius:var(--r);font-size:0.97rem;line-height:1.7}
-.msg.u .mbub{background:var(--night3);border:1px solid var(--w4);color:var(--w);border-bottom-right-radius:4px}
-.msg.a .mbub{background:var(--night2);border:1px solid var(--goldb);color:var(--w);border-bottom-left-radius:4px;border-left:2px solid var(--gold)}
-.tyb{display:flex;gap:5px;align-items:center;padding:0.85rem 1.1rem;background:var(--night2);border:1px solid var(--goldb);border-left:2px solid var(--gold);border-radius:var(--r);border-bottom-left-radius:4px}
-.dot{width:5px;height:5px;background:var(--gold3);border-radius:50%;animation:pu 1.3s infinite}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-thumb{background:var(--cream3);border-radius:4px}
+.msg{display:flex;flex-direction:column;max-width:78%;animation:msgIn .25s ease forwards}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.u{align-self:flex-end;align-items:flex-end}
+.msg.a{align-self:flex-start;align-items:flex-start}
+.mwho{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;color:var(--ink3)}
+.msg.a .mwho{color:var(--terra)}
+.mbub{padding:0.9rem 1.1rem;border-radius:var(--r);font-size:0.97rem;line-height:1.65}
+.msg.u .mbub{background:var(--sage);color:var(--white);border-bottom-right-radius:4px}
+.msg.a .mbub{background:var(--white);border:1.5px solid var(--cream3);color:var(--ink);border-bottom-left-radius:4px;box-shadow:var(--shadow)}
+.tyb{display:flex;gap:5px;align-items:center;padding:0.9rem 1.1rem;background:var(--white);border:1.5px solid var(--cream3);border-radius:var(--r);border-bottom-left-radius:4px;box-shadow:var(--shadow)}
+.dot{width:6px;height:6px;background:var(--terra3);border-radius:50%;animation:pu 1.3s infinite}
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-@keyframes pu{0%,80%,100%{opacity:.25;transform:scale(1)}40%{opacity:1;transform:scale(1.4)}}
-.binwrap{display:flex;gap:10px;animation:fu .2s ease forwards}
-.binbtn{flex:1;padding:12px;border-radius:var(--r);font-family:var(--fT);font-size:1.1rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s;border:1px solid}
-.boui{background:var(--goldg);border-color:var(--goldb);color:var(--gold3)}.boui:hover{background:var(--gold);color:var(--night);border-color:var(--gold)}
-.bnon{background:rgba(180,50,50,0.08);border-color:rgba(180,50,50,0.3);color:rgba(220,100,100,0.9)}.bnon:hover{background:rgba(160,40,40,0.5);color:var(--w);border-color:rgba(160,40,40,0.5)}
-.izone{padding:0.9rem 1.5rem;background:rgba(0,0,0,0.2);border-top:1px solid var(--w4);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
-.uinp{flex:1;background:var(--night3);border:1px solid rgba(232,226,212,0.1);border-radius:var(--r);color:var(--w);font-family:var(--fU);font-size:0.95rem;line-height:1.5;min-height:42px;max-height:120px;padding:9px 13px;resize:none;outline:none;transition:border-color .2s}
-.uinp::placeholder{color:var(--w3)}.uinp:focus{border-color:var(--goldb)}.uinp:disabled{opacity:0.28}
-.sbtn{width:42px;height:42px;background:var(--gold);border:none;border-radius:var(--r);color:var(--night);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.sbtn:hover{background:var(--gold2);transform:scale(1.07)}.sbtn:disabled{opacity:0.25;cursor:not-allowed;transform:none}
+@keyframes pu{0%,80%,100%{opacity:.3;transform:scale(1)}40%{opacity:1;transform:scale(1.35)}}
+.binwrap{display:flex;gap:10px;animation:msgIn .2s ease forwards}
+.binbtn{flex:1;padding:13px;border-radius:var(--r);font-family:var(--fU);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid}
+.boui{background:var(--sage-soft);border-color:var(--sage);color:var(--sage2)}.boui:hover{background:var(--sage);color:var(--white)}
+.bnon{background:rgba(196,97,58,0.07);border-color:var(--terra-border);color:var(--terra)}.bnon:hover{background:var(--terra);color:var(--white);border-color:var(--terra)}
+.izone{padding:1rem 1.5rem;background:rgba(250,247,242,0.97);border-top:1px solid var(--ink4);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.uinp{flex:1;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink);font-family:var(--fU);font-size:0.95rem;line-height:1.5;min-height:42px;max-height:120px;padding:9px 13px;resize:none;outline:none;transition:border-color .2s}
+.uinp::placeholder{color:var(--ink3)}.uinp:focus{border-color:var(--terra-border);background:var(--white)}.uinp:disabled{opacity:0.4}
+.sbtn{width:42px;height:42px;background:var(--terra);border:none;border-radius:var(--r);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sbtn:hover{background:var(--terra2);transform:scale(1.06)}.sbtn:disabled{opacity:0.3;cursor:not-allowed;transform:none}
 .sbtn svg{width:15px;height:15px}
-.dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1.5rem;background:rgba(0,0,0,0.15);border-top:1px solid var(--w5);flex-shrink:0}
-.tc{font-size:0.6rem;color:var(--w3);font-weight:500;letter-spacing:0.08em}
-.vhint{font-size:0.58rem;color:var(--w3);opacity:0.6;margin-left:8px}
-.dfooter-right{display:flex;align-items:center;gap:10px}
-.vbtn{font-size:0.68rem;font-weight:500;padding:6px 16px;background:var(--goldg);border:1px solid var(--goldb);border-radius:50px;color:var(--w3);cursor:pointer;transition:all .15s}
-.vbtn:not(:disabled):hover{color:var(--gold3);border-color:var(--gold3)}.vbtn:disabled{opacity:0.25;cursor:not-allowed}
+.dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 1.5rem;background:var(--cream2);border-top:1px solid var(--ink4);flex-shrink:0}
+.dfooter-left{display:flex;align-items:center;gap:10px}
+.tc{font-size:0.72rem;color:var(--ink2);font-weight:600}
+.vhint{font-size:0.72rem;color:var(--terra);font-weight:600;background:var(--terra-soft);padding:3px 10px;border-radius:var(--r4);border:1px solid var(--terra-border)}
+.vbtn{font-size:0.78rem;font-weight:700;padding:7px 18px;background:var(--sage);border:none;border-radius:var(--r4);color:var(--white);cursor:pointer;transition:all .15s}
+.vbtn:not(:disabled):hover{background:var(--sage2);transform:translateY(-1px)}
+.vbtn:disabled{opacity:0.35;cursor:not-allowed;background:var(--cream3);color:var(--ink3)}
 
-/* VERDICT */
+/* ── VERDICT ── */
 #verdict{display:none;min-height:100vh}
-#verdict.active{display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem 4rem;background:var(--night)}
-.vpage{width:100%;max-width:720px;padding:0.5rem 0 2rem}
-.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem}
-.bnew{padding:8px 20px;background:var(--gold);border:none;border-radius:50px;color:var(--night);font-family:var(--fT);font-size:1rem;letter-spacing:0.06em;cursor:pointer;transition:all .15s}
-.bnew:hover{background:var(--gold2);transform:translateY(-1px)}
-.vey{font-size:0.6rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.6rem}
-.vh{font-family:var(--fT);font-size:clamp(3rem,7vw,5rem);letter-spacing:0.04em;line-height:1;color:var(--gold3);margin-bottom:0.8rem}
-.vq{font-size:0.95rem;color:var(--w2);padding:0.7rem 1rem;background:var(--night2);border-left:2px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0;margin-bottom:2rem}
-.vs{background:var(--night2);border:1px solid rgba(232,226,212,0.07);border-radius:var(--r);padding:1.4rem;margin-bottom:0.85rem;animation:fu .4s ease forwards}
-.vsf{background:var(--goldg);border-color:var(--goldb)}
-.vsl{font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold3);margin-bottom:0.6rem}
-.vst{font-size:0.97rem;line-height:1.7;color:var(--w2)}.vsf .vst{color:var(--w)}
-.vst-big{font-family:var(--fT);font-size:1.8rem;letter-spacing:0.04em;color:var(--gold3)}
-.vcats{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
-.vcat{background:var(--night2);border:1px solid rgba(232,226,212,0.07);border-radius:var(--r);padding:1rem 1.2rem}
-.vcat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
-.vcat-label{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--w3)}
-.vcat-winner{font-size:0.7rem;font-weight:500;color:var(--gold3)}
+#verdict.active{display:block;background:var(--cream);padding-top:5rem}
+.vpage{max-width:700px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem}
+.vback{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-weight:600;font-size:0.8rem;padding:7px 16px;cursor:pointer;transition:all .15s}
+.vback:hover{background:var(--cream3)}
+.vnew{background:var(--terra);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-weight:700;font-size:0.8rem;padding:8px 18px;cursor:pointer;transition:all .15s}
+.vnew:hover{background:var(--terra2)}
+
+.v-winner-block{background:var(--terra);border-radius:var(--r3);padding:2.5rem;margin-bottom:2rem;text-align:center;animation:fadeUp .4s ease forwards}
+.v-winner-label{font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:0.75rem}
+.v-winner-name{font-family:var(--fT);font-size:clamp(2.8rem,7vw,4.5rem);font-weight:900;color:var(--white);line-height:1;margin-bottom:0.5rem;letter-spacing:-0.02em}
+.v-winner-pct{font-size:1rem;color:rgba(255,255,255,0.75);font-weight:600}
+
+.v-cats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.vcat{background:var(--white);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
+.vcat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem}
+.vcat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)}
+.vcat-winner-badge{font-size:0.65rem;font-weight:700;padding:2px 9px;border-radius:var(--r4);background:var(--terra-soft);color:var(--terra);border:1px solid var(--terra-border)}
+.vcat-winner-badge.sage{background:var(--sage-soft);color:var(--sage2);border-color:var(--sage-border)}
 .vbar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
-.vbar-name{font-size:0.6rem;color:var(--w3);width:64px;flex-shrink:0}
-.vbar{flex:1;height:5px;background:rgba(232,226,212,0.08);border-radius:3px;overflow:hidden}
-.vbar-fill{height:100%;background:var(--gold3);border-radius:3px;transition:width .6s ease}
-.vbar-pct{font-size:0.6rem;color:var(--gold3);width:28px;flex-shrink:0;text-align:right}
-.vcat-comment{font-size:0.8rem;color:var(--w3);line-height:1.5}
-.vload{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:5rem 0;color:var(--w3)}
+.vbar-name{font-size:0.62rem;color:var(--ink3);width:60px;flex-shrink:0;font-weight:600}
+.vbar{flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden}
+.vbar-fill-user{height:100%;background:var(--sage);border-radius:3px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.vbar-fill-ai{height:100%;background:var(--terra3);border-radius:3px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.vbar-pct{font-size:0.65rem;color:var(--ink2);font-weight:700;width:28px;text-align:right}
+.vcat-comment{font-size:0.8rem;color:var(--ink3);line-height:1.5;margin-top:0.25rem}
+
+.v-section{background:var(--white);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
+.v-section-label{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--terra);margin-bottom:0.6rem}
+.v-section-text{font-size:0.97rem;line-height:1.7;color:var(--ink2)}
+
+.v-conseil{background:var(--sage);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
+.v-conseil .v-section-label{color:rgba(255,255,255,0.75)}
+.v-conseil .v-section-text{color:var(--white)}
+
+.vload{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:5rem 0;color:var(--ink3)}
 .vdots{display:flex;gap:7px}
-.vdots span{width:6px;height:6px;background:var(--gold3);border-radius:50%;animation:pu 1.3s infinite}
+.vdots span{width:8px;height:8px;background:var(--terra3);border-radius:50%;animation:pu 1.3s infinite}
 .vdots span:nth-child(2){animation-delay:.2s}.vdots span:nth-child(3){animation-delay:.4s}
 
-@media(max-width:768px){
-  #home.active{grid-template-columns:1fr}
-  .h-left{padding:2rem 1.5rem;border-right:none;border-bottom:1px solid var(--w5);justify-content:flex-start}
-  .h-prompts{display:none}.h-right{padding:1.5rem}
-  .pgrid{grid-template-columns:repeat(2,1fr)}.opts{grid-template-columns:1fr}.msg{max-width:92%}
+/* ── MENU PAGES ── */
+#page-categories,#page-cgu,#page-profile{display:none}
+#page-categories.active,#page-cgu.active,#page-profile.active{display:block;min-height:100vh;background:var(--cream);padding-top:5rem}
+.content-page{max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+.page-title{font-family:var(--fT);font-size:2.5rem;font-weight:900;color:var(--ink);margin-bottom:0.4rem}
+.page-sub{font-size:0.95rem;color:var(--ink3);margin-bottom:2.5rem;line-height:1.55}
+.cat-card{background:var(--white);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);border-left:4px solid var(--terra)}
+.cat-card.sage-border{border-left-color:var(--sage)}
+.cat-name{font-family:var(--fU);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem;display:flex;align-items:center;gap:8px}
+.cat-desc{font-size:0.88rem;color:var(--ink3);line-height:1.6}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--terra);cursor:pointer;margin-bottom:2rem;background:none;border:none;padding:0;font-family:var(--fU)}
+.back-link:hover{text-decoration:underline}
+
+@media(max-width:600px){
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .opts{grid-template-columns:1fr}
+  .msg{max-width:90%}
+  .v-cats{grid-template-columns:1fr}
+  .home-card{padding:1.75rem 1.25rem}
 }
 </style>
 </head>
 <body>
 
-<!-- LANDING -->
-<div id="landing" class="screen active">
-  <div class="l-inner">
-    <p class="l-eye">L'arène des idées</p>
-    <h1 class="l-name">OBJECTION</h1>
-    <p class="l-desc">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout ou s'effondre. Défends ce que tu crois vraiment.</p>
-    <button class="l-btn" id="exploreBtn">Explorer</button>
-  </div>
-</div>
-
-<!-- HOME -->
-<div id="home" class="screen">
-  <div class="h-left">
-    <h2 class="h-title">Entrer<br>dans<br>l'arène</h2>
-    <p class="h-sub">Choisis ta conviction, ton contradicteur, et prépare-toi à défendre chaque mot.</p>
-    <div class="h-prompts">
-      <p class="h-prompts-title">Ce que cache chaque bouton</p>
-      <div class="prompt-item"><span class="prompt-icon">🏛</span><div><span class="prompt-name">Philosophe</span>Maïeutique socratique. Déconstruit les prémisses avant d'attaquer la conclusion.</div></div>
-      <div class="prompt-item"><span class="prompt-icon">📊</span><div><span class="prompt-name">Économiste</span>Exige des données chiffrées. Vérifie tes sources. Refuse les approximations.</div></div>
-      <div class="prompt-item"><span class="prompt-icon">🔬</span><div><span class="prompt-name">Scientifique</span>Preuves reproductibles uniquement. Démonte les biais cognitifs. Conteste les sources non académiques.</div></div>
-      <div class="prompt-item"><span class="prompt-icon">⚖</span><div><span class="prompt-name">Juriste</span>Précision sémantique totale. Chaque généralisation est une faille.</div></div>
-      <div class="prompt-item"><span class="prompt-icon">✊</span><div><span class="prompt-name">Militant</span>Ramène tout aux conséquences humaines concrètes. Interpelle la conscience morale.</div></div>
-      <div class="prompt-item"><span class="prompt-icon">👁</span><div><span class="prompt-name">Avocat du diable</span>Retourne tes propres arguments contre toi. Aucune limite rhétorique. Le plus difficile à battre.</div></div>
+<!-- ══ TOPBAR ══ -->
+<nav class="topbar">
+  <div class="topbar-logo" id="logoBtn">Objection</div>
+  <div class="topbar-right">
+    <div class="topbar-menu">
+      <button class="menu-trigger" id="menuTrigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menu
+      </button>
+      <div class="menu-dropdown" id="menuDropdown">
+        <button class="menu-item" id="menuCategories">Les contradicteurs</button>
+        <button class="menu-item" id="menuCGU">Conditions d'utilisation</button>
+        <hr class="menu-sep"/>
+        <button class="menu-item" id="menuProfile">Mon profil</button>
+      </div>
+    </div>
+    <div id="authZone">
+      <button class="auth-btn btn-login" id="loginBtn">Connexion</button>
+      <button class="auth-btn btn-signup" id="signupBtn">Créer un compte</button>
     </div>
   </div>
-  <div class="h-right">
+</nav>
+
+<!-- ══ LANDING ══ -->
+<div id="landing" class="screen active">
+  <span class="l-tag">L'arène des idées</span>
+  <h1 class="l-title">Défends ce que<br>tu <span>crois vraiment.</span></h1>
+  <p class="l-desc">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout ou s'effondre.</p>
+  <button class="l-cta" id="exploreBtn">Commencer un débat <span>→</span></button>
+</div>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen">
+  <div class="home-card">
+    <h2 class="home-title">Quelle est ta <span>conviction</span> ?</h2>
+    <p class="home-sub">Choisis un sujet, un contradicteur, et prépare-toi à défendre chaque mot.</p>
+
     <label class="lbl" for="conviction">Ta conviction</label>
     <textarea id="conviction" class="conv" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="3" maxlength="300"></textarea>
-    <div class="hint"><span id="charCount">0</span> / 300</div>
+    <div class="hint-row">
+      <span></span>
+      <span class="char-hint"><span id="charCount">0</span> / 300</span>
+    </div>
+
     <div class="sec">
       <label class="lbl">Contradicteur</label>
       <div class="pgrid" id="personaGrid">
@@ -194,6 +328,7 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
         <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>
       </div>
     </div>
+
     <div class="opts">
       <div>
         <label class="lbl">Férocité</label>
@@ -211,20 +346,21 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
         </div>
       </div>
     </div>
+
     <button class="cta" id="startBtn" disabled>
       <span>Entrer dans l'arène</span>
-      <span class="arr">→</span>
+      <span class="cta-arr">→</span>
     </button>
   </div>
 </div>
 
-<!-- DÉBAT -->
+<!-- ══ DÉBAT ══ -->
 <div id="debate" class="screen">
   <div class="dbar">
-    <button class="bback" id="backBtn">← Quitter</button>
-    <div class="dmeta">
-      <span class="bdg" id="personaBadge"></span>
-      <span class="bdg" id="ferocityBadge"></span>
+    <div class="dbar-left">
+      <button class="dbar-back" id="backBtn">← Quitter</button>
+      <span class="dbadge" id="personaBadge"></span>
+      <span class="dbadge sage" id="ferocityBadge"></span>
     </div>
   </div>
   <div class="cstrip" id="convictionStrip"></div>
@@ -236,69 +372,291 @@ html,body{min-height:100%;background:var(--night);color:var(--w);font-family:var
     </button>
   </div>
   <div class="dfooter">
-    <div style="display:flex;align-items:center">
+    <div class="dfooter-left">
       <span class="tc" id="turnCount">0 échange</span>
-      <span class="vhint" id="verdictHint">Verdict disponible dans 5 échanges</span>
+      <span class="vhint" id="verdictHint">Verdict dans 5 échanges</span>
     </div>
     <button class="vbtn" id="verdictBtn" disabled>Demander le verdict</button>
   </div>
 </div>
 
-<!-- VERDICT -->
+<!-- ══ VERDICT ══ -->
 <div id="verdict" class="screen">
   <div class="vpage">
     <div class="vnav">
-      <button class="bback" id="backToDebate">← Retour au débat</button>
-      <button class="bnew" id="newDebate">Nouveau débat</button>
+      <button class="vback" id="backToDebate">← Retour au débat</button>
+      <button class="vnew" id="newDebate">Nouveau débat</button>
     </div>
-    <p class="vey">Verdict final</p>
-    <h2 class="vh">Le tribunal<br>a tranché.</h2>
-    <p class="vq" id="verdictQuote"></p>
     <div id="verdictBody">
       <div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>
     </div>
   </div>
 </div>
 
+<!-- ══ PAGES MENU ══ -->
+<div id="page-categories" class="screen">
+  <div class="content-page">
+    <button class="back-link" id="backFromCat">← Retour</button>
+    <h2 class="page-title">Les contradicteurs</h2>
+    <p class="page-sub">Chaque contradicteur suit un prompt précis qui définit sa façon d'attaquer tes arguments.</p>
+    <div class="cat-card"><div class="cat-name"><span>🏛</span> Philosophe</div><div class="cat-desc">Utilise la maïeutique socratique pour révéler les contradictions internes de ton argument. Il déconstruit les prémisses avant d'attaquer la conclusion. Il s'appuie sur Socrate, Nietzsche, Kant.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>📊</span> Économiste</div><div class="cat-desc">Exige des données empiriques chiffrées. Identifie les incentives ignorés, les externalités, les corrélations confondues avec des causalités. Demande systématiquement la source de tes chiffres.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>🔬</span> Scientifique</div><div class="cat-desc">Exige des preuves reproductibles. Identifie les biais cognitifs. Refuse les sources non académiques (Reddit, blogs, presse généraliste) et le signale explicitement.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>⚖</span> Juriste</div><div class="cat-desc">Relève chaque imprécision sémantique, généralisation abusive, exception non prise en compte. Demande des références exactes si tu cites une loi ou un chiffre.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>✊</span> Militant</div><div class="cat-desc">Ramène chaque argument à ses conséquences humaines concrètes. Interpelle la conscience morale. Conteste la méthodologie de tes sources si elle dessert sa position.</div></div>
+    <div class="cat-card sage-border"><div class="cat-name"><span>👁</span> Avocat du diable</div><div class="cat-desc">Le plus difficile à battre. Défend l'opposé de ta conviction avec une logique implacable. Retourne tes propres arguments contre toi. Utilise l'ironie si nécessaire. Aucune limite rhétorique.</div></div>
+  </div>
+</div>
+
+<div id="page-cgu" class="screen">
+  <div class="content-page">
+    <button class="back-link" id="backFromCGU">← Retour</button>
+    <h2 class="page-title">Conditions d'utilisation</h2>
+    <p class="page-sub">En utilisant Objection, tu acceptes les conditions suivantes.</p>
+    <div class="cat-card">
+      <div class="cat-name">Usage</div>
+      <div class="cat-desc">Objection est un outil de débat intellectuel. Il est conçu pour challenger des idées, pas des personnes. Les sujets soumis doivent être débattables (pas de questions météo, de faits divers ou de goûts personnels).</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-name">Limites de l'IA</div>
+      <div class="cat-desc">L'IA peut se tromper dans ses arguments ou ses références. Elle ne remplace pas un expert. Les verdicts sont générés automatiquement et ne constituent pas une évaluation professionnelle.</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-name">Données</div>
+      <div class="cat-desc">Les débats ne sont pas stockés sans ton consentement. Ton email et ton pseudo sont conservés uniquement pour la gestion de ton compte. Aucune donnée n'est revendue à des tiers.</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-profile" class="screen">
+  <div class="content-page">
+    <button class="back-link" id="backFromProfile">← Retour</button>
+    <h2 class="page-title">Mon profil</h2>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal modal-inner">
+    <button class="modal-close" id="loginClose">✕</button>
+    <h3 class="modal-title">Connexion</h3>
+    <p class="modal-sub">Retrouve ton historique et ton profil.</p>
+    <input type="email" class="inp" id="loginEmail" placeholder="Email"/>
+    <input type="password" class="inp" id="loginPassword" placeholder="Mot de passe"/>
+    <p class="field-err" id="loginErr"></p>
+    <button class="btn-primary" id="loginSubmit">Se connecter</button>
+    <p class="modal-switch">Pas encore de compte ? <a id="switchToSignup">Créer un compte</a></p>
+  </div>
+</div>
+
+<div class="overlay" id="signupOverlay">
+  <div class="modal modal-inner">
+    <button class="modal-close" id="signupClose">✕</button>
+    <h3 class="modal-title">Créer un compte</h3>
+    <p class="modal-sub">Choisis un pseudo unique — il apparaîtra dans tes verdicts.</p>
+    <input type="text" class="inp" id="signupPseudo" placeholder="Ton pseudo" maxlength="20"/>
+    <p class="field-err" id="pseudoErr"></p>
+    <input type="email" class="inp" id="signupEmail" placeholder="Email"/>
+    <input type="password" class="inp" id="signupPassword" placeholder="Mot de passe (8 caractères min.)"/>
+    <p class="field-err" id="signupErr"></p>
+    <button class="btn-primary" id="signupSubmit">Créer mon compte</button>
+    <p class="modal-switch">Déjà un compte ? <a id="switchToLogin">Se connecter</a></p>
+  </div>
+</div>
+
+<div class="overlay" id="confirmOverlay">
+  <div class="modal confirm-modal">
+    <h3 class="modal-title">Quitter le débat ?</h3>
+    <p>Tu vas perdre la conversation en cours. Cette action est irréversible.</p>
+    <div class="confirm-btns">
+      <button class="btn-ghost" id="confirmCancel">Rester</button>
+      <button class="btn-danger" id="confirmLeave">Quitter</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ══ SUPABASE ══
+const { createClient } = supabase;
+const SB = createClient(
+  'https://bsabkjrnebzdrvleciva.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M'
+);
+
+// ══ PERSONAS ══
 const PERSONAS = {
-  philosopher:{label:'Philosophe',icon:'🏛',prompt:`Tu es un philosophe socratique. Tu utilises la maïeutique pour révéler les contradictions internes. Tu t'appuies sur Socrate, Nietzsche, Kant. Tu démontres les failles dans les prémisses avant d'attaquer la conclusion.`},
-  economist:  {label:'Économiste',icon:'📊',prompt:`Tu es un économiste rigoureux. Tu exiges des données empiriques chiffrées. Tu identifies les incentives ignorés, les externalités, les corrélations confondues avec des causalités. Si l'adversaire cite des chiffres, tu vérifies leur cohérence et tu demandes la source précise.`},
-  scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu exiges des preuves reproductibles. Tu identifies les biais cognitifs. Si l'adversaire cite une étude ou un chiffre, tu demandes la source. Si la source est un forum, un blog ou un média non scientifique, tu le signales clairement et tu refuses de l'accepter comme preuve.`},
-  lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte. Si l'adversaire cite une loi ou un chiffre, tu demandes la référence exacte.`},
-  activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Si l'adversaire cite des chiffres qui semblent contredire ta position, tu demandes d'où ils viennent et tu peux en contester la méthodologie.`},
-  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es l'avocat du diable. Tu défends l'opposé de toute conviction avec une logique implacable. Tu exploites chaque faille rhétorique, retournes les arguments, utilises l'ironie si nécessaire. Tu es redoutable : tu retournes les propres arguments de l'adversaire contre lui. Si l'adversaire cite des chiffres douteux, tu les démolis avec précision.`},
+  philosopher:{label:'Philosophe',icon:'🏛',prompt:`Tu es un philosophe socratique. Tu utilises la maïeutique pour révéler les contradictions internes. Tu t'appuies sur Socrate, Nietzsche, Kant. Tu déconstruis les prémisses avant d'attaquer la conclusion.`},
+  economist:  {label:'Économiste',icon:'📊',prompt:`Tu es un économiste rigoureux. Tu exiges des données empiriques chiffrées. Si l'adversaire cite des chiffres, tu demandes la source précise et tu vérifies leur cohérence.`},
+  scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu exiges des preuves reproductibles. Si la source est un forum, un blog ou un média non scientifique, tu le signales et tu refuses de l'accepter.`},
+  lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte.`},
+  activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Tu interpelles la conscience morale.`},
+  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es l'avocat du diable. Tu défends l'opposé de toute conviction avec une logique implacable. Tu retournes les propres arguments de l'adversaire contre lui. Aucune limite rhétorique.`},
 };
-const FEROCITY = {
-  soft:  {label:'Douce',  prompt:'Ton ton est direct mais pas agressif. Tu poses des questions qui poussent à réfléchir.'},
-  normal:{label:'Vive',   prompt:'Ton ton est ferme. Tu attaques les failles sans ménagement, mais restes factuel.'},
-  brutal:{label:'Brutale',prompt:"Ton ton est implacable. Aucune concession. Tu frappes sur les points les plus faibles avec précision."},
+const FEROCITY={
+  soft:{label:'Douce',prompt:'Ton ton est direct mais pas agressif.'},
+  normal:{label:'Vive',prompt:'Ton ton est ferme. Tu attaques les failles sans ménagement.'},
+  brutal:{label:'Brutale',prompt:"Ton ton est implacable. Aucune concession."},
 };
-const MODE = {
-  attack:  {prompt:"STRATÉGIE : identifie la faille principale et exploite-la directement. Priorité aux prémisses."},
-  steelman:{prompt:"STRATÉGIE : formule d'abord la meilleure version possible de l'argument adverse, puis montre pourquoi même cette version ne tient pas."},
+const MODE={
+  attack:{prompt:"STRATÉGIE : identifie la faille principale et exploite-la."},
+  steelman:{prompt:"STRATÉGIE : formule d'abord la meilleure version de l'argument adverse, puis montre pourquoi elle ne tient pas."},
 };
 
+// ══ ÉTAT ══
 let S={conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false};
+let currentUser=null, currentPseudo=null;
+
+// ══ UTILS ══
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
 
-$('exploreBtn').addEventListener('click',()=>showScreen('home'));
+// ══ AUTH STATE ══
+SB.auth.onAuthStateChange(async(event,session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    const {data}=await SB.from('profiles').select('pseudo').eq('id',session.user.id).single();
+    currentPseudo=data?.pseudo||null;
+    renderAuthZone(true);
+  } else {
+    currentUser=null;currentPseudo=null;
+    renderAuthZone(false);
+  }
+});
+
+function renderAuthZone(logged){
+  const z=$('authZone');
+  if(logged){
+    const initial=(currentPseudo||currentUser.email||'?')[0].toUpperCase();
+    const name=currentPseudo||currentUser.email;
+    z.innerHTML=`<div class="user-chip"><div class="user-avatar">${initial}</div><span class="user-name">${esc(name)}</span></div>`;
+  } else {
+    z.innerHTML=`<button class="auth-btn btn-login" id="loginBtn">Connexion</button><button class="auth-btn btn-signup" id="signupBtn">Créer un compte</button>`;
+    $('loginBtn').onclick=()=>openOverlay('loginOverlay');
+    $('signupBtn').onclick=()=>openOverlay('signupOverlay');
+  }
+}
+
+// ══ OVERLAYS ══
+function openOverlay(id){$(id).classList.add('open')}
+function closeOverlay(id){$(id).classList.remove('open')}
+
+$('loginClose').onclick=()=>closeOverlay('loginOverlay');
+$('signupClose').onclick=()=>closeOverlay('signupOverlay');
+$('switchToSignup').onclick=()=>{closeOverlay('loginOverlay');openOverlay('signupOverlay')};
+$('switchToLogin').onclick=()=>{closeOverlay('signupOverlay');openOverlay('loginOverlay')};
+
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+});
+
+// Connexion
+$('loginSubmit').onclick=async()=>{
+  const email=$('loginEmail').value.trim(), pw=$('loginPassword').value;
+  const errEl=$('loginErr');
+  errEl.classList.remove('show');
+  if(!email||!pw){errEl.textContent='Remplis tous les champs.';errEl.classList.add('show');return}
+  $('loginSubmit').disabled=true;$('loginSubmit').textContent='Connexion…';
+  const{error}=await SB.auth.signInWithPassword({email,password:pw});
+  $('loginSubmit').disabled=false;$('loginSubmit').textContent='Se connecter';
+  if(error){errEl.textContent='Email ou mot de passe incorrect.';errEl.classList.add('show')}
+  else closeOverlay('loginOverlay');
+};
+
+// Inscription
+$('signupSubmit').onclick=async()=>{
+  const pseudo=$('signupPseudo').value.trim();
+  const email=$('signupEmail').value.trim();
+  const pw=$('signupPassword').value;
+  const pseudoErr=$('pseudoErr'), signupErr=$('signupErr');
+  pseudoErr.classList.remove('show');signupErr.classList.remove('show');
+
+  if(!pseudo||!email||!pw){signupErr.textContent='Remplis tous les champs.';signupErr.classList.add('show');return}
+  if(pw.length<8){signupErr.textContent='Mot de passe trop court (8 caractères min.)';signupErr.classList.add('show');return}
+  if(pseudo.length<3){pseudoErr.textContent='Le pseudo doit faire au moins 3 caractères.';pseudoErr.classList.add('show');return}
+
+  $('signupSubmit').disabled=true;$('signupSubmit').textContent='Création…';
+
+  // Vérifie si le pseudo est déjà pris
+  const{data:existing}=await SB.from('profiles').select('id').eq('pseudo',pseudo).maybeSingle();
+  if(existing){
+    $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
+    pseudoErr.textContent='Ce pseudo est déjà pris. Choisis-en un autre.';pseudoErr.classList.add('show');
+    return;
+  }
+
+  const{data,error}=await SB.auth.signUp({email,password:pw});
+  if(error){
+    $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
+    signupErr.textContent=error.message||'Erreur lors de la création.';signupErr.classList.add('show');return;
+  }
+
+  // Crée le profil avec le pseudo
+  if(data.user){
+    await SB.from('profiles').insert({id:data.user.id,pseudo,email});
+  }
+
+  $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
+  closeOverlay('signupOverlay');
+};
+
+// Confirm quitter débat
+$('confirmCancel').onclick=()=>closeOverlay('confirmOverlay');
+$('confirmLeave').onclick=()=>{closeOverlay('confirmOverlay');resetState();showScreen('home')};
+
+// ══ NAVIGATION ══
+$('logoBtn').onclick=()=>showScreen('landing');
+$('exploreBtn').onclick=()=>showScreen('home');
+
+// Menu
+const menuTrigger=$('menuTrigger'), menuDropdown=$('menuDropdown');
+menuTrigger.onclick=(e)=>{e.stopPropagation();menuDropdown.classList.toggle('open')};
+document.addEventListener('click',()=>menuDropdown.classList.remove('open'));
+
+$('menuCategories').onclick=()=>{menuDropdown.classList.remove('open');showScreen('page-categories')};
+$('menuCGU').onclick=()=>{menuDropdown.classList.remove('open');showScreen('page-cgu')};
+$('menuProfile').onclick=()=>{
+  menuDropdown.classList.remove('open');
+  if(!currentUser){openOverlay('loginOverlay');return}
+  renderProfile();showScreen('page-profile');
+};
+
+function renderProfile(){
+  const name=currentPseudo||currentUser?.email||'Utilisateur';
+  $('profileContent').innerHTML=`
+    <div class="cat-card" style="margin-bottom:1rem">
+      <div class="cat-name" style="font-size:1.3rem">${esc(name)}</div>
+      <div class="cat-desc">${esc(currentUser?.email||'')}</div>
+    </div>
+    <button class="btn-primary" id="logoutBtn" style="max-width:200px">Se déconnecter</button>`;
+  $('logoutBtn').onclick=async()=>{await SB.auth.signOut();showScreen('landing')};
+}
+
+[$('backFromCat'),$('backFromCGU'),$('backFromProfile')].forEach(b=>b&&(b.onclick=()=>history.back()||showScreen('landing')));
+
+// ══ SETUP ══
 const convEl=$('conviction'),charEl=$('charCount'),startEl=$('startBtn');
 convEl.addEventListener('input',()=>{charEl.textContent=convEl.value.length;startEl.disabled=convEl.value.trim().length<10});
 document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.persona=b.dataset.persona}));
 document.querySelectorAll('#ferocityGroup .tbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#ferocityGroup .tbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.ferocity=b.dataset.val}));
 document.querySelectorAll('#modeGroup .tbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#modeGroup .tbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.mode=b.dataset.val}));
 startEl.addEventListener('click',startDebate);
-$('backBtn').addEventListener('click',()=>{if(confirm('Abandonner ce débat ?')){resetState();showScreen('home')}});
-$('verdictBtn').addEventListener('click',requestVerdict);
+
+// ══ DÉBAT ══
+$('backBtn').onclick=()=>openOverlay('confirmOverlay');
+$('verdictBtn').onclick=requestVerdict;
 const inputEl=$('userInput'),sendEl=$('sendBtn');
 inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
 inputEl.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'});
-sendEl.addEventListener('click',()=>sendMsg());
-$('backToDebate').addEventListener('click',()=>showScreen('debate'));
-$('newDebate').addEventListener('click',()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;showScreen('home')});
+sendEl.onclick=()=>sendMsg();
+
+$('backToDebate').onclick=()=>showScreen('debate');
+$('newDebate').onclick=()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;showScreen('home')};
 
 async function startDebate(){
   S.conviction=convEl.value.trim();S.history=[];S.turns=0;S.waitingBinary=false;
@@ -306,8 +664,8 @@ async function startDebate(){
   $('personaBadge').textContent=`${p.icon} ${p.label}`;
   $('ferocityBadge').textContent=FEROCITY[S.ferocity].label;
   $('convictionStrip').textContent=S.conviction;
-  $('messages').innerHTML='';$('turnCount').textContent='0 échange';$('verdictBtn').disabled=true;
-  $('verdictHint').textContent='Verdict disponible dans 5 échanges';
+  $('messages').innerHTML='';$('turnCount').textContent='0 échange';
+  $('verdictBtn').disabled=true;$('verdictHint').textContent='Verdict dans 5 échanges';
   showScreen('debate');setLoading(true);
   S.history.push({role:'user',content:`Je soutiens que : ${S.conviction}`});
   try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns=1;refreshTurns()}
@@ -319,7 +677,7 @@ async function sendMsg(override){
   const txt=override??inputEl.value.trim();
   if(!txt||S.loading)return;
   if(!override){inputEl.value='';inputEl.style.height='auto'}
-  removeBinary();S.waitingBinary=false;
+  removeBinaryOnly();S.waitingBinary=false;
   renderUser(txt);S.history.push({role:'user',content:txt});setLoading(true);
   try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns++;refreshTurns();if(S.turns>=5)$('verdictBtn').disabled=false}
   catch(e){hideTyping();renderAI('Erreur réseau. Réessaie.');console.error(e)}
@@ -327,11 +685,12 @@ async function sendMsg(override){
 }
 
 async function requestVerdict(){
-  $('verdictQuote').textContent=S.conviction;
   $('verdictBody').innerHTML='<div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>';
   showScreen('verdict');
-  try{const v=await verdictApi();renderVerdict(v)}
-  catch(e){$('verdictBody').innerHTML='<p style="color:var(--w3)">Erreur lors du verdict.</p>'}
+  const userName=currentPseudo||(currentUser?.email?.split('@')[0])||'Le défenseur';
+  const aiName=PERSONAS[S.persona].label;
+  try{const v=await verdictApi(userName,aiName);renderVerdict(v,userName,aiName)}
+  catch(e){$('verdictBody').innerHTML='<p style="color:var(--ink3)">Erreur lors du verdict.</p>'}
 }
 
 function buildSystemPrompt(){
@@ -343,25 +702,21 @@ ${f.prompt}
 ${m.prompt}
 
 VÉRIFICATION DES SOURCES :
-Si l'adversaire cite un chiffre, une étude ou une statistique sans source, demande-lui la source précise.
-Si la source citée est Reddit, un blog, un forum ou un article de presse généraliste, signale explicitement que ce n'est pas une source fiable et refuse de l'accepter comme preuve.
-Si tu as un contre-exemple ou une étude contradictoire crédible, utilise-le.
+Si l'adversaire cite un chiffre sans source, demande la source précise.
+Si la source est Reddit, un blog, un forum ou un média non scientifique, signale-le explicitement et refuse de l'accepter comme preuve.
 
 SUJETS HORS DÉBAT :
-Si la conviction soumise n'est pas débattable (météo, fait divers, goût personnel, question sans position défendable), réponds uniquement : "Ce n'est pas un sujet à débattre." et rien d'autre.
+Si la conviction n'est pas débattable (météo, fait divers, goût personnel), réponds uniquement : "Ce n'est pas un sujet à débattre." et rien d'autre.
 
 FORMAT STRICT :
-Chaque réplique :
 1. Une ou deux phrases qui répondent directement à ce qui vient d'être dit.
 2. Un argument court et factuel.
-3. Une question fermée piège — si oui ça contredit la thèse adverse, si non ça révèle une incohérence. La question doit être précise. Termine alors par exactement : [Réponds par oui ou non]
-Si une réponse textuelle libre est plus pertinente qu'une question binaire, omets le marqueur [Réponds par oui ou non].
+3. Si pertinent : une question fermée piège, termine alors par exactement : [Réponds par oui ou non]
+Si une réponse libre est plus pertinente, omets ce marqueur.
 
 INTERDICTIONS :
-Jamais "Bonne question", "Certainement", "Tout à fait", "En effet", "Absolument", "Il est indéniable que", "Force est de constater".
-Jamais de listes à tirets dans les réponses.
-Jamais de mise en forme markdown.
-Jamais "En tant que..." ou "Selon ma perspective...".
+Jamais "Bonne question", "Certainement", "Tout à fait", "En effet", "Absolument".
+Jamais de listes à tirets. Jamais de markdown. Jamais "En tant que...".
 Jamais de formulations lyriques ou emphatiques.
 Maximum 150 mots. Une seule question par réplique.
 Tu parles comme un humain dans un vrai débat.
@@ -376,14 +731,21 @@ async function api(history){
   const d=await res.json();return d.reply;
 }
 
-async function verdictApi(){
-  const transcript=S.history.map(m=>`${m.role==='user'?'DÉFENSEUR':'CONTRADICTEUR'} : ${m.content}`).join('\n\n');
-  const res=await fetch('/api/verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript})});
+async function verdictApi(userName,aiName){
+  const transcript=S.history.map(m=>`${m.role==='user'?userName:aiName} : ${m.content}`).join('\n\n');
+  const res=await fetch('/api/verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName})});
   if(!res.ok)throw new Error(`${res.status}`);
   const d=await res.json();return d.verdict;
 }
 
-function renderUser(text){const msgs=$('messages'),div=document.createElement('div');div.className='msg u';div.innerHTML=`<div class="mwho">Toi</div><div class="mbub">${esc(text)}</div>`;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight}
+// ══ DOM ══
+function renderUser(text){
+  const msgs=$('messages'),div=document.createElement('div');
+  const name=currentPseudo||(currentUser?.email?.split('@')[0])||'Toi';
+  div.className='msg u';
+  div.innerHTML=`<div class="mwho">${esc(name)}</div><div class="mbub">${esc(text)}</div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
 
 function renderAI(raw){
   const msgs=$('messages'),p=PERSONAS[S.persona];
@@ -393,7 +755,6 @@ function renderAI(raw){
   div.innerHTML=`<div class="mwho">${p.icon} ${p.label}</div><div class="mbub">${esc(display)}</div>`;
   msgs.appendChild(div);
   if(hasBin){S.waitingBinary=true;showBinary();}
-  else{S.waitingBinary=false;}
   msgs.scrollTop=msgs.scrollHeight;
 }
 
@@ -407,7 +768,6 @@ function showBinary(){
 }
 
 function removeBinaryOnly(){const el=$('binaryWrap');if(el)el.remove()}
-function removeBinary(){removeBinaryOnly();inputEl.disabled=S.loading;sendEl.disabled=S.loading}
 
 function showTyping(){
   const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
@@ -421,38 +781,63 @@ function refreshTurns(){
   const t=S.turns;
   $('turnCount').textContent=`${t} échange${t>1?'s':''}`;
   if(t<5){const r=5-t;$('verdictHint').textContent=`Verdict dans ${r} échange${r>1?'s':''}`}
-  else{$('verdictHint').textContent=''}
+  else $('verdictHint').style.display='none';
 }
 
-function renderVerdict(raw){
+function renderVerdict(raw,userName,aiName){
   let d;
   try{d=JSON.parse(raw.replace(/```json|```/g,'').trim())}
-  catch{$('verdictBody').innerHTML=`<div class="vs"><p class="vst">${esc(raw)}</p></div>`;return}
+  catch{$('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-text">${esc(raw)}</p></div>`;return}
 
-  let html='';
-  if(d.winner_overall){
-    html+=`<div class="vs vsf"><p class="vsl">Vainqueur global</p><p class="vst vst-big">${esc(d.winner_overall)}</p></div>`;
-  }
+  const winnerDisplay=d.winner_overall||'';
+  const isUserWinner=winnerDisplay.toLowerCase().includes('défenseur')||winnerDisplay.toLowerCase().includes(userName.toLowerCase());
+  const winnerName=isUserWinner?userName:aiName;
+  const winnerPct=winnerDisplay.match(/\((\d+)%\)/)?.[1]||'';
+
+  let html=`
+    <div class="v-winner-block">
+      <div class="v-winner-label">Vainqueur du débat</div>
+      <div class="v-winner-name">${esc(winnerName)}</div>
+      ${winnerPct?`<div class="v-winner-pct">${winnerPct}% de domination</div>`:''}
+    </div>`;
+
   if(d.categories&&d.categories.length){
-    html+='<div class="vcats">';
-    d.categories.forEach(cat=>{
+    html+='<div class="v-cats">';
+    d.categories.forEach((cat,i)=>{
       const pct=cat.pct||50;
-      const defPct=cat.winner==='Défenseur'?pct:100-pct;
-      html+=`<div class="vcat">
-        <div class="vcat-header"><span class="vcat-label">${esc(cat.label)}</span><span class="vcat-winner">${esc(cat.winner)}</span></div>
+      const userWinsThis=cat.winner==='Défenseur'||cat.winner?.toLowerCase().includes(userName.toLowerCase());
+      const userPct=userWinsThis?pct:100-pct;
+      const aiPct=100-userPct;
+      const badgeCls=userWinsThis?'':'sage';
+      const badgeName=userWinsThis?userName:aiName;
+      html+=`<div class="vcat" style="animation-delay:${i*0.08}s">
+        <div class="vcat-head">
+          <span class="vcat-label">${esc(cat.label)}</span>
+          <span class="vcat-winner-badge ${badgeCls}">${esc(badgeName)}</span>
+        </div>
         <div class="vbar-wrap">
-          <span class="vbar-name">Défenseur</span>
-          <div class="vbar"><div class="vbar-fill" style="width:${defPct}%"></div></div>
-          <span class="vbar-pct">${defPct}%</span>
+          <span class="vbar-name">${esc(userName)}</span>
+          <div class="vbar"><div class="vbar-fill-user" style="width:${userPct}%"></div></div>
+          <span class="vbar-pct">${userPct}%</span>
+        </div>
+        <div class="vbar-wrap">
+          <span class="vbar-name">${esc(aiName)}</span>
+          <div class="vbar"><div class="vbar-fill-ai" style="width:${aiPct}%"></div></div>
+          <span class="vbar-pct">${aiPct}%</span>
         </div>
         <p class="vcat-comment">${esc(cat.comment||'')}</p>
       </div>`;
     });
     html+='</div>';
   }
+
   if(d.summary){
-    html+=`<div class="vs" style="margin-top:1rem"><p class="vsl">Analyse</p><p class="vst">${esc(d.summary)}</p></div>`;
+    html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
   }
+  if(d.conseil){
+    html+=`<div class="v-conseil"><p class="v-section-label">Conseil pour la prochaine fois</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
+  }
+
   $('verdictBody').innerHTML=html;
 }
 
