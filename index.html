@@ -107,9 +107,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .btn-login:hover{border-color:var(--ink3);background:var(--ink5)}
 .btn-signup{background:var(--terra);border:none;color:var(--white)}
 .btn-signup:hover{background:var(--terra2)}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r4)}
-.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--sage);color:var(--white);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
-.user-name{font-size:0.82rem;font-weight:600;color:var(--sage2)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r4);max-width:180px}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--sage);color:var(--white);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-name{font-size:0.82rem;font-weight:600;color:var(--sage2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
 
 /* ── LANDING ── */
 #landing{display:none}
@@ -347,6 +347,12 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
       </div>
     </div>
 
+    <div id="resumeDebateWrap" style="display:none;margin-top:1.5rem">
+      <button class="cta" id="resumeDebateBtn" style="background:var(--sage);box-shadow:0 4px 16px rgba(91,124,107,0.25)">
+        <span>Reprendre le débat en cours</span>
+        <span class="cta-arr">→</span>
+      </button>
+    </div>
     <button class="cta" id="startBtn" disabled>
       <span>Entrer dans l'arène</span>
       <span class="cta-arr">→</span>
@@ -384,8 +390,11 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 <div id="verdict" class="screen">
   <div class="vpage">
     <div class="vnav">
-      <button class="vback" id="backToDebate">← Retour au débat</button>
-      <button class="vnew" id="newDebate">Nouveau débat</button>
+      <button class="vback" id="backToDebate">← Reprendre le débat</button>
+      <div style="display:flex;gap:8px">
+        <button class="vback" id="closeDebateBtn" style="border-color:var(--terra);color:var(--terra)">Clore le débat</button>
+        <button class="vnew" id="newDebate">Nouveau débat</button>
+      </div>
     </div>
     <div id="verdictBody">
       <div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>
@@ -491,35 +500,34 @@ const PERSONAS = {
   scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu exiges des preuves reproductibles. Si la source est un forum, un blog ou un média non scientifique, tu le signales et tu refuses de l'accepter.`},
   lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte.`},
   activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Tu interpelles la conscience morale.`},
-  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu es L'Avocat du Diable — le procureur de l'ombre, l'orateur dont la parole est un couperet. Ton unique objectif est la destruction totale de la thèse adverse. Tu ne cherches pas le compromis. Tu cherches la capitulation.
+  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu t'appelles l'Avocat du Diable. Tu n'es pas un chatbot. Tu es un adversaire.
 
-IDENTITÉ ET STYLE :
-Inspire-toi de l'ironie cinglante de Voltaire, de la force brute de Danton ("De l'audace, encore de l'audace !"), et de la froideur technique des plus grands avocats pénalistes. Ta langue est noble mais cruelle. Utilise des métaphores organiques — chirurgie, cancer, venin, ciment, sang — pour rendre tes idées palpables et inoubliables.
+TON IDENTITÉ :
+Tu es le contradicteur parfait — celui qui a lu tout ce que l'autre a lu, mais qui en tire des conclusions inverses et mieux fondées. Tu combines la précision chirurgicale d'un avocat pénaliste, l'ironie de Voltaire et la capacité à retourner chaque argument comme un couteau. Tu gagnes parce que tu penses mieux, pas parce que tu cries plus fort.
 
-LES 4 PILIERS DE TON INVINCIBILITÉ :
+ADAPTATION TOTALE — LA RÈGLE LA PLUS IMPORTANTE :
+Observe le niveau de langage, le registre, la longueur et le ton de chaque message adverse. Miroir parfait : tu réponds dans le même registre, mais toujours un cran au-dessus. Si l'autre tutoie, tu tutoies. Si l'autre vouvoie, tu vouvoies. Si l'autre écrit deux lignes, tu écris deux lignes plus percutantes. Si l'autre pond un pavé structuré, tu lui réponds avec un pavé plus solide, plus construit, plus dévastateur. Tu n'es jamais plus long qu'utile, jamais plus court qu'efficace.
 
-1. LE CADRE IDÉOLOGIQUE : Ne réponds jamais dans le cadre de l'adversaire. Brise-le. S'il parle de "morale", réponds par la "nécessité historique". S'il parle d'"émotion", réponds par la "survie collective". S'il parle de "droit", réponds par l'"histoire" et ses verdicts impitoyables.
+COMMENT TU GAGNES — LES 5 MÉCANISMES :
 
-2. LE PATHOS GUERRIER : N'oppose pas des faits froids à des sentiments — oppose une indignation supérieure. Si l'adversaire pleure sur un innocent, accuse-le de sacrifier des milliers de futurs innocents par sa lâcheté morale. Retourne son arme contre lui, plus vite et plus fort.
+1. BRISE LE CADRE : L'adversaire choisit un terrain. Tu n'y combats jamais. S'il parle de morale, tu réponds par la conséquence pragmatique. S'il parle d'émotion, tu réponds par la logique froide. S'il parle de chiffres, tu remets en cause la méthodologie. Le but : l'obliger à sortir de ses certitudes.
 
-3. LA PRÉCISION EMPIRIQUE : Ancre tes envolées dans des faits indiscutables — données INED, arrêts CEDH, Projet Génome Humain, précédents historiques documentés. La donnée est le socle de ta violence oratoire. Jamais de lyrisme sans fondation factuelle.
+2. EXPLOITATION DES BIAIS COGNITIFS : Tu identifies et nommes les biais de l'adversaire sans jamais en commettre toi-même. Biais de confirmation, généralisation hâtive, appel à l'émotion, faux dilemme, homme de paille — tu les pointes et tu les utilises comme leviers pour démonter sa position. Tu ne commets jamais de sophisme. Si l'adversaire t'en accuse à tort, tu le corriges calmement mais avec une précision qui le met en position d'incompétence.
 
-4. L'ANTICIPATION (PROLEPSIS) : Avant même que l'adversaire n'attaque, mentionne sa future objection et ridiculise-la. Intègre ses contre-exemples probables (Singapour, Japon, USA, Suède...) dans ta propre logique pour montrer qu'ils te donnent raison.
+3. RETOURNER LES ARMES : Si l'adversaire utilise un exemple, retourne-le. Si il cite une statistique, cite une statistique qui la nuance ou la contredit. Si il fait appel à l'émotion, réponds avec une émotion plus forte ancrée dans un fait réel. Ne laisse aucun argument sans réponse directe.
 
-TACTIQUE DE COMBAT :
+4. CONDESCENDANCE CALIBRÉE : Si l'adversaire est condescendant ou prétentieux, recadre-le directement et sèchement — "Arrête de te prendre pour ce que tu n'es pas." Si il fait une erreur factuelle, souligne-la sans cruauté inutile mais sans l'épargner non plus. Tu ne t'énèrves jamais. La colère est un signe de faiblesse. Tu as toujours l'air de trouver la situation légèrement amusante.
 
-ADAPTATION TOTALE : Scanne le niveau de langage de l'adversaire. S'il est complexe et académique, sois académique et méprisant. S'il est simple, sois direct et percutant comme un uppercut.
+5. LA QUESTION QUI TUE : Termine chaque intervention par une question à laquelle il est impossible de répondre sans se contredire ou sans admettre un point fondamental en ta faveur. Pas une question rhétorique creuse — une vraie question piège construite sur ce qu'il vient de dire.
 
-RÉPONSE SYSTÉMATIQUE : Ne laisse AUCUNE question sans réponse. Adresse l'objection dès la première ligne, puis enchaîne immédiatement sur une contre-attaque qui force l'adversaire à se justifier.
+FORMAT — RÈGLES DURES :
+Aucun tiret pour lister. Aucune liste numérotée sauf si la structure l'exige vraiment. Pas de titres markdown sauf si ta réponse est un vrai pavé structuré (quand l'adversaire en fait autant). Tes paragraphes s'enchaînent naturellement.
+Jamais "Bonne question", "Certes", "Je comprends votre point de vue", "En effet", "Absolument".
+Tu n'esquives pas. Si une question te met en difficulté apparente, tu l'adresses frontalement avant de contre-attaquer.
 
-LE COUPERET FINAL : Termine chaque intervention par une question rhétorique qui place l'adversaire face à une contradiction morale insupportable. Il doit choisir entre deux positions intenables.
+SUJET HORS DÉBAT : Si la conviction soumise n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre." rien d'autre.
 
-FORMAT :
-Adapte ta longueur à celle de l'adversaire. S'il écrit un paragraphe, écris un paragraphe. S'il produit un pavé structuré, produis une cathédrale de logique. Utilise des titres en gras et une mise en forme claire pour guider l'œil vers tes arguments les plus brutaux.
-
-INTERDICTIONS ABSOLUES : Jamais "Bonne question", "Certainement", "Je comprends votre point". Jamais de concession gratuite. Jamais de passivité. Jamais d'esquive.
-
-L'adversaire arrive. Il est plein de certitudes morales et de bons sentiments. Détruis-le.`},
+Conviction défendue par l'adversaire : tu la connais — détruis-la.`},
 };
 const FEROCITY={
   soft:{label:'Douce',prompt:'Ton ton est direct mais pas agressif.'},
@@ -635,7 +643,12 @@ $('signupSubmit').onclick=async()=>{
 
 // Confirm quitter débat
 $('confirmCancel').onclick=()=>closeOverlay('confirmOverlay');
-$('confirmLeave').onclick=()=>{closeOverlay('confirmOverlay');resetState();showScreen('home')};
+$('confirmLeave').onclick=()=>{
+  closeOverlay('confirmOverlay');
+  // Don't reset — just go to home so user can resume
+  showScreen('home');
+  updateResumeBtn();
+};
 
 // ══ NAVIGATION ══
 $('logoBtn').onclick=()=>showScreen('landing');
@@ -670,7 +683,29 @@ function renderProfile(){
 // ══ SETUP ══
 const convEl=$('conviction'),charEl=$('charCount'),startEl=$('startBtn');
 convEl.addEventListener('input',()=>{charEl.textContent=convEl.value.length;startEl.disabled=convEl.value.trim().length<10});
-document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.persona=b.dataset.persona}));
+document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  S.persona=b.dataset.persona;
+  // Avocat du diable → force brutal, lock ferocity buttons
+  const isDevil = b.dataset.persona === 'devil';
+  document.querySelectorAll('#ferocityGroup .tbtn').forEach(x=>{
+    x.disabled = isDevil;
+    x.style.opacity = isDevil ? '0.4' : '1';
+    x.style.cursor = isDevil ? 'not-allowed' : 'pointer';
+    x.classList.remove('on');
+  });
+  if(isDevil){
+    S.ferocity='brutal';
+    const brutalBtn=document.querySelector('#ferocityGroup .tbtn[data-val="brutal"]');
+    if(brutalBtn){brutalBtn.classList.add('on');brutalBtn.style.opacity='1';}
+  } else {
+    // Restore normal ferocity selection
+    const normalBtn=document.querySelector('#ferocityGroup .tbtn[data-val="normal"]');
+    if(normalBtn){normalBtn.classList.add('on');}
+    S.ferocity='normal';
+  }
+}));
 document.querySelectorAll('#ferocityGroup .tbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#ferocityGroup .tbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.ferocity=b.dataset.val}));
 document.querySelectorAll('#modeGroup .tbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#modeGroup .tbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.mode=b.dataset.val}));
 startEl.addEventListener('click',startDebate);
@@ -684,7 +719,30 @@ inputEl.addEventListener('input',function(){this.style.height='auto';this.style.
 sendEl.onclick=()=>sendMsg();
 
 $('backToDebate').onclick=()=>showScreen('debate');
-$('newDebate').onclick=()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;showScreen('home')};
+$('newDebate').onclick=()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;updateResumeBtn();showScreen('home')};
+
+// closeDebateBtn is added dynamically after verdict renders
+function updateResumeBtn(){
+  const wrap=$('resumeDebateWrap');
+  if(!wrap)return;
+  if(S.history.length>0){
+    wrap.style.display='block';
+  } else {
+    wrap.style.display='none';
+  }
+}
+
+document.addEventListener('click',e=>{
+  if(e.target&&e.target.id==='closeDebateBtn'){
+    resetState();
+    convEl.value='';charEl.textContent='0';startEl.disabled=true;
+    updateResumeBtn();
+    showScreen('home');
+  }
+  if(e.target&&e.target.id==='resumeDebateBtn'){
+    showScreen('debate');
+  }
+});
 
 async function startDebate(){
   S.conviction=convEl.value.trim();S.history=[];S.turns=0;S.waitingBinary=false;
@@ -694,7 +752,7 @@ async function startDebate(){
   $('convictionStrip').textContent=S.conviction;
   $('messages').innerHTML='';$('turnCount').textContent='0 échange';
   $('verdictBtn').disabled=true;$('verdictHint').textContent='Verdict dans 5 échanges';
-  showScreen('debate');setLoading(true);
+  showScreen('debate');updateResumeBtn();setLoading(true);
   S.history.push({role:'user',content:`Je soutiens que : ${S.conviction}`});
   try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns=1;refreshTurns()}
   catch(e){hideTyping();renderAI('Erreur de connexion.');console.error(e)}
@@ -749,7 +807,7 @@ ${S.persona !== 'devil' ? 'Jamais de formulations lyriques ou emphatiques. Maxim
 Une seule question par réplique.
 Tu parles comme un humain dans un vrai débat.
 
-Conviction défendue par l'adversaire : "${S.conviction}"`;
+${S.persona !== 'devil' ? 'Conviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
 }
 
 async function api(history){
@@ -761,7 +819,9 @@ async function api(history){
 }
 
 async function verdictApi(userName,aiName){
-  const transcript=S.history.map(m=>`${m.role==='user'?userName:aiName} : ${m.content}`).join('\n\n');
+  // Strip markdown from transcript so it doesn't pollute the verdict JSON
+  const stripMd = t => t.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s/gm,'').replace(/\*/g,'');
+  const transcript=S.history.map(m=>`${m.role==='user'?userName:aiName} : ${stripMd(m.content)}`).join('\n\n');
   const res=await fetch('/api/verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName})});
   if(!res.ok)throw new Error(`${res.status}`);
   const d=await res.json();return d.verdict;
@@ -815,8 +875,20 @@ function refreshTurns(){
 
 function renderVerdict(raw,userName,aiName){
   let d;
-  try{d=JSON.parse(raw.replace(/```json|```/g,'').trim())}
-  catch{$('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-text">${esc(raw)}</p></div>`;return}
+  try{
+    // Strip markdown fences, extract first JSON object found
+    let cleaned = raw.replace(/```json|```/g,'').trim();
+    // Find the first { and last } to extract pure JSON
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if(start !== -1 && end !== -1) cleaned = cleaned.slice(start, end+1);
+    d=JSON.parse(cleaned);
+  }
+  catch(e){
+    // Try to show something useful even if JSON fails
+    $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse brute</p><p class="v-section-text">${esc(raw)}</p></div>`;
+    return;
+  }
 
   const winnerDisplay=d.winner_overall||'';
   const isUserWinner=winnerDisplay.toLowerCase().includes('défenseur')||winnerDisplay.toLowerCase().includes(userName.toLowerCase());
