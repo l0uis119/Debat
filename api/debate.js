@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { history, systemPrompt } = req.body;
+  const { history, systemPrompt, maxTokens } = req.body;
   if (!history || !systemPrompt) return res.status(400).json({ error: 'Missing fields' });
 
   // La clé est lue depuis les variables d'environnement Vercel — jamais dans le code
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'mistral-large-latest',
-        max_tokens: 400,
+        max_tokens: maxTokens || 400,
         temperature: 0.85,
         messages: [
           { role: 'system', content: systemPrompt },
