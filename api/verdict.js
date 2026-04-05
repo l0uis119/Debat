@@ -14,6 +14,12 @@ export default async function handler(req, res) {
   const defName = userName || 'Le défenseur';
   const contName = aiName || 'Le contradicteur';
 
+  // Safety: if transcript contains refusal message, return neutral verdict
+  const REFUSAL_MSG = "Cette requête enfreint les politiques de sécurité";
+  if (transcript.includes(REFUSAL_MSG)) {
+    return res.status(200).json({ verdict: '{"winner_overall":"Débat non valide","categories":[],"summary":"Ce débat a été interrompu pour des raisons de sécurité légale.","conseil":"Choisis un sujet relevant du débat philosophique ou politique."}' });
+  }
+
   const VERDICT_SYSTEM = `Tu es un arbitre de débat. Tu es totalement neutre et pragmatique. Tu n'as aucun jugement sur le fond du sujet discuté.
 
 Tu analyses uniquement : la solidité des arguments, leur crédibilité, la logique du raisonnement, la gestion des contradictions, la rhétorique.
@@ -37,7 +43,9 @@ Réponds UNIQUEMENT en JSON brut, sans markdown, sans backticks :
   "conseil": "UN seul conseil précis et actionnable adressé à ${defName} pour s'améliorer dans un prochain débat. Commence par 'Pour la prochaine fois :'. Maximum 2 phrases."
 }
 
-Tout en français. Sois précis et direct.`;
+Tout en français. Sois précis et direct.
+
+CRITIQUE ABSOLUE : Ta réponse doit être du JSON pur. Pas un seul caractère en dehors du JSON. Pas de texte avant, pas de texte après, pas de backticks, pas de markdown. Commence directement par { et termine par }. Si tu ne respectes pas cette règle, la réponse sera inutilisable.`;
 
   try {
     const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
