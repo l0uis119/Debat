@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mon profil — Objection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF7F2;--cream2:#F2EDE4;--cream3:#E8E0D4;
+  --terra:#C4613A;--terra2:#A84E2D;
+  --terra-soft:rgba(196,97,58,0.1);--terra-border:rgba(196,97,58,0.25);
+  --sage:#5B7C6B;--sage2:#3D5C4D;
+  --sage-soft:rgba(91,124,107,0.1);--sage-border:rgba(91,124,107,0.25);
+  --ink:#1A1208;--ink2:#3D2E1A;--ink3:rgba(26,18,8,0.55);
+  --ink4:rgba(26,18,8,0.12);--ink5:rgba(26,18,8,0.05);
+  --white:#FFFFFF;--ok:#2D7A4F;--ok-soft:rgba(45,122,79,0.1);
+  --r:14px;--r3:24px;--r4:50px;
+  --fT:'Fraunces',serif;--fU:'Nunito',sans-serif;
+  --shadow:0 2px 16px rgba(26,18,8,0.08);--shadow2:0 4px 32px rgba(26,18,8,0.12);
+}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(250,247,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
+.logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;text-decoration:none}
+.back-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-size:0.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s}
+.back-btn:hover{background:var(--cream3)}
+
+/* ── PAGE ── */
+.page{max-width:520px;margin:0 auto;padding:6rem 1.5rem 4rem}
+.page-title{font-family:var(--fT);font-size:2.2rem;font-weight:900;color:var(--ink);margin-bottom:2rem}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--r3);padding:1.75rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.card-title{font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--terra);margin-bottom:1rem}
+
+/* ── AVATAR ── */
+.avatar-row{display:flex;align-items:center;gap:14px;margin-bottom:0.5rem}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--sage);color:var(--white);font-family:var(--fT);font-size:1.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-name{font-family:var(--fT);font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1.1}
+.user-email{font-size:0.85rem;color:var(--ink3);margin-top:2px}
+
+/* ── FORM ── */
+.inp{width:100%;padding:11px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);font-family:var(--fU);font-size:0.95rem;color:var(--ink);outline:none;transition:border-color .2s,background .2s;margin-bottom:0}
+.inp::placeholder{color:var(--ink3)}
+.inp:focus{border-color:var(--terra);background:var(--white)}
+.inp-row{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
+.inp-row .inp{flex:1;margin-bottom:0}
+.check-btn{padding:0 18px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);font-family:var(--fU);font-size:0.85rem;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.check-btn:hover:not(:disabled){border-color:var(--terra);color:var(--terra);background:var(--terra-soft)}
+.check-btn:disabled{opacity:0.5;cursor:not-allowed}
+.status{font-size:0.78rem;min-height:1.2em;padding:2px 0;display:none}
+.status.ok{display:block;color:var(--ok)}
+.status.err{display:block;color:var(--terra)}
+.btn{width:100%;padding:13px;background:var(--terra);border:none;border-radius:var(--r);color:var(--white);font-family:var(--fU);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .18s;margin-top:0.75rem}
+.btn:hover:not(:disabled){background:var(--terra2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(196,97,58,0.3)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--cream3)}
+.btn.ghost:hover:not(:disabled){background:var(--cream2);border-color:var(--ink3);transform:none;box-shadow:none}
+.btn.danger{background:transparent;color:var(--terra);border:1.5px solid var(--terra-border)}
+.btn.danger:hover:not(:disabled){background:var(--terra-soft);transform:none;box-shadow:none}
+.divider{border:none;border-top:1px solid var(--cream3);margin:1rem 0}
+.hint{font-size:0.8rem;color:var(--ink3);margin-top:6px;line-height:1.5}
+
+/* ── AUTH SCREENS ── */
+.screen{display:none}.screen.active{display:block}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:5rem 1.5rem 2rem}
+.auth-card{background:var(--white);border-radius:var(--r3);padding:2.25rem;width:100%;max-width:420px;box-shadow:var(--shadow2)}
+.auth-title{font-family:var(--fT);font-size:1.7rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem}
+.auth-sub{font-size:0.88rem;color:var(--ink3);margin-bottom:1.75rem;line-height:1.5}
+.auth-inp{width:100%;padding:11px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);font-family:var(--fU);font-size:0.95rem;color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:0.75rem}
+.auth-inp::placeholder{color:var(--ink3)}
+.auth-inp:focus{border-color:var(--terra);background:var(--white)}
+.auth-err{font-size:0.78rem;color:var(--terra);display:none;margin:-0.4rem 0 0.75rem}
+.auth-err.show{display:block}
+.auth-switch{text-align:center;margin-top:1.25rem;font-size:0.85rem;color:var(--ink3)}
+.auth-switch a{color:var(--terra);text-decoration:none;font-weight:600;cursor:pointer}
+.auth-switch a:hover{text-decoration:underline}
+
+/* ── LOADING ── */
+#screen-loading{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.spinner{width:32px;height:32px;border:3px solid var(--cream3);border-top-color:var(--terra);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="logo" href="/">Objection</a>
+  <a class="back-btn" href="/">← Retour</a>
+</nav>
+
+<!-- Loading initial -->
+<div id="screen-loading"><div class="spinner"></div></div>
+
+<!-- Profil (connecté) -->
+<div id="screen-profile" class="screen">
+  <div class="page">
+    <h1 class="page-title">Mon profil</h1>
+
+    <!-- Identité -->
+    <div class="card">
+      <div class="card-title">Compte</div>
+      <div class="avatar-row">
+        <div class="avatar" id="avatarCircle">?</div>
+        <div>
+          <div class="user-name" id="displayName">—</div>
+          <div class="user-email" id="displayEmail">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Changer de pseudo -->
+    <div class="card">
+      <div class="card-title">Changer de pseudo</div>
+      <div class="inp-row">
+        <input type="text" class="inp" id="pseudoInput" placeholder="Nouveau pseudo" maxlength="20"/>
+        <button class="check-btn" id="checkBtn">Vérifier</button>
+      </div>
+      <div class="status" id="pseudoStatus"></div>
+      <button class="btn" id="saveBtn" disabled>Enregistrer</button>
+    </div>
+
+    <!-- Changer de mot de passe -->
+    <div class="card">
+      <div class="card-title">Mot de passe</div>
+      <input type="password" class="auth-inp" id="pw1" placeholder="Nouveau mot de passe (8 car. min.)"/>
+      <input type="password" class="auth-inp" id="pw2" placeholder="Confirmer le mot de passe" style="margin-bottom:0"/>
+      <div class="status err" id="pwErr" style="display:none"></div>
+      <button class="btn ghost" id="savePasswordBtn">Changer le mot de passe</button>
+    </div>
+
+    <!-- Déconnexion -->
+    <div class="card">
+      <button class="btn danger" id="logoutBtn">Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Connexion -->
+<div id="screen-login" class="screen">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2 class="auth-title">Connexion</h2>
+      <p class="auth-sub">Retrouve ton profil et ton historique.</p>
+      <input type="email" class="auth-inp" id="loginEmail" placeholder="Email" autocomplete="email"/>
+      <input type="password" class="auth-inp" id="loginPw" placeholder="Mot de passe" autocomplete="current-password"/>
+      <div class="auth-err" id="loginErr"></div>
+      <button class="btn" id="loginBtn">Se connecter</button>
+      <p class="auth-switch">Pas encore de compte ? <a id="goSignup">Créer un compte</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Inscription -->
+<div id="screen-signup" class="screen">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2 class="auth-title">Créer un compte</h2>
+      <p class="auth-sub">Choisis un pseudo unique — il apparaîtra dans tes verdicts.</p>
+      <input type="text" class="auth-inp" id="signupPseudo" placeholder="Ton pseudo (3–20 caractères)" maxlength="20" autocomplete="username"/>
+      <div class="auth-err" id="signupPseudoErr"></div>
+      <input type="email" class="auth-inp" id="signupEmail" placeholder="Email" autocomplete="email"/>
+      <input type="password" class="auth-inp" id="signupPw" placeholder="Mot de passe (8 caractères min.)" autocomplete="new-password"/>
+      <div class="auth-err" id="signupErr"></div>
+      <button class="btn" id="signupBtn">Créer mon compte</button>
+      <p class="auth-switch">Déjà un compte ? <a id="goLogin">Se connecter</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Message de confirmation (email, succès) -->
+<div id="screen-confirm" class="screen">
+  <div class="auth-wrap">
+    <div class="auth-card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:1rem">✉️</div>
+      <h2 class="auth-title" style="margin-bottom:0.5rem">Vérifie ta boîte mail</h2>
+      <p class="auth-sub" style="margin-bottom:1.5rem">Un lien de confirmation t'a été envoyé. Clique dessus pour activer ton compte, puis reviens ici.</p>
+      <button class="btn ghost" onclick="show('screen-login')">← Retour à la connexion</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://bsabkjrnebzdrvleciva.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M';
+
+const { createClient } = supabase;
+const SB = createClient(SB_URL, SB_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth' }
+});
+
+// ── utils ──
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function show(id) {
+  ['screen-loading','screen-profile','screen-login','screen-signup','screen-confirm']
+    .forEach(s => $(s).classList.remove('active'));
+  $(id).classList.add('active');
+}
+function setErr(id, msg) {
+  const el = $(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearErr(id) { $(id).classList.remove('show'); }
+
+// ── state ──
+let user = null;
+let pseudo = null;
+let pseudoAvailable = false;
+
+// ── init ──
+async function init() {
+  // Récupère la session depuis le localStorage — synchrone grâce à getSession()
+  const { data: { session }, error } = await SB.auth.getSession();
+  if (error) { console.error('getSession error:', error); }
+
+  if (session?.user) {
+    user = session.user;
+    await loadPseudo();
+    renderProfile();
+    show('screen-profile');
+  } else {
+    show('screen-login');
+  }
+}
+
+async function loadPseudo() {
+  if (!user) return;
+  const { data, error } = await SB
+    .from('profiles')
+    .select('pseudo')
+    .eq('id', user.id)
+    .single();
+  if (error) console.warn('loadPseudo error:', error.message);
+  pseudo = data?.pseudo || null;
+}
+
+function renderProfile() {
+  const name = pseudo || user?.email || '?';
+  const initial = name[0].toUpperCase();
+  $('avatarCircle').textContent = initial;
+  $('displayName').textContent = pseudo || '(pas de pseudo)';
+  $('displayEmail').textContent = user?.email || '';
+  $('pseudoInput').value = pseudo || '';
+  pseudoAvailable = false;
+  $('saveBtn').disabled = true;
+  $('pseudoStatus').className = 'status';
+}
+
+// ── pseudo check ──
+$('checkBtn').onclick = async () => {
+  const val = $('pseudoInput').value.trim();
+  const st = $('pseudoStatus');
+  pseudoAvailable = false;
+  $('saveBtn').disabled = true;
+  st.className = 'status';
+
+  if (!val || val.length < 3) {
+    st.textContent = 'Le pseudo doit faire au moins 3 caractères.';
+    st.className = 'status err';
+    return;
+  }
+  if (val === pseudo) {
+    st.textContent = "C'est déjà ton pseudo actuel.";
+    st.className = 'status err';
+    return;
+  }
+
+  $('checkBtn').textContent = '…';
+  $('checkBtn').disabled = true;
+
+  const { data, error } = await SB
+    .from('profiles')
+    .select('id')
+    .eq('pseudo', val)
+    .limit(1);
+
+  $('checkBtn').textContent = 'Vérifier';
+  $('checkBtn').disabled = false;
+
+  if (error) {
+    // Erreur réseau ou RLS — on affiche l'erreur brute pour debugger
+    st.textContent = 'Erreur de vérification : ' + error.message;
+    st.className = 'status err';
+    return;
+  }
+
+  if (data && data.length > 0) {
+    st.textContent = 'Ce pseudo est déjà pris.';
+    st.className = 'status err';
+  } else {
+    st.textContent = '✓ Disponible !';
+    st.className = 'status ok';
+    pseudoAvailable = true;
+    $('saveBtn').disabled = false;
+  }
+};
+
+// ── save pseudo ──
+$('saveBtn').onclick = async () => {
+  if (!pseudoAvailable) return;
+  const val = $('pseudoInput').value.trim();
+  $('saveBtn').disabled = true;
+  $('saveBtn').textContent = 'Enregistrement…';
+
+  // Si l'utilisateur n'a pas encore de profil → insert, sinon → update
+  let error;
+  if (!pseudo) {
+    ({ error } = await SB.from('profiles').insert({ id: user.id, pseudo: val, email: user.email }));
+  } else {
+    ({ error } = await SB.from('profiles').update({ pseudo: val }).eq('id', user.id));
+  }
+
+  $('saveBtn').textContent = 'Enregistrer';
+  if (error) {
+    const st = $('pseudoStatus');
+    st.textContent = 'Erreur : ' + error.message;
+    st.className = 'status err';
+    $('saveBtn').disabled = false;
+  } else {
+    pseudo = val;
+    pseudoAvailable = false;
+    renderProfile();
+    const st = $('pseudoStatus');
+    st.textContent = '✓ Pseudo mis à jour !';
+    st.className = 'status ok';
+  }
+};
+
+// ── change password ──
+$('savePasswordBtn').onclick = async () => {
+  const p1 = $('pw1').value;
+  const p2 = $('pw2').value;
+  const errEl = $('pwErr');
+  errEl.style.display = 'none';
+
+  if (!p1 || !p2) { errEl.textContent = 'Remplis les deux champs.'; errEl.style.display = 'block'; return; }
+  if (p1.length < 8) { errEl.textContent = 'Mot de passe trop court (8 caractères min.).'; errEl.style.display = 'block'; return; }
+  if (p1 !== p2) { errEl.textContent = 'Les deux mots de passe ne correspondent pas.'; errEl.style.display = 'block'; return; }
+
+  $('savePasswordBtn').disabled = true;
+  $('savePasswordBtn').textContent = 'Mise à jour…';
+
+  const { error } = await SB.auth.updateUser({ password: p1 });
+
+  $('savePasswordBtn').disabled = false;
+  $('savePasswordBtn').textContent = 'Changer le mot de passe';
+
+  if (error) {
+    errEl.textContent = 'Erreur : ' + error.message;
+    errEl.style.display = 'block';
+  } else {
+    $('pw1').value = '';
+    $('pw2').value = '';
+    errEl.style.display = 'block';
+    errEl.className = 'status ok';
+    errEl.textContent = '✓ Mot de passe mis à jour.';
+  }
+};
+
+// ── logout ──
+$('logoutBtn').onclick = async () => {
+  $('logoutBtn').disabled = true;
+  $('logoutBtn').textContent = 'Déconnexion…';
+  await SB.auth.signOut();
+  user = null;
+  pseudo = null;
+  window.location.href = '/';
+};
+
+// ── login ──
+$('loginBtn').onclick = async () => {
+  const email = $('loginEmail').value.trim();
+  const pw = $('loginPw').value;
+  clearErr('loginErr');
+
+  if (!email || !pw) { setErr('loginErr', 'Remplis tous les champs.'); return; }
+
+  $('loginBtn').disabled = true;
+  $('loginBtn').textContent = 'Connexion…';
+
+  const { data, error } = await SB.auth.signInWithPassword({ email, password: pw });
+
+  $('loginBtn').disabled = false;
+  $('loginBtn').textContent = 'Se connecter';
+
+  if (error) {
+    setErr('loginErr', 'Email ou mot de passe incorrect.');
+    return;
+  }
+
+  user = data.user;
+  await loadPseudo();
+  renderProfile();
+  show('screen-profile');
+};
+
+// ── signup ──
+$('signupBtn').onclick = async () => {
+  const pseudoVal = $('signupPseudo').value.trim();
+  const email = $('signupEmail').value.trim();
+  const pw = $('signupPw').value;
+  clearErr('signupPseudoErr');
+  clearErr('signupErr');
+
+  if (!pseudoVal || !email || !pw) { setErr('signupErr', 'Remplis tous les champs.'); return; }
+  if (pseudoVal.length < 3) { setErr('signupPseudoErr', 'Le pseudo doit faire au moins 3 caractères.'); return; }
+  if (pw.length < 8) { setErr('signupErr', 'Mot de passe trop court (8 caractères min.).'); return; }
+
+  $('signupBtn').disabled = true;
+  $('signupBtn').textContent = 'Vérification…';
+
+  // Vérifie dispo pseudo
+  const { data: existing, error: checkErr } = await SB
+    .from('profiles').select('id').eq('pseudo', pseudoVal).limit(1);
+
+  if (checkErr) { setErr('signupErr', 'Erreur réseau : ' + checkErr.message); $('signupBtn').disabled = false; $('signupBtn').textContent = 'Créer mon compte'; return; }
+  if (existing && existing.length > 0) { setErr('signupPseudoErr', 'Ce pseudo est déjà pris.'); $('signupBtn').disabled = false; $('signupBtn').textContent = 'Créer mon compte'; return; }
+
+  $('signupBtn').textContent = 'Création…';
+
+  const { data, error } = await SB.auth.signUp({ email, password: pw });
+
+  $('signupBtn').disabled = false;
+  $('signupBtn').textContent = 'Créer mon compte';
+
+  if (error) { setErr('signupErr', error.message || 'Erreur lors de la création.'); return; }
+
+  // Crée le profil — l'utilisateur peut ne pas être confirmé encore selon les settings Supabase
+  if (data.user) {
+    await SB.from('profiles').insert({ id: data.user.id, pseudo: pseudoVal, email });
+    // Si session dispo directement (email confirm désactivé)
+    if (data.session) {
+      user = data.user;
+      pseudo = pseudoVal;
+      renderProfile();
+      show('screen-profile');
+    } else {
+      show('screen-confirm');
+    }
+  }
+};
+
+// ── navigation entre login et signup ──
+$('goSignup').onclick = () => show('screen-signup');
+$('goLogin').onclick  = () => show('screen-login');
+
+// ── écoute les changements de session (ex: token refresh, email confirm) ──
+SB.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' && session?.user && !user) {
+    user = session.user;
+    await loadPseudo();
+    renderProfile();
+    show('screen-profile');
+  }
+  if (event === 'SIGNED_OUT') {
+    user = null; pseudo = null;
+    show('screen-login');
+  }
+});
+
+// ── démarrage ──
+init();
+</script>
+</body>
+</html>
