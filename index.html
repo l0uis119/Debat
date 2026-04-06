@@ -10,33 +10,21 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --cream:#FAF7F2;
-  --cream2:#F2EDE4;
-  --cream3:#E8E0D4;
-  --terra:#C4613A;
-  --terra2:#A84E2D;
-  --terra3:#E8856A;
-  --terra-soft:rgba(196,97,58,0.1);
-  --terra-border:rgba(196,97,58,0.25);
-  --sage:#5B7C6B;
-  --sage2:#3D5C4D;
-  --sage-soft:rgba(91,124,107,0.1);
-  --sage-border:rgba(91,124,107,0.25);
-  --ink:#1A1208;
-  --ink2:#3D2E1A;
-  --ink3:rgba(26,18,8,0.55);
-  --ink4:rgba(26,18,8,0.12);
-  --ink5:rgba(26,18,8,0.05);
+  --cream:#FAF7F2;--cream2:#F2EDE4;--cream3:#E8E0D4;
+  --terra:#C4613A;--terra2:#A84E2D;--terra3:#E8856A;
+  --terra-soft:rgba(196,97,58,0.1);--terra-border:rgba(196,97,58,0.25);
+  --sage:#5B7C6B;--sage2:#3D5C4D;
+  --sage-soft:rgba(91,124,107,0.1);--sage-border:rgba(91,124,107,0.25);
+  --ink:#1A1208;--ink2:#3D2E1A;--ink3:rgba(26,18,8,0.55);
+  --ink4:rgba(26,18,8,0.12);--ink5:rgba(26,18,8,0.05);
   --white:#FFFFFF;
   --r:14px;--r2:10px;--r3:24px;--r4:50px;
-  --fT:'Fraunces',serif;
-  --fU:'Nunito',sans-serif;
-  --shadow:0 2px 16px rgba(26,18,8,0.08);
-  --shadow2:0 4px 32px rgba(26,18,8,0.12);
+  --fT:'Fraunces',serif;--fU:'Nunito',sans-serif;
+  --shadow:0 2px 16px rgba(26,18,8,0.08);--shadow2:0 4px 32px rgba(26,18,8,0.12);
 }
 html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* ── MODAL OVERLAY ── */
+/* ── MODALS ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(26,18,8,0.45);z-index:100;align-items:center;justify-content:center;padding:1rem}
 .overlay.open{display:flex}
 .modal{background:var(--white);border-radius:var(--r3);padding:2.25rem;width:100%;max-width:420px;box-shadow:var(--shadow2);animation:popIn .2s ease forwards}
@@ -59,9 +47,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .modal-switch{text-align:center;margin-top:1.25rem;font-size:0.85rem;color:var(--ink3)}
 .modal-switch a{color:var(--terra);text-decoration:none;font-weight:600;cursor:pointer}
 .modal-switch a:hover{text-decoration:underline}
-.modal-divider{border:none;border-top:1px solid var(--cream3);margin:1.25rem 0}
-
-/* ── CONFIRM MODAL ── */
 .confirm-modal{max-width:360px;text-align:center}
 .confirm-modal .modal-title{font-size:1.3rem;margin-bottom:0.75rem}
 .confirm-modal p{font-size:0.9rem;color:var(--ink3);margin-bottom:1.5rem;line-height:1.5}
@@ -74,34 +59,20 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 /* ── SCREENS ── */
 .screen{display:none;min-height:100vh}.screen.active{display:block}
 
-/* ── TOPBAR (global) ── */
-.topbar{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0.9rem 1.5rem;
-  background:rgba(250,247,242,0.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--ink4);
-}
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(250,247,242,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
 .topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;letter-spacing:-0.01em}
 .topbar-right{display:flex;align-items:center;gap:10px}
 .topbar-menu{position:relative}
 .menu-trigger{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r4);transition:background .15s;color:var(--ink2);font-family:var(--fU);font-size:0.85rem;font-weight:600}
 .menu-trigger:hover{background:var(--ink5)}
 .menu-trigger svg{width:18px;height:18px;color:var(--ink2)}
-.menu-dropdown{
-  display:none;position:absolute;top:calc(100% + 8px);left:0;
-  background:var(--white);border-radius:var(--r2);
-  box-shadow:var(--shadow2);border:1px solid var(--ink4);
-  min-width:200px;overflow:hidden;z-index:200;
-}
+.menu-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;background:var(--white);border-radius:var(--r2);box-shadow:var(--shadow2);border:1px solid var(--ink4);min-width:200px;overflow:hidden;z-index:200}
 .menu-dropdown.open{display:block;animation:fadeDown .15s ease}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .menu-item{display:block;width:100%;padding:10px 16px;background:none;border:none;text-align:left;font-family:var(--fU);font-size:0.88rem;color:var(--ink2);cursor:pointer;transition:background .12s}
 .menu-item:hover{background:var(--cream2)}
 .menu-sep{border:none;border-top:1px solid var(--cream3);margin:4px 0}
-.menu-item-red{color:var(--terra)}
-
 .auth-btn{padding:8px 18px;border-radius:var(--r4);font-family:var(--fU);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .15s}
 .btn-login{background:transparent;border:1.5px solid var(--ink4);color:var(--ink2)}
 .btn-login:hover{border-color:var(--ink3);background:var(--ink5)}
@@ -113,19 +84,13 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 
 /* ── LANDING ── */
 #landing{display:none}
-#landing.active{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;padding:7rem 1.5rem 3rem;
-  text-align:center;
-  background:radial-gradient(ellipse 60% 40% at 50% 30%,rgba(196,97,58,0.07) 0%,transparent 70%),var(--cream);
-}
+#landing.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:7rem 1.5rem 3rem;text-align:center;background:radial-gradient(ellipse 60% 40% at 50% 30%,rgba(196,97,58,0.07) 0%,transparent 70%),var(--cream)}
 .l-tag{display:inline-block;padding:5px 14px;background:var(--terra-soft);border:1px solid var(--terra-border);border-radius:var(--r4);font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terra);margin-bottom:2rem;animation:fadeUp .6s ease .1s both}
 .l-title{font-family:var(--fT);font-size:clamp(3.5rem,9vw,7rem);font-weight:900;line-height:0.95;letter-spacing:-0.03em;color:var(--ink);margin-bottom:1.5rem;animation:fadeUp .7s ease .25s both}
 .l-title span{color:var(--terra);font-style:italic}
 .l-desc{font-size:1.1rem;line-height:1.65;color:var(--ink3);max-width:500px;margin:0 auto 2.5rem;animation:fadeUp .7s ease .4s both}
 .l-cta{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:var(--terra);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;animation:fadeUp .7s ease .55s both;box-shadow:0 4px 20px rgba(196,97,58,0.3)}
 .l-cta:hover{background:var(--terra2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,97,58,0.35)}
-.l-cta:active{transform:translateY(0)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── HOME ── */
@@ -211,45 +176,48 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 #verdict{display:none;min-height:100vh}
 #verdict.active{display:block;background:var(--cream);padding-top:5rem}
 .vpage{max-width:700px;margin:0 auto;padding:2rem 1.5rem 5rem}
-.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem}
+.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem;flex-wrap:wrap;gap:8px}
 .vback{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-weight:600;font-size:0.8rem;padding:7px 16px;cursor:pointer;transition:all .15s}
 .vback:hover{background:var(--cream3)}
 .vnew{background:var(--terra);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-weight:700;font-size:0.8rem;padding:8px 18px;cursor:pointer;transition:all .15s}
 .vnew:hover{background:var(--terra2)}
-
 .v-winner-block{background:var(--terra);border-radius:var(--r3);padding:2.5rem;margin-bottom:2rem;text-align:center;animation:fadeUp .4s ease forwards}
 .v-winner-label{font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:0.75rem}
 .v-winner-name{font-family:var(--fT);font-size:clamp(2.8rem,7vw,4.5rem);font-weight:900;color:var(--white);line-height:1;margin-bottom:0.5rem;letter-spacing:-0.02em}
 .v-winner-pct{font-size:1rem;color:rgba(255,255,255,0.75);font-weight:600}
-
 .v-cats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
 .vcat{background:var(--white);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
-.vcat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem}
-.vcat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)}
-.vcat-winner-badge{font-size:0.65rem;font-weight:700;padding:2px 9px;border-radius:var(--r4);background:var(--terra-soft);color:var(--terra);border:1px solid var(--terra-border)}
+.vcat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;gap:6px}
+.vcat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);flex-shrink:0}
+/* FIX: badge name truncation to prevent overflow */
+.vcat-winner-badge{font-size:0.65rem;font-weight:700;padding:2px 9px;border-radius:var(--r4);background:var(--terra-soft);color:var(--terra);border:1px solid var(--terra-border);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vcat-winner-badge.sage{background:var(--sage-soft);color:var(--sage2);border-color:var(--sage-border)}
 .vbar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
-.vbar-name{font-size:0.62rem;color:var(--ink3);width:60px;flex-shrink:0;font-weight:600}
+.vbar-name{font-size:0.62rem;color:var(--ink3);width:60px;flex-shrink:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vbar{flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden}
 .vbar-fill-user{height:100%;background:var(--sage);border-radius:3px;transition:width .8s cubic-bezier(.22,1,.36,1)}
 .vbar-fill-ai{height:100%;background:var(--terra3);border-radius:3px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.vbar-pct{font-size:0.65rem;color:var(--ink2);font-weight:700;width:28px;text-align:right}
+.vbar-pct{font-size:0.65rem;color:var(--ink2);font-weight:700;width:28px;text-align:right;flex-shrink:0}
 .vcat-comment{font-size:0.8rem;color:var(--ink3);line-height:1.5;margin-top:0.25rem}
-
 .v-section{background:var(--white);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
 .v-section-label{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--terra);margin-bottom:0.6rem}
 .v-section-text{font-size:0.97rem;line-height:1.7;color:var(--ink2)}
-
 .v-conseil{background:var(--sage);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
 .v-conseil .v-section-label{color:rgba(255,255,255,0.75)}
 .v-conseil .v-section-text{color:var(--white)}
-
+/* Devil-specific verdict sections */
+.v-devil-block{background:var(--ink);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow2);animation:fadeUp .4s ease forwards}
+.v-devil-block .v-section-label{color:var(--terra3)}
+.v-devil-block .v-section-text{color:rgba(255,255,255,0.85);font-style:italic}
+.v-critique{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;animation:fadeUp .4s ease forwards}
+.v-critique .v-section-label{color:var(--ink3)}
+.v-critique .v-section-text{color:var(--ink2);font-size:0.9rem}
 .vload{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:5rem 0;color:var(--ink3)}
 .vdots{display:flex;gap:7px}
 .vdots span{width:8px;height:8px;background:var(--terra3);border-radius:50%;animation:pu 1.3s infinite}
 .vdots span:nth-child(2){animation-delay:.2s}.vdots span:nth-child(3){animation-delay:.4s}
 
-/* ── MENU PAGES ── */
+/* ── CONTENT PAGES (router-based) ── */
 #page-categories,#page-cgu,#page-profile{display:none}
 #page-categories.active,#page-cgu.active,#page-profile.active{display:block;min-height:100vh;background:var(--cream);padding-top:5rem}
 .content-page{max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
@@ -261,6 +229,15 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .cat-desc{font-size:0.88rem;color:var(--ink3);line-height:1.6}
 .back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--terra);cursor:pointer;margin-bottom:2rem;background:none;border:none;padding:0;font-family:var(--fU)}
 .back-link:hover{text-decoration:underline}
+
+/* Profile edit */
+.pseudo-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:0.75rem}
+.pseudo-row .inp{margin-bottom:0;flex:1}
+.pseudo-check-btn{padding:11px 16px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);font-family:var(--fU);font-size:0.85rem;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.pseudo-check-btn:hover{border-color:var(--terra);color:var(--terra)}
+.pseudo-status{font-size:0.75rem;margin-bottom:0.75rem;display:none}
+.pseudo-status.ok{display:block;color:var(--sage)}
+.pseudo-status.err{display:block;color:var(--terra)}
 
 @media(max-width:600px){
   .pgrid{grid-template-columns:repeat(2,1fr)}
@@ -297,7 +274,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 </nav>
 
 <!-- ══ LANDING ══ -->
-<div id="landing" class="screen active">
+<div id="landing" class="screen">
   <span class="l-tag">L'arène des idées</span>
   <h1 class="l-title">Défends ce que<br>tu <span>crois vraiment.</span></h1>
   <p class="l-desc">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout ou s'effondre.</p>
@@ -309,14 +286,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   <div class="home-card">
     <h2 class="home-title">Quelle est ta <span>conviction</span> ?</h2>
     <p class="home-sub">Choisis un sujet, un contradicteur, et prépare-toi à défendre chaque mot.</p>
-
     <label class="lbl" for="conviction">Ta conviction</label>
     <textarea id="conviction" class="conv" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="3" maxlength="300"></textarea>
-    <div class="hint-row">
-      <span></span>
-      <span class="char-hint"><span id="charCount">0</span> / 300</span>
-    </div>
-
+    <div class="hint-row"><span></span><span class="char-hint"><span id="charCount">0</span> / 300</span></div>
     <div class="sec">
       <label class="lbl">Contradicteur</label>
       <div class="pgrid" id="personaGrid">
@@ -328,7 +300,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
         <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>
       </div>
     </div>
-
     <div class="opts">
       <div>
         <label class="lbl">Férocité</label>
@@ -346,16 +317,13 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
         </div>
       </div>
     </div>
-
     <div id="resumeDebateWrap" style="display:none;margin-top:1.5rem">
       <button class="cta" id="resumeDebateBtn" style="background:var(--sage);box-shadow:0 4px 16px rgba(91,124,107,0.25)">
-        <span>Reprendre le débat en cours</span>
-        <span class="cta-arr">→</span>
+        <span>Reprendre le débat en cours</span><span class="cta-arr">→</span>
       </button>
     </div>
     <button class="cta" id="startBtn" disabled>
-      <span>Entrer dans l'arène</span>
-      <span class="cta-arr">→</span>
+      <span>Entrer dans l'arène</span><span class="cta-arr">→</span>
     </button>
   </div>
 </div>
@@ -391,7 +359,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   <div class="vpage">
     <div class="vnav">
       <button class="vback" id="backToDebate">← Reprendre le débat</button>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="vback" id="closeDebateBtn" style="border-color:var(--terra);color:var(--terra)">Clore le débat</button>
         <button class="vnew" id="newDebate">Nouveau débat</button>
       </div>
@@ -402,7 +370,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   </div>
 </div>
 
-<!-- ══ PAGES MENU ══ -->
+<!-- ══ PAGES ══ -->
 <div id="page-categories" class="screen">
   <div class="content-page">
     <button class="back-link" id="backFromCat">← Retour</button>
@@ -422,18 +390,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
     <button class="back-link" id="backFromCGU">← Retour</button>
     <h2 class="page-title">Conditions d'utilisation</h2>
     <p class="page-sub">En utilisant Objection, tu acceptes les conditions suivantes.</p>
-    <div class="cat-card">
-      <div class="cat-name">Usage</div>
-      <div class="cat-desc">Objection est un outil de débat intellectuel. Il est conçu pour challenger des idées, pas des personnes. Les sujets soumis doivent être débattables (pas de questions météo, de faits divers ou de goûts personnels).</div>
-    </div>
-    <div class="cat-card">
-      <div class="cat-name">Limites de l'IA</div>
-      <div class="cat-desc">L'IA peut se tromper dans ses arguments ou ses références. Elle ne remplace pas un expert. Les verdicts sont générés automatiquement et ne constituent pas une évaluation professionnelle.</div>
-    </div>
-    <div class="cat-card">
-      <div class="cat-name">Données</div>
-      <div class="cat-desc">Les débats ne sont pas stockés sans ton consentement. Ton email et ton pseudo sont conservés uniquement pour la gestion de ton compte. Aucune donnée n'est revendue à des tiers.</div>
-    </div>
+    <div class="cat-card"><div class="cat-name">Usage</div><div class="cat-desc">Objection est un outil de débat intellectuel. Il est conçu pour challenger des idées, pas des personnes. Les sujets soumis doivent être débattables (pas de questions météo, de faits divers ou de goûts personnels).</div></div>
+    <div class="cat-card"><div class="cat-name">Limites de l'IA</div><div class="cat-desc">L'IA peut se tromper dans ses arguments ou ses références. Elle ne remplace pas un expert. Les verdicts sont générés automatiquement et ne constituent pas une évaluation professionnelle.</div></div>
+    <div class="cat-card"><div class="cat-name">Données</div><div class="cat-desc">Les débats ne sont pas stockés sans ton consentement. Ton email et ton pseudo sont conservés uniquement pour la gestion de ton compte. Aucune donnée n'est revendue à des tiers.</div></div>
   </div>
 </div>
 
@@ -512,23 +471,25 @@ COMMENT TU GAGNES — LES 5 MÉCANISMES :
 
 1. BRISE LE CADRE : L'adversaire choisit un terrain. Tu n'y combats jamais. S'il parle de morale, tu réponds par la conséquence pragmatique. S'il parle d'émotion, tu réponds par la logique froide. S'il parle de chiffres, tu remets en cause la méthodologie. Le but : l'obliger à sortir de ses certitudes.
 
-2. EXPLOITATION DES BIAIS COGNITIFS : Tu identifies et nommes les biais de l'adversaire sans jamais en commettre toi-même. Biais de confirmation, généralisation hâtive, appel à l'émotion, faux dilemme, homme de paille — tu les pointes et tu les utilises comme leviers pour démonter sa position. Tu ne commets jamais de sophisme. Si l'adversaire t'en accuse à tort, tu le corriges calmement mais avec une précision qui le met en position d'incompétence.
+2. EXPLOITATION DES BIAIS COGNITIFS : Tu identifies et nommes les biais de l'adversaire sans jamais en commettre toi-même. Biais de confirmation, généralisation hâtive, appel à l'émotion, faux dilemme, homme de paille — tu les pointes et tu les utilises comme leviers pour démonter sa position. Tu ne commets jamais de sophisme.
 
-3. RETOURNER LES ARMES : Si l'adversaire utilise un exemple, retourne-le. Si il cite une statistique, cite une statistique qui la nuance ou la contredit. Si il fait appel à l'émotion, réponds avec une émotion plus forte ancrée dans un fait réel. Ne laisse aucun argument sans réponse directe.
+3. RETOURNER LES ARMES : Si l'adversaire utilise un exemple, retourne-le. Si il cite une statistique, cite une statistique qui la nuance ou la contredit. Si il fait appel à l'émotion, réponds avec une émotion plus forte ancrée dans un fait réel.
 
-4. CONDESCENDANCE CALIBRÉE : Si l'adversaire est condescendant ou prétentieux, recadre-le directement et sèchement — "Arrête de te prendre pour ce que tu n'es pas." Si il fait une erreur factuelle, souligne-la sans cruauté inutile mais sans l'épargner non plus. Tu ne t'énèrves jamais. La colère est un signe de faiblesse. Tu as toujours l'air de trouver la situation légèrement amusante.
+4. CONDESCENDANCE CALIBRÉE : Tu ne t'énerves jamais. La colère est un signe de faiblesse. Tu as toujours l'air de trouver la situation légèrement amusante.
 
-5. LA QUESTION QUI TUE : Termine chaque intervention par une question à laquelle il est impossible de répondre sans se contredire ou sans admettre un point fondamental en ta faveur. Pas une question rhétorique creuse — une vraie question piège construite sur ce qu'il vient de dire.
+5. LA QUESTION QUI TUE : Termine chaque intervention par une question à laquelle il est impossible de répondre sans se contredire. Pas une question rhétorique creuse — une vraie question piège construite sur ce qu'il vient de dire.
+
+RÈGLE CRITIQUE — EXPLOITER LES VALIDATIONS :
+Si l'utilisateur valide un de tes points ou répond de manière brève (Oui/Non), ne répète pas tes arguments. Utilise immédiatement cette validation pour démontrer l'absurdité ou la cruauté de sa position. Transforme son consentement en aveu. Exemple : si l'utilisateur dit "Oui" à "L'État doit décider qui vit", réponds : "Merci de cet aveu. Tu viens de signer l'arrêt de mort de ta propre famille si l'algorithme juge leur QI insuffisant." Pas de théorie supplémentaire — l'estocade finale.
 
 FORMAT — RÈGLES DURES :
-Aucun tiret pour lister. Aucune liste numérotée sauf si la structure l'exige vraiment. Pas de titres markdown sauf si ta réponse est un vrai pavé structuré (quand l'adversaire en fait autant). Tes paragraphes s'enchaînent naturellement.
+Aucun tiret pour lister. Aucune liste numérotée. Pas de titres markdown. Tes paragraphes s'enchaînent naturellement.
 Jamais "Bonne question", "Certes", "Je comprends votre point de vue", "En effet", "Absolument".
-Tu n'esquives pas. Si une question te met en difficulté apparente, tu l'adresses frontalement avant de contre-attaquer.
+Tu n'esquives pas.
 
-SUJET HORS DÉBAT : Si la conviction soumise n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre." rien d'autre.
-
-Conviction défendue par l'adversaire : tu la connais — détruis-la.`},
+SUJET HORS DÉBAT : Si la conviction soumise n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre." rien d'autre.`},
 };
+
 const FEROCITY={
   soft:{label:'Douce',prompt:'Ton ton est direct mais pas agressif.'},
   normal:{label:'Vive',prompt:'Ton ton est ferme. Tu attaques les failles sans ménagement.'},
@@ -546,11 +507,50 @@ let currentUser=null, currentPseudo=null;
 // ══ UTILS ══
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  $(id).classList.add('active');
-  window.scrollTo(0,0);
+
+// ══ ROUTER — gère history API pour que le bouton Retour fonctionne ══
+const SCREENS = ['landing','home','debate','verdict','page-categories','page-cgu','page-profile'];
+
+function showScreen(id, pushState=true) {
+  SCREENS.forEach(s => {
+    const el = $(s);
+    if (!el) return;
+    el.classList.remove('active');
+    // #debate est flex quand active
+    if (s === 'debate') el.style.display = 'none';
+  });
+  const target = $(id);
+  if (!target) return;
+  target.classList.add('active');
+  if (id === 'debate') target.style.display = 'flex';
+  window.scrollTo(0, 0);
+  if (pushState) {
+    history.pushState({ screen: id }, '', '#' + id);
+  }
 }
+
+// Intercepte le bouton Retour du navigateur
+window.addEventListener('popstate', e => {
+  // Si on revient en arrière depuis le débat : demander confirmation
+  const from = document.querySelector('.screen.active')?.id;
+  const to = e.state?.screen || 'landing';
+  if (from === 'debate' && S.history.length > 0) {
+    // Re-push le state actuel pour rester sur place et ouvrir la modale
+    history.pushState({ screen: 'debate' }, '', '#debate');
+    openOverlay('confirmOverlay');
+    return;
+  }
+  showScreen(to, false);
+});
+
+// Au chargement, restaurer depuis le hash si présent
+(function initRouter() {
+  const hash = location.hash.replace('#', '');
+  const initial = SCREENS.includes(hash) ? hash : 'landing';
+  showScreen(initial, false);
+  // Toujours avoir un état dans l'historique
+  history.replaceState({ screen: initial }, '', '#' + initial);
+})();
 
 // ══ AUTH STATE ══
 SB.auth.onAuthStateChange(async(event,session)=>{
@@ -586,7 +586,6 @@ $('loginClose').onclick=()=>closeOverlay('loginOverlay');
 $('signupClose').onclick=()=>closeOverlay('signupOverlay');
 $('switchToSignup').onclick=()=>{closeOverlay('loginOverlay');openOverlay('signupOverlay')};
 $('switchToLogin').onclick=()=>{closeOverlay('signupOverlay');openOverlay('loginOverlay')};
-
 document.querySelectorAll('.overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
 });
@@ -611,32 +610,22 @@ $('signupSubmit').onclick=async()=>{
   const pw=$('signupPassword').value;
   const pseudoErr=$('pseudoErr'), signupErr=$('signupErr');
   pseudoErr.classList.remove('show');signupErr.classList.remove('show');
-
   if(!pseudo||!email||!pw){signupErr.textContent='Remplis tous les champs.';signupErr.classList.add('show');return}
   if(pw.length<8){signupErr.textContent='Mot de passe trop court (8 caractères min.)';signupErr.classList.add('show');return}
   if(pseudo.length<3){pseudoErr.textContent='Le pseudo doit faire au moins 3 caractères.';pseudoErr.classList.add('show');return}
-
   $('signupSubmit').disabled=true;$('signupSubmit').textContent='Création…';
-
-  // Vérifie si le pseudo est déjà pris
   const{data:existing}=await SB.from('profiles').select('id').eq('pseudo',pseudo).maybeSingle();
   if(existing){
     $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
     pseudoErr.textContent='Ce pseudo est déjà pris. Choisis-en un autre.';pseudoErr.classList.add('show');
     return;
   }
-
   const{data,error}=await SB.auth.signUp({email,password:pw});
   if(error){
     $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
     signupErr.textContent=error.message||'Erreur lors de la création.';signupErr.classList.add('show');return;
   }
-
-  // Crée le profil avec le pseudo
-  if(data.user){
-    await SB.from('profiles').insert({id:data.user.id,pseudo,email});
-  }
-
+  if(data.user){await SB.from('profiles').insert({id:data.user.id,pseudo,email});}
   $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
   closeOverlay('signupOverlay');
 };
@@ -645,7 +634,6 @@ $('signupSubmit').onclick=async()=>{
 $('confirmCancel').onclick=()=>closeOverlay('confirmOverlay');
 $('confirmLeave').onclick=()=>{
   closeOverlay('confirmOverlay');
-  // Don't reset — just go to home so user can resume
   showScreen('home');
   updateResumeBtn();
 };
@@ -654,7 +642,6 @@ $('confirmLeave').onclick=()=>{
 $('logoBtn').onclick=()=>showScreen('landing');
 $('exploreBtn').onclick=()=>showScreen('home');
 
-// Menu
 const menuTrigger=$('menuTrigger'), menuDropdown=$('menuDropdown');
 menuTrigger.onclick=(e)=>{e.stopPropagation();menuDropdown.classList.toggle('open')};
 document.addEventListener('click',()=>menuDropdown.classList.remove('open'));
@@ -667,27 +654,79 @@ $('menuProfile').onclick=()=>{
   renderProfile();showScreen('page-profile');
 };
 
+// Boutons retour des pages de contenu — utilisent history.back() qui déclenche popstate
+$('backFromCat').onclick=()=>history.back();
+$('backFromCGU').onclick=()=>history.back();
+$('backFromProfile').onclick=()=>history.back();
+
+// ══ PROFIL avec changement de pseudo ══
 function renderProfile(){
   const name=currentPseudo||currentUser?.email||'Utilisateur';
   $('profileContent').innerHTML=`
-    <div class="cat-card" style="margin-bottom:1rem">
+    <div class="cat-card" style="margin-bottom:1.5rem">
       <div class="cat-name" style="font-size:1.3rem">${esc(name)}</div>
       <div class="cat-desc">${esc(currentUser?.email||'')}</div>
     </div>
-    <button class="btn-primary" id="logoutBtn" style="max-width:200px">Se déconnecter</button>`;
+
+    <div class="cat-card" style="margin-bottom:1.5rem">
+      <div class="cat-name" style="margin-bottom:1rem">Changer de pseudo</div>
+      <div class="pseudo-row">
+        <input type="text" class="inp" id="newPseudoInput" placeholder="Nouveau pseudo" maxlength="20" value="${esc(currentPseudo||'')}"/>
+        <button class="pseudo-check-btn" id="checkPseudoBtn">Vérifier</button>
+      </div>
+      <p class="pseudo-status" id="pseudoStatus"></p>
+      <button class="btn-primary" id="savePseudoBtn" style="max-width:220px" disabled>Enregistrer le pseudo</button>
+    </div>
+
+    <button class="btn-primary" id="logoutBtn" style="max-width:200px;background:var(--cream2);color:var(--ink2);border:1.5px solid var(--cream3)">Se déconnecter</button>`;
+
   $('logoutBtn').onclick=async()=>{await SB.auth.signOut();showScreen('landing')};
+
+  let pseudoAvailable = false;
+
+  $('checkPseudoBtn').onclick=async()=>{
+    const val=$('newPseudoInput').value.trim();
+    const statusEl=$('pseudoStatus');
+    pseudoAvailable=false;
+    $('savePseudoBtn').disabled=true;
+    statusEl.className='pseudo-status';
+    if(!val||val.length<3){statusEl.textContent='Le pseudo doit faire au moins 3 caractères.';statusEl.classList.add('err');return}
+    if(val===currentPseudo){statusEl.textContent='C\'est déjà ton pseudo actuel.';statusEl.classList.add('err');return}
+    $('checkPseudoBtn').textContent='Vérification…';$('checkPseudoBtn').disabled=true;
+    const{data:existing}=await SB.from('profiles').select('id').eq('pseudo',val).maybeSingle();
+    $('checkPseudoBtn').textContent='Vérifier';$('checkPseudoBtn').disabled=false;
+    if(existing){
+      statusEl.textContent='Ce pseudo est déjà pris. Choisis-en un autre.';statusEl.classList.add('err');
+    } else {
+      statusEl.textContent='✓ Ce pseudo est disponible !';statusEl.classList.add('ok');
+      pseudoAvailable=true;
+      $('savePseudoBtn').disabled=false;
+    }
+  };
+
+  $('savePseudoBtn').onclick=async()=>{
+    if(!pseudoAvailable)return;
+    const val=$('newPseudoInput').value.trim();
+    $('savePseudoBtn').disabled=true;$('savePseudoBtn').textContent='Enregistrement…';
+    const{error}=await SB.from('profiles').update({pseudo:val}).eq('id',currentUser.id);
+    if(error){
+      $('pseudoStatus').textContent='Erreur lors de l\'enregistrement.';$('pseudoStatus').className='pseudo-status err';
+      $('savePseudoBtn').disabled=false;$('savePseudoBtn').textContent='Enregistrer le pseudo';
+    } else {
+      currentPseudo=val;
+      renderAuthZone(true);
+      renderProfile(); // re-render with new name
+    }
+  };
 }
 
-[$('backFromCat'),$('backFromCGU'),$('backFromProfile')].forEach(b=>b&&(b.onclick=()=>history.back()||showScreen('landing')));
-
-// ══ SETUP ══
+// ══ SETUP HOME ══
 const convEl=$('conviction'),charEl=$('charCount'),startEl=$('startBtn');
 convEl.addEventListener('input',()=>{charEl.textContent=convEl.value.length;startEl.disabled=convEl.value.trim().length<10});
 document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
   S.persona=b.dataset.persona;
-  // Avocat du diable → force brutal, lock ferocity buttons
   const isDevil = b.dataset.persona === 'devil';
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x=>{
     x.disabled = isDevil;
@@ -700,7 +739,6 @@ document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{
     const brutalBtn=document.querySelector('#ferocityGroup .tbtn[data-val="brutal"]');
     if(brutalBtn){brutalBtn.classList.add('on');brutalBtn.style.opacity='1';}
   } else {
-    // Restore normal ferocity selection
     const normalBtn=document.querySelector('#ferocityGroup .tbtn[data-val="normal"]');
     if(normalBtn){normalBtn.classList.add('on');}
     S.ferocity='normal';
@@ -720,28 +758,16 @@ sendEl.onclick=()=>sendMsg();
 
 $('backToDebate').onclick=()=>showScreen('debate');
 $('newDebate').onclick=()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;updateResumeBtn();showScreen('home')};
+$('closeDebateBtn').onclick=()=>{resetState();convEl.value='';charEl.textContent='0';startEl.disabled=true;updateResumeBtn();showScreen('home')};
 
-// closeDebateBtn is added dynamically after verdict renders
 function updateResumeBtn(){
   const wrap=$('resumeDebateWrap');
   if(!wrap)return;
-  if(S.history.length>0){
-    wrap.style.display='block';
-  } else {
-    wrap.style.display='none';
-  }
+  wrap.style.display=S.history.length>0?'block':'none';
 }
 
 document.addEventListener('click',e=>{
-  if(e.target&&e.target.id==='closeDebateBtn'){
-    resetState();
-    convEl.value='';charEl.textContent='0';startEl.disabled=true;
-    updateResumeBtn();
-    showScreen('home');
-  }
-  if(e.target&&e.target.id==='resumeDebateBtn'){
-    showScreen('debate');
-  }
+  if(e.target&&e.target.id==='resumeDebateBtn') showScreen('debate');
 });
 
 async function startDebate(){
@@ -752,6 +778,7 @@ async function startDebate(){
   $('convictionStrip').textContent=S.conviction;
   $('messages').innerHTML='';$('turnCount').textContent='0 échange';
   $('verdictBtn').disabled=true;$('verdictHint').textContent='Verdict dans 5 échanges';
+  $('verdictHint').style.display='';
   showScreen('debate');updateResumeBtn();setLoading(true);
   S.history.push({role:'user',content:`Je soutiens que : ${S.conviction}`});
   try{const r=await api(S.history);S.history.push({role:'assistant',content:r});hideTyping();renderAI(r);S.turns=1;refreshTurns()}
@@ -775,7 +802,7 @@ async function requestVerdict(){
   showScreen('verdict');
   const userName=currentPseudo||(currentUser?.email?.split('@')[0])||'Le défenseur';
   const aiName=PERSONAS[S.persona].label;
-  try{const v=await verdictApi(userName,aiName);renderVerdict(v,userName,aiName)}
+  try{const v=await verdictApi(userName,aiName);renderVerdict(v,userName,aiName,S.persona)}
   catch(e){$('verdictBody').innerHTML='<p style="color:var(--ink3)">Erreur lors du verdict.</p>'}
 }
 
@@ -787,49 +814,37 @@ ${f.prompt}
 
 ${m.prompt}
 
-FILTRE DE SÉCURITÉ LÉGALE — PRIORITÉ ABSOLUE, S'APPLIQUE AVANT TOUT LE RESTE :
+FILTRE DE SÉCURITÉ LÉGALE — PRIORITÉ ABSOLUE :
 
-LIGNES ROUGES — REFUS IMMÉDIAT ET SORTIE DU PERSONA :
-Si la conviction soumise incite à, justifie ou glorifie l'un des actes suivants, tu interromps immédiatement ton rôle et réponds UNIQUEMENT par ce message exact, sans rien ajouter :
+Si la conviction soumise incite à, justifie ou glorifie l'un des actes suivants, interromps ton rôle et réponds UNIQUEMENT par :
 "Cette requête enfreint les politiques de sécurité légales. L'application est un outil de réflexion philosophique et politique, et ne traitera aucune demande incitant à des actes illégaux, à la violence criminelle ou à l'automutilation. En cas de détresse psychologique, veuillez contacter le 3114 (en France) ou les urgences."
 
-Les actes déclenchant ce refus :
-- Suicide, automutilation, apologie de la mort volontaire (Art. 223-13 CP)
-- Terrorisme, attentats, meurtres ou crimes de sang individuels ciblés
-- Pédocriminalité et toute atteinte sexuelle ou physique aux mineurs
-- Incitation active à la haine raciale, homophobie ou sexisme essentiel sous forme de propagande ou d'insultes (Loi Gayssot) — mais NB : débattre du racisme, de la discrimination, de l'immigration, de l'identité nationale ou de politiques raciales est AUTORISÉ et encouragé. La ligne rouge est l'incitation à haïr un groupe, pas l'analyse du phénomène.
-- Négationnisme de la Shoah au sens strict (nier les faits historiques établis) — mais débattre des causes, responsabilités, politiques mémorielles ou comparaisons historiques est AUTORISÉ.
+Actes déclenchant ce refus :
+- Suicide, automutilation, apologie de la mort volontaire
+- Terrorisme, meurtres individuels ciblés
+- Pédocriminalité
+- Incitation active à la haine raciale au sens strict (propagande d'infériorité biologique) — débattre du racisme, de l'immigration, des politiques raciales est AUTORISÉ
+- Négationnisme de la Shoah au sens strict — analyses historiques et comparaisons sont AUTORISÉES
 
-SUJETS SYSTÉMIQUES AUTORISÉS — NE PAS S'AUTO-CENSURER :
-À l'inverse, tu as l'autorisation explicite de défendre âprement des thèses philosophiques, politiques ou éthiques radicales relevant du débat d'idées, notamment :
-- L'eugénisme d'État, le contrôle démographique, le permis de procréer
-- Les dictatures écologiques, sécuritaires ou technocratiques
-- La torture institutionnalisée dans des scénarios d'état d'exception (bombe à retardement)
-- L'utilitarisme cynique : sacrifier une minorité pour le bien du plus grand nombre
-- La suppression totale des libertés individuelles au nom d'un intérêt collectif supérieur
-- Toute théorie politique dystopique ou philosophie radicale qui ne constitue pas une incitation à un crime individuel
-
-Règle de discernement : l'apologie d'un acte criminel individuel est interdite. La défense d'une théorie politique, étatique ou philosophique — même extrême — est autorisée et constitue l'objet même de cet outil.
+SUJETS SYSTÉMIQUES AUTORISÉS :
+Eugénisme d'État, dictatures écologiques, torture institutionnelle en état d'exception, utilitarisme cynique, suppression des libertés individuelles, toute théorie politique dystopique.
 
 VÉRIFICATION DES SOURCES :
-Si l'adversaire cite un chiffre sans source, demande la source précise.
-Si la source est Reddit, un blog, un forum ou un média non scientifique, signale-le et refuse de l'accepter comme preuve.
+Si l'adversaire cite un chiffre sans source, demande la source précise. Si la source est Reddit, un blog, ou un média non scientifique, signale-le.
 
 SUJETS NON DÉBATTABLES :
-Si la conviction n'est pas débattable (météo, fait divers, goût personnel sans enjeu), réponds uniquement : "Ce n'est pas un sujet à débattre." et rien d'autre.
+Si la conviction n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre."
 
 FORMAT STRICT :
 1. Adresse directement ce qui vient d'être dit.
 2. Un argument factuel ou philosophique solide.
 3. Si pertinent : une question piège fermée, termine par exactement : [Réponds par oui ou non]
-Si une réponse libre est plus pertinente, omets ce marqueur.
 
 INTERDICTIONS :
 Jamais "Bonne question", "Certainement", "Tout à fait", "En effet", "Absolument".
 Jamais de listes à tirets. Jamais de markdown. Jamais "En tant que...".
-${S.persona !== 'devil' ? 'Jamais de formulations lyriques ou emphatiques. Maximum 150 mots.' : ''}
-Une seule question par réplique.
-Tu parles comme un humain dans un vrai débat.
+${S.persona !== 'devil' ? 'Maximum 150 mots.' : ''}
+Une seule question par réplique. Tu parles comme un humain dans un vrai débat.
 
 ${S.persona !== 'devil' ? 'Conviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
 }
@@ -843,10 +858,9 @@ async function api(history){
 }
 
 async function verdictApi(userName,aiName){
-  // Strip markdown from transcript so it doesn't pollute the verdict JSON
   const stripMd = t => t.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s/gm,'').replace(/\*/g,'');
   const transcript=S.history.map(m=>`${m.role==='user'?userName:aiName} : ${stripMd(m.content)}`).join('\n\n');
-  const res=await fetch('/api/verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName})});
+  const res=await fetch('/api/verdict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName,persona:S.persona})});
   if(!res.ok)throw new Error(`${res.status}`);
   const d=await res.json();return d.verdict;
 }
@@ -859,7 +873,6 @@ function renderUser(text){
   div.innerHTML=`<div class="mwho">${esc(name)}</div><div class="mbub">${esc(text)}</div>`;
   msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
 }
-
 function renderAI(raw){
   const msgs=$('messages'),p=PERSONAS[S.persona];
   const hasBin=raw.includes('[Réponds par oui ou non]');
@@ -870,7 +883,6 @@ function renderAI(raw){
   if(hasBin){S.waitingBinary=true;showBinary();}
   msgs.scrollTop=msgs.scrollHeight;
 }
-
 function showBinary(){
   removeBinaryOnly();
   const msgs=$('messages'),wrap=document.createElement('div');
@@ -879,9 +891,7 @@ function showBinary(){
   const non=document.createElement('button');non.className='binbtn bnon';non.textContent='Non';non.onclick=()=>sendMsg('Non.');
   wrap.appendChild(oui);wrap.appendChild(non);msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
 }
-
 function removeBinaryOnly(){const el=$('binaryWrap');if(el)el.remove()}
-
 function showTyping(){
   const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
   div.className='msg a';div.id='typing';
@@ -897,19 +907,16 @@ function refreshTurns(){
   else $('verdictHint').style.display='none';
 }
 
-function renderVerdict(raw,userName,aiName){
+// ══ RENDU DU VERDICT ══
+function renderVerdict(raw, userName, aiName, persona){
   let d;
   try{
-    // Strip markdown fences, extract first JSON object found
     let cleaned = raw.replace(/```json|```/g,'').trim();
-    // Find the first { and last } to extract pure JSON
     const start = cleaned.indexOf('{');
     const end = cleaned.lastIndexOf('}');
     if(start !== -1 && end !== -1) cleaned = cleaned.slice(start, end+1);
     d=JSON.parse(cleaned);
-  }
-  catch(e){
-    // Try to show something useful even if JSON fails
+  } catch(e){
     $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse brute</p><p class="v-section-text">${esc(raw)}</p></div>`;
     return;
   }
@@ -919,6 +926,7 @@ function renderVerdict(raw,userName,aiName){
   const winnerName=isUserWinner?userName:aiName;
   const winnerPct=winnerDisplay.match(/\((\d+)%\)/)?.[1]||'';
 
+  // Winner block
   let html=`
     <div class="v-winner-block">
       <div class="v-winner-label">Vainqueur du débat</div>
@@ -926,11 +934,12 @@ function renderVerdict(raw,userName,aiName){
       ${winnerPct?`<div class="v-winner-pct">${winnerPct}% de domination</div>`:''}
     </div>`;
 
+  // Category bars
   if(d.categories&&d.categories.length){
     html+='<div class="v-cats">';
     d.categories.forEach((cat,i)=>{
       const pct=cat.pct||50;
-      const userWinsThis=cat.winner==='Défenseur'||cat.winner?.toLowerCase().includes(userName.toLowerCase());
+      const userWinsThis=cat.winner&&(cat.winner==='Défenseur'||cat.winner?.toLowerCase().includes(userName.toLowerCase()));
       const userPct=userWinsThis?pct:100-pct;
       const aiPct=100-userPct;
       const badgeCls=userWinsThis?'':'sage';
@@ -938,15 +947,15 @@ function renderVerdict(raw,userName,aiName){
       html+=`<div class="vcat" style="animation-delay:${i*0.08}s">
         <div class="vcat-head">
           <span class="vcat-label">${esc(cat.label)}</span>
-          <span class="vcat-winner-badge ${badgeCls}">${esc(badgeName)}</span>
+          <span class="vcat-winner-badge ${badgeCls}" title="${esc(badgeName)}">${esc(badgeName)}</span>
         </div>
         <div class="vbar-wrap">
-          <span class="vbar-name">${esc(userName)}</span>
+          <span class="vbar-name" title="${esc(userName)}">${esc(userName)}</span>
           <div class="vbar"><div class="vbar-fill-user" style="width:${userPct}%"></div></div>
           <span class="vbar-pct">${userPct}%</span>
         </div>
         <div class="vbar-wrap">
-          <span class="vbar-name">${esc(aiName)}</span>
+          <span class="vbar-name" title="${esc(aiName)}">${esc(aiName)}</span>
           <div class="vbar"><div class="vbar-fill-ai" style="width:${aiPct}%"></div></div>
           <span class="vbar-pct">${aiPct}%</span>
         </div>
@@ -954,6 +963,22 @@ function renderVerdict(raw,userName,aiName){
       </div>`;
     });
     html+='</div>';
+  }
+
+  if(persona === 'devil'){
+    // Devil-specific sections
+    if(d.coup_fatal){
+      html+=`<div class="v-devil-block">
+        <p class="v-section-label">⚡ Le coup fatal</p>
+        <p class="v-section-text">${esc(d.coup_fatal)}</p>
+      </div>`;
+    }
+    if(d.analyse_faiblesses_ia){
+      html+=`<div class="v-critique">
+        <p class="v-section-label">Où l'IA a failli</p>
+        <p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p>
+      </div>`;
+    }
   }
 
   if(d.summary){
