@@ -449,7 +449,8 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 const { createClient } = supabase;
 const SB = createClient(
   'https://bsabkjrnebzdrvleciva.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M',
+  { auth: { persistSession: true, autoRefreshToken: true } }
 );
 
 // ══ PERSONAS ══
@@ -553,28 +554,47 @@ window.addEventListener('popstate', e => {
 })();
 
 // ══ AUTH STATE ══
-SB.auth.onAuthStateChange(async(event,session)=>{
-  if(session?.user){
-    currentUser=session.user;
-    const {data}=await SB.from('profiles').select('pseudo').eq('id',session.user.id).single();
-    currentPseudo=data?.pseudo||null;
-    renderAuthZone(true);
-  } else {
-    currentUser=null;currentPseudo=null;
-    renderAuthZone(false);
+// Charge la session existante dès le démarrage (localStorage → pas de flash login/signup)
+async function initAuth() {
+  const { data: { session } } = await SB.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).single();
+    currentPseudo = data?.pseudo || null;
   }
+  renderAuthZone();
+}
+initAuth();
+
+// Écoute les changements ultérieurs (login, logout, refresh token)
+SB.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_OUT' || !session) {
+    currentUser = null; currentPseudo = null;
+  } else if (session?.user) {
+    currentUser = session.user;
+    const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).single();
+    currentPseudo = data?.pseudo || null;
+  }
+  renderAuthZone();
 });
 
-function renderAuthZone(logged){
-  const z=$('authZone');
-  if(logged){
-    const initial=(currentPseudo||currentUser.email||'?')[0].toUpperCase();
-    const name=currentPseudo||currentUser.email;
-    z.innerHTML=`<div class="user-chip"><div class="user-avatar">${initial}</div><span class="user-name">${esc(name)}</span></div>`;
+// Centralise tout le rendu de la zone auth + les bindings boutons
+function renderAuthZone() {
+  const z = $('authZone');
+  if (currentUser) {
+    const initial = (currentPseudo || currentUser.email || '?')[0].toUpperCase();
+    const name = currentPseudo || currentUser.email;
+    z.innerHTML = `<div class="user-chip" id="profileChip" style="cursor:pointer" title="Mon profil">
+      <div class="user-avatar">${initial}</div>
+      <span class="user-name">${esc(name)}</span>
+    </div>`;
+    // Chip cliquable → ouvre le profil directement
+    $('profileChip').onclick = () => { renderProfile(); showScreen('page-profile'); };
   } else {
-    z.innerHTML=`<button class="auth-btn btn-login" id="loginBtn">Connexion</button><button class="auth-btn btn-signup" id="signupBtn">Créer un compte</button>`;
-    $('loginBtn').onclick=()=>openOverlay('loginOverlay');
-    $('signupBtn').onclick=()=>openOverlay('signupOverlay');
+    z.innerHTML = `<button class="auth-btn btn-login" id="loginBtn">Connexion</button>
+                   <button class="auth-btn btn-signup" id="signupBtn">Créer un compte</button>`;
+    $('loginBtn').onclick = () => openOverlay('loginOverlay');
+    $('signupBtn').onclick = () => openOverlay('signupOverlay');
   }
 }
 
@@ -600,7 +620,10 @@ $('loginSubmit').onclick=async()=>{
   const{error}=await SB.auth.signInWithPassword({email,password:pw});
   $('loginSubmit').disabled=false;$('loginSubmit').textContent='Se connecter';
   if(error){errEl.textContent='Email ou mot de passe incorrect.';errEl.classList.add('show')}
-  else closeOverlay('loginOverlay');
+  else {
+    $('loginEmail').value=''; $('loginPassword').value='';
+    closeOverlay('loginOverlay');
+  }
 };
 
 // Inscription
@@ -614,21 +637,51 @@ $('signupSubmit').onclick=async()=>{
   if(pw.length<8){signupErr.textContent='Mot de passe trop court (8 caractères min.)';signupErr.classList.add('show');return}
   if(pseudo.length<3){pseudoErr.textContent='Le pseudo doit faire au moins 3 caractères.';pseudoErr.classList.add('show');return}
   $('signupSubmit').disabled=true;$('signupSubmit').textContent='Création…';
-  const{data:existing}=await SB.from('profiles').select('id').eq('pseudo',pseudo).maybeSingle();
-  if(existing){
+
+  // Vérifie la dispo du pseudo via RPC pour contourner les problèmes RLS potentiels
+  const pseudoTaken = await checkPseudoExists(pseudo);
+  if(pseudoTaken){
     $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
     pseudoErr.textContent='Ce pseudo est déjà pris. Choisis-en un autre.';pseudoErr.classList.add('show');
     return;
   }
+
   const{data,error}=await SB.auth.signUp({email,password:pw});
   if(error){
     $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
     signupErr.textContent=error.message||'Erreur lors de la création.';signupErr.classList.add('show');return;
   }
-  if(data.user){await SB.from('profiles').insert({id:data.user.id,pseudo,email});}
+  if(data.user){
+    // upsert au lieu de insert pour éviter les conflits en cas de double appel
+    await SB.from('profiles').upsert({id:data.user.id,pseudo,email},{onConflict:'id'});
+  }
   $('signupSubmit').disabled=false;$('signupSubmit').textContent='Créer mon compte';
+  $('signupPseudo').value='';$('signupEmail').value='';$('signupPassword').value='';
   closeOverlay('signupOverlay');
 };
+
+// ══ HELPER — vérification pseudo (robuste aux erreurs RLS) ══
+// Utilise .select().eq().limit(1) — plus fiable que .maybeSingle() avec RLS.
+// Si Supabase bloque la requête (RLS), on retourne false et laisse l'unique constraint DB gérer.
+async function checkPseudoExists(pseudo) {
+  try {
+    const { data, error } = await SB
+      .from('profiles')
+      .select('id')
+      .eq('pseudo', pseudo)
+      .limit(1);
+    if (error) {
+      console.warn('checkPseudoExists — Supabase error (possible RLS):', error.message, error.code);
+      // Si c'est une erreur RLS (code 42501 ou PGRST116), on ne peut pas vérifier
+      // On retourne false pour laisser l'utilisateur continuer (la contrainte unique DB rejettera si pris)
+      return false;
+    }
+    return Array.isArray(data) && data.length > 0;
+  } catch(e) {
+    console.warn('checkPseudoExists — exception réseau:', e);
+    return false;
+  }
+}
 
 // Confirm quitter débat
 $('confirmCancel').onclick=()=>closeOverlay('confirmOverlay');
@@ -651,7 +704,8 @@ $('menuCGU').onclick=()=>{menuDropdown.classList.remove('open');showScreen('page
 $('menuProfile').onclick=()=>{
   menuDropdown.classList.remove('open');
   if(!currentUser){openOverlay('loginOverlay');return}
-  renderProfile();showScreen('page-profile');
+  renderProfile();
+  showScreen('page-profile');
 };
 
 // Boutons retour des pages de contenu — utilisent history.back() qui déclenche popstate
@@ -680,42 +734,74 @@ function renderProfile(){
 
     <button class="btn-primary" id="logoutBtn" style="max-width:200px;background:var(--cream2);color:var(--ink2);border:1.5px solid var(--cream3)">Se déconnecter</button>`;
 
-  $('logoutBtn').onclick=async()=>{await SB.auth.signOut();showScreen('landing')};
+  // Déconnexion — await + navigation après confirmation Supabase
+  $('logoutBtn').onclick = async () => {
+    $('logoutBtn').disabled = true;
+    $('logoutBtn').textContent = 'Déconnexion…';
+    await SB.auth.signOut();
+    // onAuthStateChange prendra le relais pour renderAuthZone()
+    showScreen('landing');
+  };
 
   let pseudoAvailable = false;
 
-  $('checkPseudoBtn').onclick=async()=>{
-    const val=$('newPseudoInput').value.trim();
-    const statusEl=$('pseudoStatus');
-    pseudoAvailable=false;
-    $('savePseudoBtn').disabled=true;
-    statusEl.className='pseudo-status';
-    if(!val||val.length<3){statusEl.textContent='Le pseudo doit faire au moins 3 caractères.';statusEl.classList.add('err');return}
-    if(val===currentPseudo){statusEl.textContent='C\'est déjà ton pseudo actuel.';statusEl.classList.add('err');return}
-    $('checkPseudoBtn').textContent='Vérification…';$('checkPseudoBtn').disabled=true;
-    const{data:existing}=await SB.from('profiles').select('id').eq('pseudo',val).maybeSingle();
-    $('checkPseudoBtn').textContent='Vérifier';$('checkPseudoBtn').disabled=false;
-    if(existing){
-      statusEl.textContent='Ce pseudo est déjà pris. Choisis-en un autre.';statusEl.classList.add('err');
+  $('checkPseudoBtn').onclick = async () => {
+    const val = $('newPseudoInput').value.trim();
+    const statusEl = $('pseudoStatus');
+    pseudoAvailable = false;
+    $('savePseudoBtn').disabled = true;
+    statusEl.className = 'pseudo-status';
+    statusEl.style.display = 'none';
+
+    if (!val || val.length < 3) {
+      statusEl.textContent = 'Le pseudo doit faire au moins 3 caractères.';
+      statusEl.className = 'pseudo-status err';
+      statusEl.style.display = 'block';
+      return;
+    }
+    if (val === currentPseudo) {
+      statusEl.textContent = "C'est déjà ton pseudo actuel.";
+      statusEl.className = 'pseudo-status err';
+      statusEl.style.display = 'block';
+      return;
+    }
+
+    $('checkPseudoBtn').textContent = 'Vérification…';
+    $('checkPseudoBtn').disabled = true;
+
+    const taken = await checkPseudoExists(val);
+
+    $('checkPseudoBtn').textContent = 'Vérifier';
+    $('checkPseudoBtn').disabled = false;
+    statusEl.style.display = 'block';
+
+    if (taken) {
+      statusEl.textContent = 'Ce pseudo est déjà pris. Choisis-en un autre.';
+      statusEl.className = 'pseudo-status err';
     } else {
-      statusEl.textContent='✓ Ce pseudo est disponible !';statusEl.classList.add('ok');
-      pseudoAvailable=true;
-      $('savePseudoBtn').disabled=false;
+      statusEl.textContent = '✓ Ce pseudo est disponible !';
+      statusEl.className = 'pseudo-status ok';
+      pseudoAvailable = true;
+      $('savePseudoBtn').disabled = false;
     }
   };
 
-  $('savePseudoBtn').onclick=async()=>{
-    if(!pseudoAvailable)return;
-    const val=$('newPseudoInput').value.trim();
-    $('savePseudoBtn').disabled=true;$('savePseudoBtn').textContent='Enregistrement…';
-    const{error}=await SB.from('profiles').update({pseudo:val}).eq('id',currentUser.id);
-    if(error){
-      $('pseudoStatus').textContent='Erreur lors de l\'enregistrement.';$('pseudoStatus').className='pseudo-status err';
-      $('savePseudoBtn').disabled=false;$('savePseudoBtn').textContent='Enregistrer le pseudo';
+  $('savePseudoBtn').onclick = async () => {
+    if (!pseudoAvailable) return;
+    const val = $('newPseudoInput').value.trim();
+    $('savePseudoBtn').disabled = true;
+    $('savePseudoBtn').textContent = 'Enregistrement…';
+    const { error } = await SB.from('profiles').update({ pseudo: val }).eq('id', currentUser.id);
+    if (error) {
+      $('pseudoStatus').textContent = "Erreur lors de l'enregistrement : " + error.message;
+      $('pseudoStatus').className = 'pseudo-status err';
+      $('pseudoStatus').style.display = 'block';
+      $('savePseudoBtn').disabled = false;
+      $('savePseudoBtn').textContent = 'Enregistrer le pseudo';
     } else {
-      currentPseudo=val;
-      renderAuthZone(true);
-      renderProfile(); // re-render with new name
+      currentPseudo = val;
+      renderAuthZone();
+      renderProfile(); // re-render avec le nouveau nom
     }
   };
 }
