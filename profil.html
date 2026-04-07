@@ -216,7 +216,14 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  // Récupère la session depuis le localStorage — synchrone grâce à getSession()
+  // Supabase peut placer access_token dans le hash quand il redirige apres confirmation email
+  // exchangeCodeForSession le parse et etablit la session
+  if (location.hash.includes('access_token') || location.hash.includes('error_description')) {
+    try {
+      await SB.auth.exchangeCodeForSession(location.href);
+    } catch(e) { /* ignore, getSession prend le relais */ }
+  }
+
   const { data: { session }, error } = await SB.auth.getSession();
   if (error) { console.error('getSession error:', error); }
 
@@ -453,7 +460,7 @@ $('goLogin').onclick  = () => show('screen-login');
 
 // ── écoute les changements de session (ex: token refresh, email confirm) ──
 SB.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user && !user) {
+  if (event === 'SIGNED_IN' && session?.user) {
     user = session.user;
     await loadPseudo();
     renderProfile();
