@@ -216,34 +216,32 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  // Supabase peut placer access_token dans le hash quand il redirige apres confirmation email
-  // exchangeCodeForSession le parse et etablit la session
-  if (location.hash.includes('access_token') || location.hash.includes('error_description')) {
-    try {
-      await SB.auth.exchangeCodeForSession(location.href);
-    } catch(e) { /* ignore, getSession prend le relais */ }
-  }
+  try {
+    const { data: { session }, error } = await SB.auth.getSession();
+    if (error) console.error('getSession error:', error);
 
-  const { data: { session }, error } = await SB.auth.getSession();
-  if (error) { console.error('getSession error:', error); }
-
-  if (session?.user) {
-    user = session.user;
-    await loadPseudo();
-    renderProfile();
-    show('screen-profile');
-  } else {
+    if (session?.user) {
+      user = session.user;
+      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo failed:', e); }
+      renderProfile();
+      show('screen-profile');
+    } else {
+      show('screen-login');
+    }
+  } catch(e) {
+    console.error('init() fatal error:', e);
     show('screen-login');
   }
 }
 
 async function loadPseudo() {
   if (!user) return;
+  // .maybeSingle() au lieu de .single() — retourne null sans erreur si pas de ligne
   const { data, error } = await SB
     .from('profiles')
     .select('pseudo')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
   if (error) console.warn('loadPseudo error:', error.message);
   pseudo = data?.pseudo || null;
 }
@@ -460,7 +458,7 @@ $('goLogin').onclick  = () => show('screen-login');
 
 // ── écoute les changements de session (ex: token refresh, email confirm) ──
 SB.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user) {
+  if (event === 'SIGNED_IN' && session?.user && !user) {
     user = session.user;
     await loadPseudo();
     renderProfile();
