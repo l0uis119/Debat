@@ -190,8 +190,30 @@ const SB_URL = 'https://bsabkjrnebzdrvleciva.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M';
 
 const { createClient } = supabase;
+
+// Certains navigateurs (Edge, Safari) bloquent localStorage via "Tracking Prevention".
+// On détecte ça et on bascule sur un stockage en mémoire pour que Supabase fonctionne quand même.
+const memStorage = (() => {
+  const store = {};
+  return {
+    getItem:    (k) => store[k] ?? null,
+    setItem:    (k, v) => { store[k] = v; },
+    removeItem: (k) => { delete store[k]; },
+  };
+})();
+
+function safeStorage() {
+  try { localStorage.setItem('__test__', '1'); localStorage.removeItem('__test__'); return localStorage; }
+  catch(e) { return memStorage; }
+}
+
 const SB = createClient(SB_URL, SB_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth' }
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storageKey: 'sb-objection-auth',
+    storage: safeStorage(),
+  }
 });
 
 // ── utils ──
@@ -216,32 +238,27 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  try {
-    const { data: { session }, error } = await SB.auth.getSession();
-    if (error) console.error('getSession error:', error);
+  // Récupère la session depuis le localStorage — synchrone grâce à getSession()
+  const { data: { session }, error } = await SB.auth.getSession();
+  if (error) { console.error('getSession error:', error); }
 
-    if (session?.user) {
-      user = session.user;
-      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo failed:', e); }
-      renderProfile();
-      show('screen-profile');
-    } else {
-      show('screen-login');
-    }
-  } catch(e) {
-    console.error('init() fatal error:', e);
+  if (session?.user) {
+    user = session.user;
+    await loadPseudo();
+    renderProfile();
+    show('screen-profile');
+  } else {
     show('screen-login');
   }
 }
 
 async function loadPseudo() {
   if (!user) return;
-  // .maybeSingle() au lieu de .single() — retourne null sans erreur si pas de ligne
   const { data, error } = await SB
     .from('profiles')
     .select('pseudo')
     .eq('id', user.id)
-    .maybeSingle();
+    .single();
   if (error) console.warn('loadPseudo error:', error.message);
   pseudo = data?.pseudo || null;
 }
