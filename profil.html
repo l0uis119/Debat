@@ -238,16 +238,24 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  // Récupère la session depuis le localStorage — synchrone grâce à getSession()
-  const { data: { session }, error } = await SB.auth.getSession();
-  if (error) { console.error('getSession error:', error); }
-
-  if (session?.user) {
-    user = session.user;
-    await loadPseudo();
-    renderProfile();
-    show('screen-profile');
-  } else {
+  // Timeout de sécurité : si init() plante ou bloque, on affiche login après 4s
+  const fallback = setTimeout(() => show('screen-login'), 4000);
+  try {
+    const { data, error } = await SB.auth.getSession();
+    clearTimeout(fallback);
+    if (error) console.error('getSession error:', error);
+    const session = data?.session;
+    if (session?.user) {
+      user = session.user;
+      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo failed:', e); }
+      renderProfile();
+      show('screen-profile');
+    } else {
+      show('screen-login');
+    }
+  } catch(e) {
+    clearTimeout(fallback);
+    console.error('init() fatal:', e);
     show('screen-login');
   }
 }
@@ -258,7 +266,7 @@ async function loadPseudo() {
     .from('profiles')
     .select('pseudo')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
   if (error) console.warn('loadPseudo error:', error.message);
   pseudo = data?.pseudo || null;
 }
