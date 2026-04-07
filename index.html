@@ -368,10 +368,25 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 <script>
 // ══ SUPABASE (lecture seule pour récupérer le pseudo affiché dans les messages) ══
 const { createClient } = supabase;
+
+const memStorage = (() => {
+  const store = {};
+  return {
+    getItem:    (k) => store[k] ?? null,
+    setItem:    (k, v) => { store[k] = v; },
+    removeItem: (k) => { delete store[k]; },
+  };
+})();
+
+function safeStorage() {
+  try { localStorage.setItem('__test__', '1'); localStorage.removeItem('__test__'); return localStorage; }
+  catch(e) { return memStorage; }
+}
+
 const SB = createClient(
   'https://bsabkjrnebzdrvleciva.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M',
-  { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth' } }
+  { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth', storage: safeStorage() } }
 );
 
 let currentUser = null;
