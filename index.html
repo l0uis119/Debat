@@ -394,12 +394,16 @@ let currentPseudo = null;
 
 // Charge la session et met à jour la topbar
 async function initAuth() {
-  const { data: { session } } = await SB.auth.getSession();
-  if (session?.user) {
-    currentUser = session.user;
-    const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).single();
-    currentPseudo = data?.pseudo || null;
-  }
+  try {
+    const { data: sd } = await SB.auth.getSession();
+    if (sd?.session?.user) {
+      currentUser = sd.session.user;
+      try {
+        const { data } = await SB.from('profiles').select('pseudo').eq('id', currentUser.id).maybeSingle();
+        currentPseudo = data?.pseudo || null;
+      } catch(e) { currentPseudo = null; }
+    }
+  } catch(e) { console.warn('initAuth error:', e); }
   renderAuthZone();
 }
 
@@ -408,8 +412,10 @@ SB.auth.onAuthStateChange(async (event, session) => {
     currentUser = null; currentPseudo = null;
   } else if (session?.user) {
     currentUser = session.user;
-    const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).single();
-    currentPseudo = data?.pseudo || null;
+    try {
+      const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).maybeSingle();
+      currentPseudo = data?.pseudo || null;
+    } catch(e) { currentPseudo = null; }
   }
   renderAuthZone();
 });
