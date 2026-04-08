@@ -394,28 +394,44 @@ let currentPseudo = null;
 
 // Charge la session et met à jour la topbar
 async function initAuth() {
+  // Lit le pseudo depuis sessionStorage (écrit par profil.html au login)
+  // sessionStorage n'est pas bloqué par le tracking prevention d'Edge
+  try {
+    const sp = sessionStorage.getItem('objection_pseudo');
+    const se = sessionStorage.getItem('objection_email');
+    if (se) {
+      currentPseudo = sp || null;
+      currentUser = currentUser || { email: se };
+      renderAuthZone();
+    }
+  } catch(e) {}
+
+  // Essaie aussi la session Supabase pour avoir le vrai objet user
   try {
     const { data: sd } = await SB.auth.getSession();
     if (sd?.session?.user) {
       currentUser = sd.session.user;
-      try {
-        const { data } = await SB.from('profiles').select('pseudo').eq('id', currentUser.id).maybeSingle();
-        currentPseudo = data?.pseudo || null;
-      } catch(e) { currentPseudo = null; }
+      if (!currentPseudo) {
+        try {
+          const { data } = await SB.from('profiles').select('pseudo').eq('id', currentUser.id).maybeSingle();
+          currentPseudo = data?.pseudo || null;
+        } catch(e) {}
+      }
+      renderAuthZone();
     }
-  } catch(e) { console.warn('initAuth error:', e); }
-  renderAuthZone();
+  } catch(e) {}
 }
 
 SB.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT' || !session) {
     currentUser = null; currentPseudo = null;
+    try { sessionStorage.removeItem('objection_pseudo'); sessionStorage.removeItem('objection_email'); } catch(e) {}
   } else if (session?.user) {
     currentUser = session.user;
     try {
       const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).maybeSingle();
       currentPseudo = data?.pseudo || null;
-    } catch(e) { currentPseudo = null; }
+    } catch(e) {}
   }
   renderAuthZone();
 });
