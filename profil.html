@@ -82,7 +82,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .auth-switch a:hover{text-decoration:underline}
 
 /* ── LOADING ── */
-/* PAS de display:flex ici — c'est .screen.active qui contrôle la visibilité */
 #screen-loading.active{display:flex;align-items:center;justify-content:center;min-height:100vh}
 .spinner{width:32px;height:32px;border:3px solid var(--cream3);border-top-color:var(--terra);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -482,19 +481,14 @@ $('goSignup').onclick = () => show('screen-signup');
 $('goLogin').onclick  = () => show('screen-login');
 
 // ── écoute les changements de session ──
-// Note: on n'agit sur SIGNED_IN que si init() n'a pas déjà établi la session
 SB.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    user = null; pseudo = null;
+    user = null;
+    pseudo = null;
     show('screen-login');
   }
-  // SIGNED_IN géré uniquement si user n'est pas déjà défini (cas confirmation email)
-  if (event === 'SIGNED_IN' && session?.user && !user) {
-    user = session.user;
-    try { await loadPseudo(); } catch(e) {}
-    renderProfile();
-    show('screen-profile');
-  }
+  // Pas de handler SIGNED_IN ici — le login handler s'en occupe directement.
+  // onAuthStateChange SIGNED_IN causerait un double-render.
 });
 
 // ── démarrage ──
