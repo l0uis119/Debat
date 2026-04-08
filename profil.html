@@ -82,7 +82,8 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .auth-switch a:hover{text-decoration:underline}
 
 /* ── LOADING ── */
-#screen-loading{display:flex;align-items:center;justify-content:center;min-height:100vh}
+/* PAS de display:flex ici — c'est .screen.active qui contrôle la visibilité */
+#screen-loading.active{display:flex;align-items:center;justify-content:center;min-height:100vh}
 .spinner{width:32px;height:32px;border:3px solid var(--cream3);border-top-color:var(--terra);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -95,7 +96,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 </nav>
 
 <!-- Loading initial -->
-<div id="screen-loading"><div class="spinner"></div></div>
+<div id="screen-loading" class="screen active"><div class="spinner"></div></div>
 
 <!-- Profil (connecté) -->
 <div id="screen-profile" class="screen">
@@ -238,8 +239,7 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  // Timeout de sécurité : si init() plante ou bloque, on affiche login après 4s
-  const fallback = setTimeout(() => show('screen-login'), 4000);
+  const fallback = setTimeout(() => show('screen-login'), 5000);
   try {
     const { data, error } = await SB.auth.getSession();
     clearTimeout(fallback);
@@ -247,7 +247,7 @@ async function init() {
     const session = data?.session;
     if (session?.user) {
       user = session.user;
-      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo failed:', e); }
+      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo:', e); }
       renderProfile();
       show('screen-profile');
     } else {
@@ -255,7 +255,7 @@ async function init() {
     }
   } catch(e) {
     clearTimeout(fallback);
-    console.error('init() fatal:', e);
+    console.error('init fatal:', e);
     show('screen-login');
   }
 }
@@ -481,17 +481,19 @@ $('signupBtn').onclick = async () => {
 $('goSignup').onclick = () => show('screen-signup');
 $('goLogin').onclick  = () => show('screen-login');
 
-// ── écoute les changements de session (ex: token refresh, email confirm) ──
+// ── écoute les changements de session ──
+// Note: on n'agit sur SIGNED_IN que si init() n'a pas déjà établi la session
 SB.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user && !user) {
-    user = session.user;
-    await loadPseudo();
-    renderProfile();
-    show('screen-profile');
-  }
   if (event === 'SIGNED_OUT') {
     user = null; pseudo = null;
     show('screen-login');
+  }
+  // SIGNED_IN géré uniquement si user n'est pas déjà défini (cas confirmation email)
+  if (event === 'SIGNED_IN' && session?.user && !user) {
+    user = session.user;
+    try { await loadPseudo(); } catch(e) {}
+    renderProfile();
+    show('screen-profile');
   }
 });
 
