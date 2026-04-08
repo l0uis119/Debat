@@ -392,32 +392,35 @@ const SB = createClient(
 let currentUser = null;
 let currentPseudo = null;
 
-// Charge la session et met à jour la topbar
+// Charge le pseudo depuis sessionStorage (écrit par profil.html au login)
+// C'est la méthode principale — sessionStorage n'est pas bloqué par Edge
 async function initAuth() {
   try {
-    const { data: sd } = await SB.auth.getSession();
-    if (sd?.session?.user) {
-      currentUser = sd.session.user;
-      try {
-        const { data } = await SB.from('profiles').select('pseudo').eq('id', currentUser.id).maybeSingle();
-        currentPseudo = data?.pseudo || null;
-      } catch(e) { currentPseudo = null; }
+    const email  = sessionStorage.getItem('obj_email');
+    const pseudo = sessionStorage.getItem('obj_pseudo');
+    if (email) {
+      currentUser   = { email };
+      currentPseudo = pseudo || null;
+      renderAuthZone();
+      // En parallèle, on essaie la session Supabase pour avoir le vrai user.id
+      SB.auth.getSession().then(({ data: sd }) => {
+        if (sd?.session?.user) {
+          currentUser = sd.session.user;
+          // Le pseudo est déjà chargé depuis sessionStorage, pas besoin de refaire un appel
+          renderAuthZone();
+        }
+      }).catch(() => {});
     }
-  } catch(e) { console.warn('initAuth error:', e); }
+  } catch(e) {}
   renderAuthZone();
 }
 
-SB.auth.onAuthStateChange(async (event, session) => {
+SB.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT' || !session) {
     currentUser = null; currentPseudo = null;
-  } else if (session?.user) {
-    currentUser = session.user;
-    try {
-      const { data } = await SB.from('profiles').select('pseudo').eq('id', session.user.id).maybeSingle();
-      currentPseudo = data?.pseudo || null;
-    } catch(e) { currentPseudo = null; }
+    try { sessionStorage.removeItem('obj_email'); sessionStorage.removeItem('obj_pseudo'); } catch(e) {}
+    renderAuthZone();
   }
-  renderAuthZone();
 });
 
 function renderAuthZone() {
