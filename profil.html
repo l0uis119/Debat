@@ -242,11 +242,11 @@ async function init() {
   try {
     const { data, error } = await SB.auth.getSession();
     clearTimeout(fallback);
-    if (error) console.error('getSession:', error);
+    if (error) console.error('getSession error:', error);
     const session = data?.session;
     if (session?.user) {
       user = session.user;
-      try { await loadPseudo(); } catch(e) {}
+      try { await loadPseudo(); } catch(e) { console.warn('loadPseudo:', e); }
       renderProfile();
       show('screen-profile');
     } else {
@@ -254,6 +254,7 @@ async function init() {
     }
   } catch(e) {
     clearTimeout(fallback);
+    console.error('init fatal:', e);
     show('screen-login');
   }
 }
@@ -279,11 +280,6 @@ function renderProfile() {
   pseudoAvailable = false;
   $('saveBtn').disabled = true;
   $('pseudoStatus').className = 'status';
-  try {
-    if (pseudo) sessionStorage.setItem('objection_pseudo', pseudo);
-    else sessionStorage.removeItem('objection_pseudo');
-    if (user?.email) sessionStorage.setItem('objection_email', user.email);
-  } catch(e) {}
 }
 
 // ── pseudo check ──
@@ -359,7 +355,6 @@ $('saveBtn').onclick = async () => {
   } else {
     pseudo = val;
     pseudoAvailable = false;
-    try { sessionStorage.setItem('objection_pseudo', val); } catch(e) {}
     renderProfile();
     const st = $('pseudoStatus');
     st.textContent = '✓ Pseudo mis à jour !';
@@ -405,7 +400,6 @@ $('logoutBtn').onclick = async () => {
   await SB.auth.signOut();
   user = null;
   pseudo = null;
-  try { sessionStorage.removeItem('objection_pseudo'); sessionStorage.removeItem('objection_email'); } catch(e) {}
   window.location.href = '/';
 };
 
@@ -489,10 +483,12 @@ $('goLogin').onclick  = () => show('screen-login');
 // ── écoute les changements de session ──
 SB.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    user = null; pseudo = null;
-    try { sessionStorage.removeItem('objection_pseudo'); sessionStorage.removeItem('objection_email'); } catch(e) {}
+    user = null;
+    pseudo = null;
     show('screen-login');
   }
+  // Pas de handler SIGNED_IN ici — le login handler s'en occupe directement.
+  // onAuthStateChange SIGNED_IN causerait un double-render.
 });
 
 // ── démarrage ──
