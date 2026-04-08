@@ -247,6 +247,7 @@ async function init() {
     if (session?.user) {
       user = session.user;
       try { await loadPseudo(); } catch(e) { console.warn('loadPseudo:', e); }
+      try { sessionStorage.setItem('obj_email', user.email); } catch(e) {}
       renderProfile();
       show('screen-profile');
     } else {
@@ -280,6 +281,11 @@ function renderProfile() {
   pseudoAvailable = false;
   $('saveBtn').disabled = true;
   $('pseudoStatus').className = 'status';
+  // Partage le pseudo avec index.html via sessionStorage
+  try {
+    if (pseudo) sessionStorage.setItem('obj_pseudo', pseudo);
+    else sessionStorage.removeItem('obj_pseudo');
+  } catch(e) {}
 }
 
 // ── pseudo check ──
@@ -400,6 +406,7 @@ $('logoutBtn').onclick = async () => {
   await SB.auth.signOut();
   user = null;
   pseudo = null;
+  try { sessionStorage.removeItem('obj_email'); sessionStorage.removeItem('obj_pseudo'); } catch(e) {}
   window.location.href = '/';
 };
 
@@ -426,6 +433,7 @@ $('loginBtn').onclick = async () => {
 
   user = data.user;
   await loadPseudo();
+  try { sessionStorage.setItem('obj_email', user.email); } catch(e) {}
   renderProfile();
   show('screen-profile');
 };
@@ -468,6 +476,7 @@ $('signupBtn').onclick = async () => {
     if (data.session) {
       user = data.user;
       pseudo = pseudoVal;
+      try { sessionStorage.setItem('obj_email', user.email); } catch(e) {}
       renderProfile();
       show('screen-profile');
     } else {
