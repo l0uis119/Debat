@@ -82,7 +82,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .auth-switch a:hover{text-decoration:underline}
 
 /* ── LOADING ── */
-#screen-loading{display:flex;align-items:center;justify-content:center;min-height:100vh}
+#screen-loading.active{display:flex;align-items:center;justify-content:center;min-height:100vh}
 .spinner{width:32px;height:32px;border:3px solid var(--cream3);border-top-color:var(--terra);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -95,7 +95,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 </nav>
 
 <!-- Loading initial -->
-<div id="screen-loading"><div class="spinner"></div></div>
+<div id="screen-loading" class="screen active"><div class="spinner"></div></div>
 
 <!-- Profil (connecté) -->
 <div id="screen-profile" class="screen">
@@ -238,16 +238,22 @@ let pseudoAvailable = false;
 
 // ── init ──
 async function init() {
-  // Récupère la session depuis le localStorage — synchrone grâce à getSession()
-  const { data: { session }, error } = await SB.auth.getSession();
-  if (error) { console.error('getSession error:', error); }
-
-  if (session?.user) {
-    user = session.user;
-    await loadPseudo();
-    renderProfile();
-    show('screen-profile');
-  } else {
+  const fallback = setTimeout(() => show('screen-login'), 5000);
+  try {
+    const { data, error } = await SB.auth.getSession();
+    clearTimeout(fallback);
+    if (error) console.error('getSession:', error);
+    const session = data?.session;
+    if (session?.user) {
+      user = session.user;
+      try { await loadPseudo(); } catch(e) {}
+      renderProfile();
+      show('screen-profile');
+    } else {
+      show('screen-login');
+    }
+  } catch(e) {
+    clearTimeout(fallback);
     show('screen-login');
   }
 }
@@ -258,7 +264,7 @@ async function loadPseudo() {
     .from('profiles')
     .select('pseudo')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
   if (error) console.warn('loadPseudo error:', error.message);
   pseudo = data?.pseudo || null;
 }
@@ -273,7 +279,6 @@ function renderProfile() {
   pseudoAvailable = false;
   $('saveBtn').disabled = true;
   $('pseudoStatus').className = 'status';
-  // Partage le pseudo avec index.html via sessionStorage
   try {
     if (pseudo) sessionStorage.setItem('objection_pseudo', pseudo);
     else sessionStorage.removeItem('objection_pseudo');
@@ -481,16 +486,11 @@ $('signupBtn').onclick = async () => {
 $('goSignup').onclick = () => show('screen-signup');
 $('goLogin').onclick  = () => show('screen-login');
 
-// ── écoute les changements de session (ex: token refresh, email confirm) ──
+// ── écoute les changements de session ──
 SB.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user && !user) {
-    user = session.user;
-    await loadPseudo();
-    renderProfile();
-    show('screen-profile');
-  }
   if (event === 'SIGNED_OUT') {
     user = null; pseudo = null;
+    try { sessionStorage.removeItem('objection_pseudo'); sessionStorage.removeItem('objection_email'); } catch(e) {}
     show('screen-login');
   }
 });
