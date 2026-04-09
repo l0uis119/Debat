@@ -280,6 +280,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
             <button class="pbtn" data-persona="scientist"><span class="pi">🔬</span><span class="pn">Scientifique</span><span class="pd">Preuves · Méthode</span></button>
             <button class="pbtn" data-persona="lawyer"><span class="pi">⚖</span><span class="pn">Juriste</span><span class="pd">Précision · Droit</span></button>
             <button class="pbtn" data-persona="activist"><span class="pi">✊</span><span class="pn">Militant</span><span class="pd">Impact · Humain</span></button>
+            <button class="pbtn" data-persona="historian"><span class="pi">📜</span><span class="pn">Historien</span><span class="pd">Précédents · Faits</span></button>
+            <button class="pbtn" data-persona="child"><span class="pi">🧒</span><span class="pn">Enfant de 10 ans</span><span class="pd">Pourquoi · Pourquoi</span></button>
+            <button class="pbtn" data-persona="psychologist"><span class="pi">🧠</span><span class="pn">Psychologue</span><span class="pd">Biais · Inconscient</span></button>
             <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>
           </div>
         </div>
@@ -299,6 +302,8 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
             <div class="trow" id="modeGroup">
               <button class="tbtn on" data-val="attack">Attaque</button>
               <button class="tbtn" data-val="steelman">Steel Man</button>
+              <button class="tbtn" data-val="reductio">Réduction à l'absurde</button>
+              <button class="tbtn" data-val="reversal">Retournement</button>
             </div>
           </div>
         </div>
@@ -368,6 +373,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
     <div class="cat-card"><div class="cat-name"><span>🔬</span> Scientifique</div><div class="cat-desc">Exige des preuves reproductibles. Identifie les biais cognitifs. Refuse les sources non académiques (Reddit, blogs, presse généraliste).</div></div>
     <div class="cat-card"><div class="cat-name"><span>⚖</span> Juriste</div><div class="cat-desc">Relève chaque imprécision sémantique, généralisation abusive, exception non prise en compte.</div></div>
     <div class="cat-card"><div class="cat-name"><span>✊</span> Militant</div><div class="cat-desc">Ramène chaque argument à ses conséquences humaines concrètes. Interpelle la conscience morale.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>📜</span> Historien</div><div class="cat-desc">Confronte chaque argument à un précédent historique concret. Cette idée a déjà été défendue ou combattue — il montre ce que ça a donné. Il ne juge pas : il contextualise, et c'est souvent dévastateur.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>🧒</span> Enfant de 10 ans</div><div class="cat-desc">Sa seule arme : "Pourquoi ?" Il pose cette question à chaque prémisse, chaque affirmation. Son innocence naïve révèle les fondations creuses des arguments les plus sophistiqués.</div></div>
+    <div class="cat-card"><div class="cat-name"><span>🧠</span> Psychologue</div><div class="cat-desc">N'attaque pas les arguments — analyse pourquoi tu y crois. Identifie les biais cognitifs, explore ce que la conviction protège psychologiquement. Doux en surface, implacable dans les profondeurs.</div></div>
     <div class="cat-card sage-border"><div class="cat-name"><span>👁</span> Avocat du diable</div><div class="cat-desc">Le plus difficile à battre. Retourne tes propres arguments contre toi. Utilise l'ironie. Aucune limite rhétorique.</div></div>
   </div>
 </div>
@@ -477,6 +485,9 @@ const PERSONAS = {
   scientist:  {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique méthodique. Tu exiges des preuves reproductibles. Si la source est un forum, un blog ou un média non scientifique, tu le signales et tu refuses de l'accepter.`},
   lawyer:     {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste précis. Tu relèves chaque imprécision sémantique, généralisation abusive, exception non prise en compte.`},
   activist:   {label:'Militant',icon:'✊',prompt:`Tu es un militant engagé. Tu ramènes chaque argument à ses conséquences humaines concrètes. Tu interpelles la conscience morale.`},
+  historian:  {label:'Historien',icon:'📜',prompt:`Tu es un historien rigoureux. Chaque argument que l'adversaire avance, tu le confrontes à un précédent historique concret. Tu montres comment cette idée a déjà été tentée, défendue ou combattue — et ce que ça a donné. Tu n'inventes pas de faits. Si tu n'as pas de précédent précis, tu questionnes la nouveauté de l'argument. Maximum 150 mots.`},
+  child:      {label:'Enfant de 10 ans',icon:'🧒',prompt:`Tu es un enfant de 10 ans très curieux. Tu ne comprends pas les grands mots, les abstractions ou les arguments d'autorité. Ta seule arme : "Pourquoi ?" Tu poses cette question à chaque prémisse, chaque affirmation, chaque "c'est comme ça". Tu ne lâches jamais. Tu reformules naïvement ce que l'autre dit pour en révéler l'absurdité cachée. Ton ton est innocent mais chaque question démonte une couche de l'argument. Jamais plus de 3 phrases. Termine toujours par une question. [Réponds par oui ou non] quand c'est possible.`},
+  psychologist:{label:'Psychologue',icon:'🧠',prompt:`Tu es un psychologue clinicien spécialisé en psychologie cognitive et en biais de raisonnement. Tu n'attaques pas les arguments directement — tu analyses pourquoi la personne y croit. Tu identifies les biais cognitifs à l'œuvre (biais de confirmation, effet Dunning-Kruger, raisonnement motivé, peur de l'ambiguïté…). Tu explores ce que cette conviction protège psychologiquement. Tu poses des questions sur les expériences personnelles qui ont forgé cette croyance. Ton ton est doux mais implacable. Maximum 150 mots.`},
   devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu t'appelles l'Avocat du Diable. Tu n'es pas un chatbot. Tu es un adversaire.
 
 TON IDENTITÉ :
@@ -511,6 +522,8 @@ const FEROCITY = {
 const MODE = {
   attack:    {prompt:'STRATÉGIE : identifie la faille principale et exploite-la.'},
   steelman:  {prompt:"STRATÉGIE : formule d'abord la meilleure version de l'argument adverse, puis montre pourquoi elle ne tient pas."},
+  reductio:  {prompt:"STRATÉGIE : pousse la conviction de l'adversaire jusqu'à ses conséquences logiques les plus extrêmes. Montre où ce raisonnement mène inévitablement si on l'applique sans compromis. Ne caricature pas — amplifie rigoureusement."},
+  reversal:  {prompt:"STRATÉGIE : accepte la prémisse principale de l'adversaire, puis démontre qu'elle conduit logiquement à la conclusion inverse de la sienne. Commence par 'Tu as raison que…' puis retourne l'argument."},
 };
 
 // ══ ÉTAT ══
