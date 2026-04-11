@@ -259,10 +259,10 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 
 <!-- ══ LANDING ══ -->
 <div id="landing" class="screen">
-  <span class="l-tag">L'arène des idées</span>
-  <h1 class="l-title">Défends ce que<br>tu <span>crois vraiment.</span></h1>
-  <p class="l-desc">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout ou s'effondre.</p>
-  <button class="l-cta" id="exploreBtn">Commencer un débat <span>→</span></button>
+  <span class="l-tag">L'épreuve des idées</span>
+  <h1 class="l-title">Jusqu'où tient<br><span>ton idée ?</span></h1>
+  <p class="l-desc">Un contradicteur la pousse dans ses retranchements. Ce qui résiste, c'est ce qui est vrai.</p>
+  <button class="l-cta" id="exploreBtn">Tester une idée <span>→</span></button>
 </div>
 
 <!-- ══ HOME ══ -->
@@ -271,12 +271,12 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
     <!-- Ligne du haut : titre + conviction -->
     <div class="home-header">
       <div>
-        <h2 class="home-title">Quelle est ta <span>conviction</span> ?</h2>
-        <p class="home-sub">Choisis un sujet, un contradicteur, et prépare-toi à défendre chaque mot.</p>
+        <h2 class="home-title">Quelle idée veux-tu <span>tester</span> ?</h2>
+        <p class="home-sub">Choisis un contradicteur, et découvre ce qui tient dans ce que tu crois.</p>
       </div>
       <div class="home-conviction">
-        <label class="lbl" for="conviction">Ta conviction</label>
-        <textarea id="conviction" class="conv" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="4" maxlength="300"></textarea>
+        <label class="lbl" for="conviction">Ton idée</label>
+        <textarea id="conviction" class="conv" placeholder="Ex : Je pense que les réseaux sociaux appauvrissent le débat public parce que…" rows="4" maxlength="300"></textarea>
         <div class="hint-row"><span></span><span class="char-hint"><span id="charCount">0</span> / 300</span></div>
       </div>
     </div>
@@ -324,7 +324,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
           </button>
         </div>
         <button class="cta" id="startBtn" disabled>
-          <span>Entrer dans l'arène</span><span class="cta-arr">→</span>
+          <span>Entrer dans l'analyse</span><span class="cta-arr">→</span>
         </button>
       </div>
     </div>
@@ -351,9 +351,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   <div class="dfooter">
     <div class="dfooter-left">
       <span class="tc" id="turnCount">0 échange</span>
-      <span class="vhint" id="verdictHint">Verdict dans 5 échanges</span>
+      <span class="vhint" id="verdictHint">Analyse dans 5 échanges</span>
     </div>
-    <button class="vbtn" id="verdictBtn" disabled>Demander le verdict</button>
+    <button class="vbtn" id="verdictBtn" disabled>Demander l'analyse</button>
   </div>
 </div>
 
@@ -662,7 +662,7 @@ async function startDebate() {
   $('ferocityBadge').textContent = FEROCITY[S.ferocity].label;
   $('convictionStrip').textContent = S.conviction;
   $('messages').innerHTML = ''; $('turnCount').textContent = '0 échange';
-  $('verdictBtn').disabled = true; $('verdictHint').textContent = 'Verdict dans 5 échanges'; $('verdictHint').style.display = '';
+  $('verdictBtn').disabled = true; $('verdictHint').textContent = 'Analyse dans 5 échanges'; $('verdictHint').style.display = '';
   showScreen('debate'); updateResumeBtn(); setLoading(true);
   S.history.push({role:'user', content:`Je soutiens que : ${S.conviction}`});
   try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns=1; refreshTurns(); }
@@ -767,7 +767,7 @@ function setLoading(on) { S.loading=on; inputEl.disabled=on; sendEl.disabled=on;
 function refreshTurns() {
   const t = S.turns;
   $('turnCount').textContent = `${t} échange${t>1?'s':''}`;
-  if (t < 5) { const r=5-t; $('verdictHint').textContent=`Verdict dans ${r} échange${r>1?'s':''}`; }
+  if (t < 5) { const r=5-t; $('verdictHint').textContent=`Analyse dans ${r} échange${r>1?'s':''}`; }
   else $('verdictHint').style.display = 'none';
 }
 
