@@ -782,17 +782,32 @@ function renderVerdict(raw, userName, aiName, persona) {
     $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse brute</p><p class="v-section-text">${esc(raw)}</p></div>`;
     return;
   }
-  const wd = d.winner_overall||'';
-  const isUser = wd.toLowerCase().includes('défenseur')||wd.toLowerCase().includes(userName.toLowerCase());
-  const wName = isUser ? userName : aiName;
-  const wPct = wd.match(/\((\d+)%\)/)?.[1]||'';
 
-  let html = `<div class="v-winner-block">
-    <div class="v-winner-label">Vainqueur du débat</div>
-    <div class="v-winner-name">${esc(wName)}</div>
-    ${wPct?`<div class="v-winner-pct">${wPct}% de domination</div>`:''}
-  </div>`;
+  const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
+  const label = d.robustesse_label || '';
 
+  // Couleur du score selon le niveau
+  let scoreColor = 'var(--terra)';
+  if (robustesse !== null) {
+    if (robustesse >= 71) scoreColor = 'var(--sage)';
+    else if (robustesse >= 51) scoreColor = '#B07D2A';
+  }
+
+  let html = '';
+
+  // 1. Bloc score de robustesse
+  if (robustesse !== null) {
+    html += `<div class="v-winner-block" style="background:${scoreColor}">
+      <div class="v-winner-label">Robustesse de l'idée</div>
+      <div class="v-winner-name">Ton idée tient à ${robustesse}%</div>
+      ${label ? `<div class="v-winner-pct">${esc(label)}</div>` : ''}
+    </div>`;
+  }
+
+  // 2. Conseil en premier
+  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Pour aller plus loin</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
+
+  // 3. Catégories avec barres
   if (d.categories?.length) {
     html += '<div class="v-cats">';
     d.categories.forEach((cat,i) => {
@@ -812,12 +827,14 @@ function renderVerdict(raw, userName, aiName, persona) {
     html += '</div>';
   }
 
+  // 4. Spécifique Avocat du diable
   if (persona === 'devil') {
     if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">⚡ Le coup fatal</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
     if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Où l'IA a failli</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
   }
+
+  // 5. Analyse en dernier
   if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
-  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Conseil pour la prochaine fois</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
 
   $('verdictBody').innerHTML = html;
 }
