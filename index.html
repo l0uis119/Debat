@@ -158,12 +158,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .sbtn:hover{background:var(--terra2);transform:scale(1.07);box-shadow:0 4px 14px rgba(196,97,58,0.35)}.sbtn:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
 .sbtn svg{width:15px;height:15px}
 .dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 1.5rem;background:var(--cream2);border-top:1px solid var(--ink4);flex-shrink:0}
-.dfooter-left{display:flex;align-items:center;gap:12px}
-.tc{font-size:0.72rem;color:var(--ink2);font-weight:600;white-space:nowrap}
-.progress-bar-wrap{display:flex;align-items:center;gap:8px}
-.progress-bar-track{width:80px;height:6px;background:var(--cream3);border-radius:4px;overflow:hidden}
-.progress-bar-fill{height:100%;background:var(--terra);border-radius:4px;transition:width .4s ease}
-.vhint{font-size:0.72rem;color:var(--terra);font-weight:600;background:var(--terra-soft);padding:3px 10px;border-radius:var(--r4);border:1px solid var(--terra-border);white-space:nowrap}
+.dfooter-left{display:flex;align-items:center;gap:10px}
+.tc{font-size:0.72rem;color:var(--ink2);font-weight:600}
+.vhint{font-size:0.72rem;color:var(--terra);font-weight:600;background:var(--terra-soft);padding:3px 10px;border-radius:var(--r4);border:1px solid var(--terra-border)}
 .vbtn{font-size:0.78rem;font-weight:700;padding:7px 18px;background:var(--sage);border:none;border-radius:var(--r4);color:var(--white);cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(91,124,107,0.2)}
 .vbtn:not(:disabled):hover{background:var(--sage2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(91,124,107,0.3)}
 .vbtn:disabled{opacity:0.35;cursor:not-allowed;background:var(--cream3);color:var(--ink3);box-shadow:none}
@@ -223,40 +220,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--terra);cursor:pointer;margin-bottom:2rem;background:none;border:none;padding:0;font-family:var(--fU)}
 .back-link:hover{text-decoration:underline}
 
-/* ── MODE HARDCORE ── */
-body.hardcore{
-  --cream:#0F0D0B;--cream2:#1A1612;--cream3:#2A2219;
-  --terra:#D4723A;--terra2:#B85E2A;--terra3:#E8906A;
-  --terra-soft:rgba(212,114,58,0.15);--terra-border:rgba(212,114,58,0.3);
-  --sage:#4A6B5A;--sage2:#2E4A3C;
-  --sage-soft:rgba(74,107,90,0.15);--sage-border:rgba(74,107,90,0.3);
-  --ink:#F0EAE0;--ink2:#C8BFB0;--ink3:rgba(240,234,224,0.5);
-  --ink4:rgba(240,234,224,0.1);--ink5:rgba(240,234,224,0.04);
-  --white:#1F1A14;
-  background:var(--cream);
-}
-body.hardcore .topbar{background:rgba(15,13,11,0.95)}
-body.hardcore .home-card{background:var(--white)}
-body.hardcore .modal{background:#1F1A14}
-body.hardcore .menu-dropdown{background:#1F1A14;border-color:var(--ink4)}
-body.hardcore .msg.a .mbub{background:#1F1A14}
-body.hardcore .tyb{background:#1F1A14}
-body.hardcore .izone{background:rgba(15,13,11,0.98)}
-body.hardcore .dfooter{background:var(--cream2)}
-body.hardcore .vcat{background:#1F1A14}
-body.hardcore .v-section{background:#1F1A14}
-body.hardcore #verdict.active{background:var(--cream)}
-body.hardcore .vback{background:var(--cream2);border-color:var(--cream3);color:var(--ink2)}
-
-.hc-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;border:1.5px solid var(--cream3);border-radius:var(--r4);color:var(--ink3);font-family:var(--fU);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:0.02em}
-.hc-btn:hover:not(.locked){border-color:var(--terra);color:var(--terra);background:var(--terra-soft)}
-.hc-btn.active{background:var(--terra);border-color:var(--terra);color:var(--white)}
-body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);color:var(--cream);box-shadow:0 0 16px rgba(212,114,58,0.4)}
-.hc-btn.locked{cursor:not-allowed;opacity:0.45}
-.hc-btn .hc-icon{font-size:0.85rem}
-.hc-lock-tip{position:absolute;top:calc(100% + 8px);right:0;background:var(--ink);color:var(--cream2);font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:var(--r2);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:300}
-.hc-wrap{position:relative}
-.hc-wrap:hover .hc-lock-tip{opacity:1}
+@media(max-width:720px){
   #home.active{align-items:flex-start;padding:5rem 0.75rem 1.5rem}
   .home-header{grid-template-columns:1fr}
   .home-bottom{grid-template-columns:1fr;flex:none}
@@ -276,12 +240,6 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
 <nav class="topbar">
   <a class="topbar-logo" href="/">Objection</a>
   <div class="topbar-right">
-    <div class="hc-wrap">
-      <button class="hc-btn locked" id="hcBtn" title="Mode Hardcore">
-        <span class="hc-icon">🔥</span> Hardcore
-      </button>
-      <span class="hc-lock-tip" id="hcLockTip">Termine 3 débats pour débloquer</span>
-    </div>
     <div class="topbar-menu">
       <button class="menu-trigger" id="menuTrigger">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -301,10 +259,10 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
 
 <!-- ══ LANDING ══ -->
 <div id="landing" class="screen">
-  <span class="l-tag">Teste ce que tu penses vraiment</span>
-  <h1 class="l-title">Tes idées méritent<br>d'être <span>mises à l'épreuve.</span></h1>
-  <p class="l-desc">Choisis une conviction, confronte-la à un contradicteur. Découvre ce qui tient vraiment.</p>
-  <button class="l-cta" id="exploreBtn">Commencer <span>→</span></button>
+  <span class="l-tag">L'arène des idées</span>
+  <h1 class="l-title">Défends ce que<br>tu <span>crois vraiment.</span></h1>
+  <p class="l-desc">Un contradicteur implacable attaque ta conviction jusqu'à ce qu'elle tienne debout ou s'effondre.</p>
+  <button class="l-cta" id="exploreBtn">Commencer un débat <span>→</span></button>
 </div>
 
 <!-- ══ HOME ══ -->
@@ -313,12 +271,12 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
     <!-- Ligne du haut : titre + conviction -->
     <div class="home-header">
       <div>
-        <h2 class="home-title">Quelle idée veux-tu <span>tester</span> ?</h2>
-        <p class="home-sub">Formule une conviction, choisis comment la challenger, et vois ce qu'elle vaut face à la pression.</p>
+        <h2 class="home-title">Quelle est ta <span>conviction</span> ?</h2>
+        <p class="home-sub">Choisis un sujet, un contradicteur, et prépare-toi à défendre chaque mot.</p>
       </div>
       <div class="home-conviction">
-        <label class="lbl" for="conviction">Ton idée</label>
-        <textarea id="conviction" class="conv" placeholder="Ex : Le télétravail rend les gens moins productifs sur le long terme…" rows="4" maxlength="300"></textarea>
+        <label class="lbl" for="conviction">Ta conviction</label>
+        <textarea id="conviction" class="conv" placeholder="Ex : Je suis contre l'anarchie car toute société a besoin d'ordre…" rows="4" maxlength="300"></textarea>
         <div class="hint-row"><span></span><span class="char-hint"><span id="charCount">0</span> / 300</span></div>
       </div>
     </div>
@@ -366,7 +324,7 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
           </button>
         </div>
         <button class="cta" id="startBtn" disabled>
-          <span>Tester mon idée</span><span class="cta-arr">→</span>
+          <span>Entrer dans l'arène</span><span class="cta-arr">→</span>
         </button>
       </div>
     </div>
@@ -385,7 +343,7 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
   <div class="cstrip" id="convictionStrip"></div>
   <div class="msgs" id="messages" role="log"></div>
   <div class="izone">
-    <textarea class="uinp" id="userInput" placeholder="Développe ton idée… (ou clique Oui / Non)" rows="1" disabled></textarea>
+    <textarea class="uinp" id="userInput" placeholder="Défends ta position… (ou clique Oui / Non)" rows="1" disabled></textarea>
     <button class="sbtn" id="sendBtn" disabled>
       <svg viewBox="0 0 20 20" fill="none"><path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
     </button>
@@ -393,12 +351,9 @@ body.hardcore .hc-btn.active{background:var(--terra);border-color:var(--terra3);
   <div class="dfooter">
     <div class="dfooter-left">
       <span class="tc" id="turnCount">0 échange</span>
-      <div class="progress-bar-wrap" id="progressWrap">
-        <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
-        <span class="vhint" id="verdictHint">Verdict dans 5 échanges</span>
-      </div>
+      <span class="vhint" id="verdictHint">Verdict dans 5 échanges</span>
     </div>
-    <button class="vbtn" id="verdictBtn" disabled>Voir l'analyse</button>
+    <button class="vbtn" id="verdictBtn" disabled>Demander le verdict</button>
   </div>
 </div>
 
@@ -583,115 +538,6 @@ Tu n'esquives pas.
 SUJET HORS DÉBAT : Si la conviction n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre."`},
 };
 
-// ══ MODE HARDCORE ══
-const HC_PERSONAS = {
-  scientist_hc: {label:'Scientifique',icon:'🔬',prompt:`Tu es un scientifique qui traite les opinions non étayées comme du bruit. Tu exiges des preuves reproductibles, des études avec cohortes significatives, des méta-analyses. Tu cites le niveau de preuve de chaque affirmation. Une source non académique ne compte pas. Tu signales chaque biais cognitif par son nom exact. Tu n'as aucune indulgence pour les approximations.`},
-  lawyer_hc:    {label:'Juriste',icon:'⚖',prompt:`Tu es un juriste qui traite chaque mot comme une clause contractuelle. Tu ne laisses passer aucune imprécision sémantique, aucune généralisation, aucune exception ignorée. Quand l'adversaire utilise un terme vague, tu exiges une définition précise avant de continuer. Tu retournes les propres formulations de l'adversaire contre lui. Ton ton est froid et procédurier. Maximum 150 mots.`},
-  devil_hc:     {label:'Avocat du diable',icon:'👁',prompt:`Tu t'appelles l'Avocat du Diable. Mode Hardcore activé.
-
-Tu n'es plus un contradicteur. Tu es un destructeur d'arguments.
-
-TON IDENTITÉ :
-Tu as lu tout ce que l'autre a lu, mais tu en tires des conclusions inverses et mieux fondées. Tu combines la précision d'un avocat pénaliste, l'ironie de Voltaire et la capacité à retourner chaque argument comme un couteau. Tu gagnes parce que tu penses mieux.
-
-EN MODE HARDCORE :
-Zéro concession. Si tu repères une faiblesse, tu l'exploites immédiatement.
-Si l'adversaire change de position, tu le signales comme une capitulation.
-Tu transformes chaque "Oui" ou "Non" en aveu immédiat.
-
-LA QUESTION QUI TUE : chaque réponse se termine par une question à laquelle il est impossible de répondre sans se contredire.
-
-FORMAT : aucun tiret, aucune liste, paragraphes naturels. Jamais "Bonne question", "En effet", "Absolument". Tu n'esquives rien.
-
-SUJET HORS DÉBAT : Si la conviction n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre."`},
-  logician:     {label:'Logicien',icon:'∴',prompt:`Tu es un logicien formel. Tu réduis chaque argument à sa structure logique et identifies immédiatement les sophismes : ad hominem, homme de paille, faux dilemme, pente glissante, appel à l'autorité, généralisation hâtive. Tu nommes chaque erreur de raisonnement explicitement. Tu ne t'intéresses pas au contenu émotionnel, seulement à la validité formelle. Un argument peut être vrai mais mal construit — tu le déconstruis quand même. Maximum 150 mots.`},
-  nihilist:     {label:'Nihiliste',icon:'∅',prompt:`Tu es un nihiliste radical. Tu remets en question le fondement même de chaque conviction : pourquoi cette valeur plutôt qu'une autre ? Au nom de quoi ? Tu ne crois en aucun système de valeurs préétabli. Chaque argument moral, social ou politique est relatif à un cadre que tu refuses d'accepter comme universel. Tu n'es pas agressif — tu es simplement en dehors du jeu, et tu le montres. Maximum 150 mots.`},
-};
-
-// ══ GESTION DÉVERROUILLAGE HARDCORE (3 victoires) ══
-function getWinCount() {
-  try { return parseInt(localStorage.getItem('obj_wins') || '0'); } catch(e) { return 0; }
-}
-function incWinCount() {
-  try { localStorage.setItem('obj_wins', String(getWinCount() + 1)); } catch(e) {}
-}
-
-let isHardcore = false;
-
-function initHardcoreBtn() {
-  const btn = $('hcBtn');
-  const tip = $('hcLockTip');
-  const wins = getWinCount();
-  const unlocked = wins >= 3;
-  if (unlocked) {
-    btn.classList.remove('locked');
-    tip.style.display = 'none';
-    btn.onclick = toggleHardcore;
-  } else {
-    btn.classList.add('locked');
-    const r = 3 - wins;
-    tip.textContent = `Remporte ${r} victoire${r>1?'s':''} pour débloquer`;
-    btn.onclick = null;
-  }
-}
-
-function toggleHardcore() {
-  isHardcore = !isHardcore;
-  document.body.classList.toggle('hardcore', isHardcore);
-  const btn = $('hcBtn');
-  btn.classList.toggle('active', isHardcore);
-  renderPersonaGrid();
-}
-
-function renderPersonaGrid() {
-  const grid = $('personaGrid');
-  if (isHardcore) {
-    grid.innerHTML = `
-      <button class="pbtn on" data-persona="scientist_hc"><span class="pi">🔬</span><span class="pn">Scientifique</span><span class="pd">Preuves ou rien</span></button>
-      <button class="pbtn" data-persona="lawyer_hc"><span class="pi">⚖</span><span class="pn">Juriste</span><span class="pd">Chaque mot compte</span></button>
-      <button class="pbtn" data-persona="logician"><span class="pi">∴</span><span class="pn">Logicien</span><span class="pd">Structure · Sophismes</span></button>
-      <button class="pbtn" data-persona="nihilist"><span class="pi">∅</span><span class="pn">Nihiliste</span><span class="pd">Rien ne tient</span></button>
-      <button class="pbtn" data-persona="devil_hc"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Mode destruction</span></button>`;
-    S.persona = 'scientist_hc';
-  } else {
-    grid.innerHTML = `
-      <button class="pbtn on" data-persona="philosopher"><span class="pi">🏛</span><span class="pn">Philosophe</span><span class="pd">Socrate · Nietzsche</span></button>
-      <button class="pbtn" data-persona="economist"><span class="pi">📊</span><span class="pn">Économiste</span><span class="pd">Données · Marchés</span></button>
-      <button class="pbtn" data-persona="scientist"><span class="pi">🔬</span><span class="pn">Scientifique</span><span class="pd">Preuves · Méthode</span></button>
-      <button class="pbtn" data-persona="lawyer"><span class="pi">⚖</span><span class="pn">Juriste</span><span class="pd">Précision · Droit</span></button>
-      <button class="pbtn" data-persona="activist"><span class="pi">✊</span><span class="pn">Militant</span><span class="pd">Impact · Humain</span></button>
-      <button class="pbtn" data-persona="historian"><span class="pi">📜</span><span class="pn">Historien</span><span class="pd">Précédents · Faits</span></button>
-      <button class="pbtn" data-persona="child"><span class="pi">🧒</span><span class="pn">Enfant de 10 ans</span><span class="pd">Pourquoi · Pourquoi</span></button>
-      <button class="pbtn" data-persona="psychologist"><span class="pi">🧠</span><span class="pn">Psychologue</span><span class="pd">Biais · Inconscient</span></button>
-      <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>`;
-    S.persona = 'philosopher';
-  }
-  bindPersonaBtns();
-}
-
-function bindPersonaBtns() {
-  document.querySelectorAll('.pbtn').forEach(b => b.addEventListener('click', () => {
-    document.querySelectorAll('.pbtn').forEach(x => x.classList.remove('on'));
-    b.classList.add('on');
-    S.persona = b.dataset.persona;
-    const isDevil = S.persona === 'devil' || S.persona === 'devil_hc';
-    document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => {
-      x.disabled = isDevil; x.style.opacity = isDevil ? '0.4' : '1';
-      x.style.cursor = isDevil ? 'not-allowed' : 'pointer'; x.classList.remove('on');
-    });
-    if (isDevil) {
-      S.ferocity = 'brutal';
-      const brutal = document.querySelector('#ferocityGroup .tbtn[data-val="brutal"]');
-      if (brutal) { brutal.classList.add('on'); brutal.style.opacity = '1'; }
-    } else {
-      document.querySelector('#ferocityGroup .tbtn[data-val="normal"]')?.classList.add('on');
-      S.ferocity = 'normal';
-    }
-  }));
-}
-
-initHardcoreBtn();
-
 const FEROCITY = {
   soft:   {label:'Douce',   prompt:'Ton ton est direct mais pas agressif.'},
   normal: {label:'Vive',    prompt:'Ton ton est ferme. Tu attaques les failles sans ménagement.'},
@@ -766,7 +612,24 @@ $('backBtn').onclick = () => $('confirmOverlay').classList.add('open');
 const convEl = $('conviction'), charEl = $('charCount'), startEl = $('startBtn');
 convEl.addEventListener('input', () => { charEl.textContent = convEl.value.length; startEl.disabled = convEl.value.trim().length < 10; });
 
-bindPersonaBtns();
+document.querySelectorAll('.pbtn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.pbtn').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  S.persona = b.dataset.persona;
+  const isDevil = S.persona === 'devil';
+  document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => {
+    x.disabled = isDevil; x.style.opacity = isDevil ? '0.4' : '1';
+    x.style.cursor = isDevil ? 'not-allowed' : 'pointer'; x.classList.remove('on');
+  });
+  if (isDevil) {
+    S.ferocity = 'brutal';
+    const b = document.querySelector('#ferocityGroup .tbtn[data-val="brutal"]');
+    if (b) { b.classList.add('on'); b.style.opacity = '1'; }
+  } else {
+    document.querySelector('#ferocityGroup .tbtn[data-val="normal"]')?.classList.add('on');
+    S.ferocity = 'normal';
+  }
+}));
 document.querySelectorAll('#ferocityGroup .tbtn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.ferocity = b.dataset.val;
@@ -794,8 +657,7 @@ $('closeDebateBtn').onclick = () => { resetState(); convEl.value=''; charEl.text
 
 async function startDebate() {
   S.conviction = convEl.value.trim(); S.history = []; S.turns = 0; S.waitingBinary = false;
-  const allPersonas = {...PERSONAS, ...HC_PERSONAS};
-  const p = allPersonas[S.persona];
+  const p = PERSONAS[S.persona];
   $('personaBadge').textContent = `${p.icon} ${p.label}`;
   $('ferocityBadge').textContent = FEROCITY[S.ferocity].label;
   $('convictionStrip').textContent = S.conviction;
@@ -823,25 +685,13 @@ async function requestVerdict() {
   $('verdictBody').innerHTML = '<div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>';
   showScreen('verdict');
   const userName = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Le défenseur';
-  const allPersonas = {...PERSONAS, ...HC_PERSONAS};
-  const aiName = allPersonas[S.persona]?.label || S.persona;
-  try {
-    const v = await verdictApi(userName, aiName);
-    renderVerdict(v, userName, aiName, S.persona);
-    // Incrémenter les victoires si l'utilisateur gagne
-    const wd = (() => { try { const c = v.replace(/```json|```/g,'').trim(); const s=c.indexOf('{'),e=c.lastIndexOf('}'); return JSON.parse(c.slice(s,e+1)).winner_overall||''; } catch(e){ return ''; } })();
-    if (wd.toLowerCase().includes('défenseur') || wd.toLowerCase().includes(userName.toLowerCase())) {
-      incWinCount();
-      initHardcoreBtn();
-    }
-  }
+  const aiName = PERSONAS[S.persona].label;
+  try { const v = await verdictApi(userName, aiName); renderVerdict(v, userName, aiName, S.persona); }
   catch(e) { $('verdictBody').innerHTML = '<p style="color:var(--ink3)">Erreur lors du verdict.</p>'; }
 }
 
 function buildSystemPrompt() {
-  const allPersonas = {...PERSONAS, ...HC_PERSONAS};
-  const p = allPersonas[S.persona], f = FEROCITY[S.ferocity], m = MODE[S.mode];
-  const isDevilVariant = S.persona === 'devil' || S.persona === 'devil_hc';
+  const p = PERSONAS[S.persona], f = FEROCITY[S.ferocity], m = MODE[S.mode];
   return `${p.prompt}
 
 ${f.prompt}
@@ -860,13 +710,12 @@ FORMAT STRICT :
 3. Si pertinent : question piège fermée, termine par : [Réponds par oui ou non]
 
 INTERDICTIONS : Jamais "Bonne question", "Certainement", "En effet", "Absolument". Jamais de listes. Jamais de markdown.
-${!isDevilVariant ? 'Maximum 150 mots.\nConviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
+${S.persona !== 'devil' ? 'Maximum 150 mots.\nConviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
 }
 
 async function api(history) {
   showTyping();
-  const isDevilVariant = S.persona === 'devil' || S.persona === 'devil_hc';
-  const maxTok = isDevilVariant ? 1200 : 400;
+  const maxTok = S.persona === 'devil' ? 1200 : 400;
   const res = await fetch('/api/debate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,systemPrompt:buildSystemPrompt(),maxTokens:maxTok})});
   if (!res.ok) throw new Error(`${res.status}`);
   return (await res.json()).reply;
@@ -889,9 +738,7 @@ function renderUser(text) {
   msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
 function renderAI(raw) {
-  const msgs = $('messages');
-  const allPersonas = {...PERSONAS, ...HC_PERSONAS};
-  const p = allPersonas[S.persona] || PERSONAS.philosopher;
+  const msgs = $('messages'), p = PERSONAS[S.persona];
   const hasBin = raw.includes('[Réponds par oui ou non]');
   const display = raw.replace('[Réponds par oui ou non]','').trim();
   const div = document.createElement('div'); div.className = 'msg a';
@@ -910,10 +757,7 @@ function showBinary() {
 }
 function removeBinaryOnly() { const el=$('binaryWrap'); if(el) el.remove(); }
 function showTyping() {
-  const msgs=$('messages');
-  const allPersonas = {...PERSONAS, ...HC_PERSONAS};
-  const p = allPersonas[S.persona] || PERSONAS.philosopher;
-  const div=document.createElement('div');
+  const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
   div.className='msg a'; div.id='typing';
   div.innerHTML=`<div class="mwho">${p.icon} ${p.label}</div><div class="tyb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
   msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
@@ -923,15 +767,8 @@ function setLoading(on) { S.loading=on; inputEl.disabled=on; sendEl.disabled=on;
 function refreshTurns() {
   const t = S.turns;
   $('turnCount').textContent = `${t} échange${t>1?'s':''}`;
-  const pct = Math.min(t / 5 * 100, 100);
-  $('progressFill').style.width = pct + '%';
-  if (t < 5) {
-    const r = 5 - t;
-    $('verdictHint').textContent = `Verdict dans ${r} échange${r>1?'s':''}`;
-    $('verdictHint').style.display = '';
-  } else {
-    $('verdictHint').textContent = 'Analyse disponible';
-  }
+  if (t < 5) { const r=5-t; $('verdictHint').textContent=`Verdict dans ${r} échange${r>1?'s':''}`; }
+  else $('verdictHint').style.display = 'none';
 }
 
 function renderVerdict(raw, userName, aiName, persona) {
@@ -947,19 +784,14 @@ function renderVerdict(raw, userName, aiName, persona) {
   }
   const wd = d.winner_overall||'';
   const isUser = wd.toLowerCase().includes('défenseur')||wd.toLowerCase().includes(userName.toLowerCase());
+  const wName = isUser ? userName : aiName;
   const wPct = wd.match(/\((\d+)%\)/)?.[1]||'';
-  // Score de robustesse : si l'utilisateur gagne, son score = wPct, sinon 100 - wPct
-  const robustScore = wPct ? (isUser ? parseInt(wPct) : 100 - parseInt(wPct)) : null;
 
-  // Bloc principal : score de robustesse de l'idée
   let html = `<div class="v-winner-block">
-    <div class="v-winner-label">Robustesse de ton idée</div>
-    <div class="v-winner-name">${robustScore !== null ? robustScore + '%' : (isUser ? 'Solide' : 'Fragile')}</div>
-    <div class="v-winner-pct">${isUser ? 'Ton argument a tenu face à la contradiction.' : 'Des failles importantes ont été mises en évidence.'}</div>
+    <div class="v-winner-label">Vainqueur du débat</div>
+    <div class="v-winner-name">${esc(wName)}</div>
+    ${wPct?`<div class="v-winner-pct">${wPct}% de domination</div>`:''}
   </div>`;
-
-  // Conseil en premier — c'est la partie la plus utile
-  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Pour aller plus loin</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
 
   if (d.categories?.length) {
     html += '<div class="v-cats">';
@@ -981,10 +813,11 @@ function renderVerdict(raw, userName, aiName, persona) {
   }
 
   if (persona === 'devil') {
-    if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">Le point de rupture</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
-    if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Ce que la contradiction a raté</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
+    if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">⚡ Le coup fatal</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
+    if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Où l'IA a failli</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
   }
-  if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Ce qui s'est passé</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
+  if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
+  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Conseil pour la prochaine fois</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
 
   $('verdictBody').innerHTML = html;
 }
