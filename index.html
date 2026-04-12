@@ -549,8 +549,20 @@ function renderHardcoreBtn() {
     btn.classList.add('locked'); btn.classList.remove('unlocked');
     btn.title = `Encore ${remaining} analyse${remaining > 1 ? 's' : ''} solide${remaining > 1 ? 's' : ''} (≥ 71%) pour débloquer`;
     btn.onclick = () => {
+      // Affiche une bulle temporaire sous le bouton
+      const existing = document.getElementById('hcTooltip');
+      if (existing) return;
       const r = 3 - getWins();
-      alert(`Mode Hardcore verrouillé.\nEncore ${r} analyse${r > 1 ? 's' : ''} solide${r > 1 ? 's' : ''} (score ≥ 71%) pour débloquer.`);
+      const tip = document.createElement('div');
+      tip.id = 'hcTooltip';
+      tip.textContent = `Encore ${r} analyse${r > 1 ? 's' : ''} solide${r > 1 ? 's' : ''} (≥ 71%) pour débloquer`;
+      tip.style.cssText = `position:fixed;background:var(--ink);color:var(--cream);font-size:0.75rem;font-weight:600;padding:7px 13px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;pointer-events:none;animation:fadeUp .2s ease forwards`;
+      document.body.appendChild(tip);
+      // Positionner sous le bouton
+      const rect = btn.getBoundingClientRect();
+      tip.style.top = (rect.bottom + 8) + 'px';
+      tip.style.left = (rect.left + rect.width/2 - tip.offsetWidth/2) + 'px';
+      setTimeout(() => { tip.style.opacity = '0'; tip.style.transition = 'opacity .3s'; setTimeout(() => tip.remove(), 300); }, 2500);
     };
   }
 }
@@ -835,12 +847,15 @@ function refreshTurns() {
 function renderVerdict(raw, userName, aiName, persona) {
   let d;
   try {
-    let c = raw.replace(/```json|```/g,'').trim();
+    let c = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
     const s=c.indexOf('{'), e=c.lastIndexOf('}');
     if(s!==-1&&e!==-1) c=c.slice(s,e+1);
+    else throw new Error('no JSON');
     d = JSON.parse(c);
+    if (typeof d !== 'object' || d === null) throw new Error('invalid');
   } catch(e) {
-    $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse brute</p><p class="v-section-text">${esc(raw)}</p></div>`;
+    // Dernier recours : affiche le texte brut proprement
+    $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(raw.replace(/```json|```/g,'').trim())}</p></div>`;
     return;
   }
 
