@@ -43,7 +43,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 /* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(250,247,242,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
 .topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;letter-spacing:-0.01em;text-decoration:none}
-.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-right{display:flex;align-items:center;gap:8px}
 .topbar-menu{position:relative}
 .menu-trigger{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r4);transition:background .15s;color:var(--ink2);font-family:var(--fU);font-size:0.85rem;font-weight:600}
 .menu-trigger:hover{background:var(--ink5)}
@@ -63,10 +63,13 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r4);cursor:pointer;text-decoration:none;max-width:180px}
 .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--sage);color:var(--white);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .user-name{font-size:0.82rem;font-weight:600;color:var(--sage2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
-.hc-btn{padding:7px 14px;border-radius:var(--r4);font-family:var(--fU);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid var(--ink4);background:transparent;color:var(--ink3)}
+.hc-btn{padding:6px 12px;border-radius:var(--r4);font-family:var(--fU);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid var(--ink4);background:transparent;color:var(--ink3)}
 .hc-btn.locked{opacity:0.45;cursor:not-allowed}
 .hc-btn.unlocked{background:var(--ink);color:var(--white);border-color:var(--ink2)}
 .hc-btn.unlocked:hover{background:var(--terra);border-color:var(--terra);color:var(--white);transform:translateY(-1px)}
+/* Auth boutons — cachés sur mobile, visibles desktop */
+.auth-desktop{display:flex;align-items:center;gap:8px}
+@media(max-width:600px){.auth-desktop{display:none}}
 
 /* ── LANDING ── */
 #landing{display:none}
@@ -244,7 +247,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 <nav class="topbar">
   <a class="topbar-logo" href="/">Objection</a>
   <div class="topbar-right">
-    <button class="hc-btn" id="hardcoreBtn" title="Débloque après 3 analyses solides (≥ 71%)">💀 Hardcore</button>
+    <button class="hc-btn" id="hardcoreBtn">💀 Hardcore</button>
     <div class="topbar-menu">
       <button class="menu-trigger" id="menuTrigger">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -255,10 +258,12 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
         <button class="menu-item" id="menuCGU">Conditions d'utilisation</button>
         <hr class="menu-sep"/>
         <a class="menu-item" href="/profil">Mon profil</a>
+        <!-- Visible uniquement sur mobile via JS -->
+        <div id="menuAuthZone"></div>
       </div>
     </div>
-    <!-- Zone auth : remplie dynamiquement par JS -->
-    <div id="authZone"></div>
+    <!-- Zone auth desktop : cachée sur mobile -->
+    <div class="auth-desktop" id="authZone"></div>
   </div>
 </nav>
 
@@ -495,16 +500,23 @@ SB.auth.onAuthStateChange((event, session) => {
 
 function renderAuthZone() {
   const z = document.getElementById('authZone');
+  const mz = document.getElementById('menuAuthZone');
   if (currentUser) {
     const initial = (currentPseudo || currentUser.email || '?')[0].toUpperCase();
     const name = currentPseudo || currentUser.email;
-    z.innerHTML = `<a class="user-chip" href="/profil" title="Mon profil">
+    const chip = `<a class="user-chip" href="/profil" title="Mon profil">
       <div class="user-avatar">${esc(initial)}</div>
       <span class="user-name">${esc(name)}</span>
     </a>`;
+    z.innerHTML = chip;
+    if (mz) mz.innerHTML = '';
   } else {
     z.innerHTML = `<a class="auth-btn btn-login" href="/profil">Connexion</a>
                    <a class="auth-btn btn-signup" href="/profil">Créer un compte</a>`;
+    // Sur mobile, les mêmes liens apparaissent dans le menu
+    if (mz) mz.innerHTML = `<hr class="menu-sep"/>
+      <a class="menu-item" href="/profil">Connexion</a>
+      <a class="menu-item" href="/profil" style="font-weight:700;color:var(--terra)">Créer un compte</a>`;
   }
 }
 
