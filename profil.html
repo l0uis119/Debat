@@ -85,6 +85,39 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 #screen-loading.active{display:flex;align-items:center;justify-content:center;min-height:100vh}
 .spinner{width:32px;height:32px;border:3px solid var(--cream3);border-top-color:var(--terra);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── HISTORIQUE ── */
+.debate-card{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:0.75rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.debate-card:hover{border-color:var(--terra-border);background:var(--cream);transform:translateY(-1px);box-shadow:var(--shadow)}
+.debate-card-left{flex:1;min-width:0}
+.debate-conviction{font-size:0.88rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.debate-meta{font-size:0.72rem;color:var(--ink3);display:flex;gap:8px;flex-wrap:wrap}
+.debate-score{font-size:0.82rem;font-weight:700;color:var(--white);background:var(--terra);padding:4px 10px;border-radius:var(--r4);flex-shrink:0}
+.debate-score.high{background:var(--sage)}
+.debate-score.mid{background:#B07D2A}
+.no-debates{font-size:0.85rem;color:var(--ink3);text-align:center;padding:1.5rem 0}
+
+/* ── MODAL TRANSCRIPT ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(26,18,8,0.5);z-index:200;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.overlay.open{display:flex}
+.transcript-modal{background:var(--white);border-radius:var(--r3);width:100%;max-width:640px;padding:2rem;box-shadow:var(--shadow2);margin:auto}
+.transcript-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:10px}
+.transcript-title{font-family:var(--fT);font-size:1.2rem;font-weight:700;color:var(--ink);line-height:1.2}
+.transcript-meta{font-size:0.75rem;color:var(--ink3);margin-top:4px}
+.transcript-close{background:var(--cream2);border:1px solid var(--cream3);border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:var(--ink2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.transcript-close:hover{background:var(--cream3)}
+.transcript-score{background:var(--terra);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem;text-align:center;color:var(--white)}
+.transcript-score.high{background:var(--sage)}
+.transcript-score.mid{background:#B07D2A}
+.transcript-score-num{font-family:var(--fT);font-size:2rem;font-weight:900}
+.transcript-score-label{font-size:0.75rem;opacity:0.8;margin-top:2px}
+.transcript-conseil{background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r);padding:1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--sage2);line-height:1.6}
+.transcript-conseil strong{display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;color:var(--sage)}
+.transcript-msg{padding:0.75rem 0;border-bottom:1px solid var(--cream3)}
+.transcript-msg:last-child{border-bottom:none}
+.transcript-msg-who{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.transcript-msg-who.ai{color:var(--terra)}
+.transcript-msg-text{font-size:0.9rem;color:var(--ink2);line-height:1.6}
 </style>
 </head>
 <body>
@@ -138,6 +171,29 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
     <div class="card">
       <button class="btn danger" id="logoutBtn">Se déconnecter</button>
     </div>
+
+    <!-- Historique des débats -->
+    <div class="card" id="debatesCard">
+      <div class="card-title">Mes débats sauvegardés</div>
+      <div id="debatesList"><p style="font-size:0.85rem;color:var(--ink3)">Chargement…</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal transcript -->
+<div class="overlay" id="transcriptOverlay">
+  <div class="transcript-modal">
+    <div class="transcript-header">
+      <div>
+        <div class="transcript-title" id="transcriptTitle"></div>
+        <div class="transcript-meta" id="transcriptMeta"></div>
+      </div>
+      <button class="transcript-close" id="transcriptClose">✕</button>
+    </div>
+    <div class="transcript-score" id="transcriptScore"></div>
+    <div class="transcript-conseil" id="transcriptConseil"></div>
+    <div class="transcript-body" id="transcriptBody"></div>
+    <button class="btn danger" id="deleteDebateBtn" style="margin-top:1.5rem">Supprimer ce débat</button>
   </div>
 </div>
 
@@ -281,11 +337,11 @@ function renderProfile() {
   pseudoAvailable = false;
   $('saveBtn').disabled = true;
   $('pseudoStatus').className = 'status';
-  // Partage le pseudo avec index.html via sessionStorage
   try {
     if (pseudo) sessionStorage.setItem('obj_pseudo', pseudo);
     else sessionStorage.removeItem('obj_pseudo');
   } catch(e) {}
+  loadDebates();
 }
 
 // ── pseudo check ──
@@ -502,6 +558,107 @@ SB.auth.onAuthStateChange(async (event, session) => {
 
 // ── démarrage ──
 init();
+
+// ══ HISTORIQUE DES DÉBATS ══
+const PERSONA_LABELS = {
+  philosopher:'🏛 Philosophe', economist:'📊 Économiste', scientist:'🔬 Scientifique',
+  lawyer:'⚖ Juriste', activist:'✊ Militant', historian:'📜 Historien',
+  child:'🧒 Enfant de 10 ans', psychologist:'🧠 Psychologue',
+  'hc-scientist':'🧪 Scientifique HC', 'hc-lawyer':'⚔️ Juriste HC', 'hc-devil':'💀 Avocat du diable HC'
+};
+
+let currentDebateId = null;
+
+async function loadDebates() {
+  if (!user) return;
+  const list = $('debatesList');
+  const { data, error } = await SB
+    .from('debates')
+    .select('id,conviction,persona,robustesse,robustesse_label,created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error || !data?.length) {
+    list.innerHTML = '<p class="no-debates">Aucun débat sauvegardé pour l\'instant.</p>';
+    return;
+  }
+
+  list.innerHTML = data.map(d => {
+    const score = d.robustesse ?? '?';
+    const cls = score >= 71 ? 'high' : score >= 51 ? 'mid' : '';
+    const date = new Date(d.created_at).toLocaleDateString('fr-FR', {day:'numeric',month:'short',year:'numeric'});
+    const persona = PERSONA_LABELS[d.persona] || d.persona;
+    return `<div class="debate-card" data-id="${esc(d.id)}">
+      <div class="debate-card-left">
+        <div class="debate-conviction">${esc(d.conviction)}</div>
+        <div class="debate-meta"><span>${persona}</span><span>${date}</span>${d.robustesse_label ? `<span>${esc(d.robustesse_label)}</span>` : ''}</div>
+      </div>
+      <div class="debate-score ${cls}">${score}%</div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.debate-card').forEach(card => {
+    card.onclick = () => openTranscript(card.dataset.id);
+  });
+}
+
+async function openTranscript(id) {
+  currentDebateId = id;
+  const { data, error } = await SB
+    .from('debates')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) return;
+
+  const score = data.robustesse ?? '?';
+  const cls = score >= 71 ? 'high' : score >= 51 ? 'mid' : '';
+  const date = new Date(data.created_at).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'});
+  const persona = PERSONA_LABELS[data.persona] || data.persona;
+
+  $('transcriptTitle').textContent = data.conviction;
+  $('transcriptMeta').textContent = `${persona} · ${date}`;
+
+  $('transcriptScore').className = `transcript-score ${cls}`;
+  $('transcriptScore').innerHTML = `<div class="transcript-score-num">Ton idée tient à ${score}%</div><div class="transcript-score-label">${esc(data.robustesse_label || '')}</div>`;
+
+  if (data.conseil) {
+    $('transcriptConseil').innerHTML = `<strong>Pour aller plus loin</strong>${esc(data.conseil)}`;
+    $('transcriptConseil').style.display = '';
+  } else {
+    $('transcriptConseil').style.display = 'none';
+  }
+
+  const transcript = Array.isArray(data.transcript) ? data.transcript : [];
+  $('transcriptBody').innerHTML = transcript.map(m => `
+    <div class="transcript-msg">
+      <div class="transcript-msg-who ${m.role === 'assistant' ? 'ai' : ''}">${esc(m.name || m.role)}</div>
+      <div class="transcript-msg-text">${esc(m.content)}</div>
+    </div>
+  `).join('');
+
+  $('transcriptOverlay').classList.add('open');
+}
+
+$('transcriptClose').onclick = () => $('transcriptOverlay').classList.remove('open');
+$('transcriptOverlay').onclick = e => { if (e.target === $('transcriptOverlay')) $('transcriptOverlay').classList.remove('open'); };
+
+$('deleteDebateBtn').onclick = async () => {
+  if (!currentDebateId) return;
+  $('deleteDebateBtn').disabled = true;
+  $('deleteDebateBtn').textContent = 'Suppression…';
+  const { error } = await SB.from('debates').delete().eq('id', currentDebateId);
+  if (!error) {
+    $('transcriptOverlay').classList.remove('open');
+    currentDebateId = null;
+    loadDebates();
+  } else {
+    $('deleteDebateBtn').disabled = false;
+    $('deleteDebateBtn').textContent = 'Supprimer ce débat';
+  }
+};
 </script>
 </body>
 </html>
