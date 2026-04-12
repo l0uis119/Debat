@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0D0D0D"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>Objection — Hardcore</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -42,7 +45,7 @@ html,body{min-height:100%;background:#0D0D0D;color:var(--ink);font-family:var(--
 .screen{display:none;min-height:100vh}.screen.active{display:block}
 
 /* ── TOPBAR ── */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(13,13,13,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;padding-top:calc(0.9rem + env(safe-area-inset-top));background:rgba(13,13,13,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
 .topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;letter-spacing:-0.01em;text-decoration:none}
 .hc-badge{font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 9px;background:var(--terra-soft);border:1px solid var(--terra-border);border-radius:var(--r4);color:var(--terra);margin-left:6px;vertical-align:middle}
 .topbar-right{display:flex;align-items:center;gap:10px}
@@ -67,7 +70,7 @@ html,body{min-height:100%;background:#0D0D0D;color:var(--ink);font-family:var(--
 
 /* ── HOME ── */
 #home{display:none}
-#home.active{display:flex;align-items:stretch;justify-content:center;min-height:100vh;padding:4.8rem 1rem 1rem;background:var(--cream)}
+#home.active{display:flex;align-items:stretch;justify-content:center;min-height:100vh;padding:calc(4.8rem + env(safe-area-inset-top)) 1rem 1rem;background:var(--cream)}
 .home-card{background:#111111;border:1px solid var(--ink4);border-radius:var(--r3);padding:2.5rem 3rem;width:100%;max-width:1600px;box-shadow:var(--shadow2);display:flex;flex-direction:column}
 .home-bottom{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;flex:1}
 .home-bottom-right{display:flex;flex-direction:column;gap:1.25rem;height:100%}
