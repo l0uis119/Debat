@@ -160,7 +160,10 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 1.5rem;background:var(--cream2);border-top:1px solid var(--ink4);flex-shrink:0}
 .dfooter-left{display:flex;align-items:center;gap:10px}
 .tc{font-size:0.72rem;color:var(--ink2);font-weight:600}
-.vhint{font-size:0.72rem;color:var(--terra);font-weight:600;background:var(--terra-soft);padding:3px 10px;border-radius:var(--r4);border:1px solid var(--terra-border)}
+.progress-wrap{width:120px;height:7px;background:var(--cream3);border-radius:6px;overflow:hidden;flex-shrink:0}
+.progress-bar{height:100%;background:var(--terra3);border-radius:6px;transition:width .5s cubic-bezier(.22,1,.36,1),background .4s}
+.progress-bar.done{background:var(--sage)}
+.progress-label{font-size:0.7rem;font-weight:700;color:var(--ink3);min-width:28px;text-align:right}
 .vbtn{font-size:0.78rem;font-weight:700;padding:7px 18px;background:var(--sage);border:none;border-radius:var(--r4);color:var(--white);cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(91,124,107,0.2)}
 .vbtn:not(:disabled):hover{background:var(--sage2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(91,124,107,0.3)}
 .vbtn:disabled{opacity:0.35;cursor:not-allowed;background:var(--cream3);color:var(--ink3);box-shadow:none}
@@ -351,7 +354,10 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   <div class="dfooter">
     <div class="dfooter-left">
       <span class="tc" id="turnCount">0 échange</span>
-      <span class="vhint" id="verdictHint">Analyse dans 5 échanges</span>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+      <span class="progress-label" id="progressLabel">0 / 5</span>
     </div>
     <button class="vbtn" id="verdictBtn" disabled>Demander l'analyse</button>
   </div>
@@ -662,7 +668,8 @@ async function startDebate() {
   $('ferocityBadge').textContent = FEROCITY[S.ferocity].label;
   $('convictionStrip').textContent = S.conviction;
   $('messages').innerHTML = ''; $('turnCount').textContent = '0 échange';
-  $('verdictBtn').disabled = true; $('verdictHint').textContent = 'Analyse dans 5 échanges'; $('verdictHint').style.display = '';
+  $('progressBar').style.width = '0%'; $('progressBar').classList.remove('done'); $('progressLabel').textContent = '0 / 5';
+  $('verdictBtn').disabled = true;
   showScreen('debate'); updateResumeBtn(); setLoading(true);
   S.history.push({role:'user', content:`Je soutiens que : ${S.conviction}`});
   try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns=1; refreshTurns(); }
@@ -766,9 +773,12 @@ function hideTyping() { const t=$('typing'); if(t) t.remove(); }
 function setLoading(on) { S.loading=on; inputEl.disabled=on; sendEl.disabled=on; if(!on) inputEl.focus(); }
 function refreshTurns() {
   const t = S.turns;
+  const capped = Math.min(t, 5);
   $('turnCount').textContent = `${t} échange${t>1?'s':''}`;
-  if (t < 5) { const r=5-t; $('verdictHint').textContent=`Analyse dans ${r} échange${r>1?'s':''}`; }
-  else $('verdictHint').style.display = 'none';
+  $('progressBar').style.width = `${(capped/5)*100}%`;
+  $('progressLabel').textContent = `${capped} / 5`;
+  if (capped >= 5) $('progressBar').classList.add('done');
+  else $('progressBar').classList.remove('done');
 }
 
 function renderVerdict(raw, userName, aiName, persona) {
