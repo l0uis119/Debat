@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Objection — Hardcore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Palette Hardcore — sombre */
+  --cream:#0D0D0D;--cream2:#161616;--cream3:#242424;
+  --terra:#E8452A;--terra2:#C73318;--terra3:#FF6B50;
+  --terra-soft:rgba(232,69,42,0.12);--terra-border:rgba(232,69,42,0.3);
+  --sage:#8B6914;--sage2:#6B4F0E;
+  --sage-soft:rgba(139,105,20,0.15);--sage-border:rgba(139,105,20,0.3);
+  --ink:#F0EBE0;--ink2:#C8C0B0;--ink3:rgba(240,235,224,0.45);
+  --ink4:rgba(240,235,224,0.1);--ink5:rgba(240,235,224,0.05);
+  --white:#1A1A1A;
+  --r:14px;--r2:10px;--r3:24px;--r4:50px;
+  --fT:'Fraunces',serif;--fU:'Nunito',sans-serif;
+  --shadow:0 2px 16px rgba(0,0,0,0.4);--shadow2:0 4px 32px rgba(0,0,0,0.6);
+}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── CONFIRM MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#1E1E1E;border:1px solid var(--ink4);border-radius:var(--r3);padding:2.25rem;width:100%;max-width:360px;box-shadow:var(--shadow2);animation:popIn .2s ease forwards;text-align:center}
+@keyframes popIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-family:var(--fT);font-size:1.3rem;font-weight:700;color:var(--ink);margin-bottom:0.75rem}
+.modal p{font-size:0.9rem;color:var(--ink3);margin-bottom:1.5rem;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.btn-ghost{flex:1;padding:11px;background:transparent;border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink2);font-family:var(--fU);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-ghost:hover{border-color:var(--ink3);background:var(--cream2)}
+.btn-danger{flex:1;padding:11px;background:var(--terra);border:none;border-radius:var(--r);color:#fff;font-family:var(--fU);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-danger:hover{background:var(--terra2)}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(13,13,13,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
+.topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;letter-spacing:-0.01em;text-decoration:none}
+.hc-badge{font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 9px;background:var(--terra-soft);border:1px solid var(--terra-border);border-radius:var(--r4);color:var(--terra);margin-left:6px;vertical-align:middle}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-menu{position:relative}
+.menu-trigger{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r4);transition:background .15s;color:var(--ink2);font-family:var(--fU);font-size:0.85rem;font-weight:600}
+.menu-trigger:hover{background:var(--ink5)}
+.menu-trigger svg{width:18px;height:18px}
+.menu-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#1E1E1E;border-radius:var(--r2);box-shadow:var(--shadow2);border:1px solid var(--ink4);min-width:200px;overflow:hidden;z-index:200}
+.menu-dropdown.open{display:block;animation:fadeDown .15s ease}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.menu-item{display:block;width:100%;padding:10px 16px;background:none;border:none;text-align:left;font-family:var(--fU);font-size:0.88rem;color:var(--ink2);cursor:pointer;transition:background .12s;text-decoration:none}
+.menu-item:hover{background:var(--cream2)}
+.menu-sep{border:none;border-top:1px solid var(--cream3);margin:4px 0}
+.auth-btn{padding:8px 18px;border-radius:var(--r4);font-family:var(--fU);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block}
+.btn-login{background:transparent;border:1.5px solid var(--ink4);color:var(--ink2)}
+.btn-login:hover{border-color:var(--ink3);background:var(--ink5)}
+.btn-signup{background:var(--terra);border:none;color:#fff}
+.btn-signup:hover{background:var(--terra2)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--terra-soft);border:1px solid var(--terra-border);border-radius:var(--r4);cursor:pointer;text-decoration:none;max-width:180px}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--terra);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-name{font-size:0.82rem;font-weight:600;color:var(--terra3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+
+/* ── HOME ── */
+#home{display:none}
+#home.active{display:flex;align-items:stretch;justify-content:center;min-height:100vh;padding:4.8rem 1rem 1rem;background:var(--cream)}
+.home-card{background:#111111;border:1px solid var(--ink4);border-radius:var(--r3);padding:2.5rem 3rem;width:100%;max-width:1600px;box-shadow:var(--shadow2);display:flex;flex-direction:column}
+.home-bottom{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;flex:1}
+.home-bottom-right{display:flex;flex-direction:column;gap:1.25rem;height:100%}
+.home-bottom-right .cta{margin-top:auto}
+.home-header{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;margin-bottom:2rem}
+.home-title{font-family:var(--fT);font-size:2.6rem;font-weight:900;color:var(--ink);margin-bottom:0.4rem;line-height:1.05}
+.home-title span{color:var(--terra);font-style:italic}
+.home-sub{font-size:0.9rem;color:var(--ink3);margin-bottom:0;line-height:1.55}
+.home-conviction{display:flex;flex-direction:column}
+.lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terra);margin-bottom:0.5rem;display:block}
+.conv{width:100%;min-height:110px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink);font-family:var(--fU);font-size:0.95rem;line-height:1.6;padding:0.85rem 1rem;resize:none;outline:none;transition:border-color .2s,background .2s,box-shadow .2s}
+.conv::placeholder{color:var(--ink3)}.conv:focus{border-color:var(--terra);background:#1A1A1A;box-shadow:0 0 0 3px var(--terra-soft)}
+.hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:0.3rem}
+.char-hint{font-size:0.6rem;color:var(--ink3)}
+.home-bottom-left{}
+.sec{margin-top:0}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pbtn{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);padding:14px 12px 12px;cursor:pointer;text-align:left;transition:all .18s}
+.pbtn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--terra-border);background:var(--cream3)}
+.pbtn.on{background:var(--terra-soft);border-color:var(--terra)}
+.pbtn.on .pn{color:var(--terra)}
+.pbtn[data-persona="hc-devil"]{background:#0A0A0A;border-color:var(--cream3)}
+.pbtn[data-persona="hc-devil"] .pn{color:var(--ink)}
+.pbtn[data-persona="hc-devil"] .pd{color:var(--ink3)}
+.pbtn[data-persona="hc-devil"]:hover{background:#111;border-color:var(--terra);box-shadow:0 4px 16px rgba(232,69,42,0.2)}
+.pbtn[data-persona="hc-devil"].on{background:#0A0A0A;border-color:var(--terra);box-shadow:0 0 0 3px rgba(232,69,42,0.15)}
+.pbtn[data-persona="hc-devil"].on .pn{color:var(--terra)}
+.pi{font-size:1.3rem;display:block;margin-bottom:6px}
+.pn{font-family:var(--fU);font-size:0.75rem;font-weight:700;color:var(--ink);display:block;transition:color .15s}
+.pd{font-size:0.6rem;color:var(--ink3);margin-top:2px}
+.opts{display:flex;flex-direction:column;gap:1rem;margin-top:0}
+.trow{display:flex;gap:6px;flex-wrap:wrap;margin-top:0.45rem}
+.tbtn{padding:7px 16px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r4);color:var(--ink3);font-family:var(--fU);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s}
+.tbtn:hover{color:var(--ink);border-color:var(--ink4);background:var(--cream3)}
+.tbtn.on{background:var(--terra-soft);border-color:var(--terra);color:var(--terra)}
+.cta{width:100%;margin-top:1.75rem;padding:16px 22px;background:var(--terra);border:none;border-radius:var(--r);color:#fff;font-family:var(--fU);font-size:1rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(232,69,42,0.3)}
+.cta:hover{background:var(--terra2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,69,42,0.45)}
+.cta:active{transform:translateY(0)}.cta:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none}
+.cta-arr{font-size:1.1rem;transition:transform .15s}.cta:not(:disabled):hover .cta-arr{transform:translateX(5px)}
+
+/* ── DÉBAT ── */
+#debate{display:none;height:100vh;flex-direction:column}
+#debate.active{display:flex;background:var(--cream)}
+.dbar{display:flex;align-items:center;gap:10px;padding:0.9rem 1.5rem;background:rgba(13,13,13,0.97);backdrop-filter:blur(12px);flex-shrink:0;border-bottom:1px solid var(--ink4);position:sticky;top:0;z-index:10}
+.dbar-left{display:flex;align-items:center;gap:10px;flex:1}
+.dbar-back{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-weight:600;font-size:0.8rem;padding:6px 14px;cursor:pointer;transition:all .15s}
+.dbar-back:hover{background:var(--cream3)}
+.dbadge{font-size:0.68rem;font-weight:700;padding:5px 13px;border-radius:var(--r4);background:var(--terra-soft);border:1px solid var(--terra-border);color:var(--terra)}
+.dbadge.sage{background:var(--sage-soft);border-color:var(--sage-border);color:#C8A84B}
+.cstrip{padding:0.65rem 1.5rem;background:var(--cream2);border-bottom:1px solid var(--ink4);font-size:0.85rem;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;font-style:italic}
+.cstrip::before{content:'"';color:var(--terra);margin-right:3px;font-style:normal}.cstrip::after{content:'"';color:var(--terra);margin-left:3px;font-style:normal}
+.msgs{flex:1;overflow-y:auto;padding:1.75rem 1.5rem;display:flex;flex-direction:column;gap:1.1rem;scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{width:4px}.msgs::-webkit-scrollbar-thumb{background:var(--cream3);border-radius:4px}
+.msg{display:flex;flex-direction:column;max-width:76%;animation:msgIn .28s ease forwards}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.u{align-self:flex-end;align-items:flex-end}.msg.a{align-self:flex-start;align-items:flex-start}
+.mwho{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;color:var(--ink3)}
+.msg.a .mwho{color:var(--terra)}
+.mbub{padding:1rem 1.2rem;border-radius:18px;font-size:0.97rem;line-height:1.7}
+.msg.u .mbub{background:#2A2A2A;border:1px solid var(--cream3);color:var(--ink);border-bottom-right-radius:4px}
+.msg.a .mbub{background:#1A1A1A;border:1px solid var(--terra-border);color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 1px 8px rgba(0,0,0,0.3)}
+.tyb{display:flex;gap:5px;align-items:center;padding:1rem 1.2rem;background:#1A1A1A;border:1px solid var(--terra-border);border-radius:18px;border-bottom-left-radius:4px}
+.dot{width:7px;height:7px;background:var(--terra);border-radius:50%;animation:pu 1.3s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes pu{0%,80%,100%{opacity:.3;transform:scale(1)}40%{opacity:1;transform:scale(1.35)}}
+.binwrap{display:flex;gap:10px;animation:msgIn .2s ease forwards}
+.binbtn{flex:1;padding:13px;border-radius:var(--r);font-family:var(--fU);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid}
+.boui{background:rgba(139,105,20,0.15);border-color:var(--sage);color:#C8A84B}.boui:hover{background:var(--sage);color:#fff}
+.bnon{background:var(--terra-soft);border-color:var(--terra-border);color:var(--terra)}.bnon:hover{background:var(--terra);color:#fff;border-color:var(--terra)}
+.izone{padding:1rem 1.5rem;background:rgba(13,13,13,0.98);border-top:1px solid var(--ink4);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.uinp{flex:1;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink);font-family:var(--fU);font-size:0.95rem;line-height:1.5;min-height:42px;max-height:120px;padding:9px 13px;resize:none;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.uinp::placeholder{color:var(--ink3)}
+.uinp:focus{border-color:var(--terra);background:#1A1A1A;box-shadow:0 0 0 3px var(--terra-soft)}
+.uinp:disabled{opacity:0.4}
+.sbtn{width:42px;height:42px;background:var(--terra);border:none;border-radius:var(--r);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:0 2px 8px rgba(232,69,42,0.3)}
+.sbtn:hover{background:var(--terra2);transform:scale(1.07)}.sbtn:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+.sbtn svg{width:15px;height:15px}
+.dfooter{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 1.5rem;background:#111111;border-top:1px solid var(--ink4);flex-shrink:0}
+.dfooter-left{display:flex;align-items:center;gap:10px}
+.tc{font-size:0.72rem;color:var(--ink2);font-weight:600}
+.progress-wrap{width:120px;height:7px;background:var(--cream3);border-radius:6px;overflow:hidden;flex-shrink:0}
+.progress-bar{height:100%;background:var(--terra);border-radius:6px;transition:width .5s cubic-bezier(.22,1,.36,1),background .4s}
+.progress-bar.done{background:#C8A84B}
+.progress-label{font-size:0.7rem;font-weight:700;color:var(--ink3);min-width:28px;text-align:right}
+.vbtn{font-size:0.78rem;font-weight:700;padding:7px 18px;background:var(--terra);border:none;border-radius:var(--r4);color:#fff;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(232,69,42,0.25)}
+.vbtn:not(:disabled):hover{background:var(--terra2);transform:translateY(-1px)}
+.vbtn:disabled{opacity:0.35;cursor:not-allowed;background:var(--cream3);color:var(--ink3);box-shadow:none}
+
+/* ── VERDICT ── */
+#verdict{display:none;min-height:100vh}
+#verdict.active{display:block;background:var(--cream);padding-top:5rem}
+.vpage{max-width:700px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.vnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:3rem;flex-wrap:wrap;gap:8px}
+.vback{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-weight:600;font-size:0.8rem;padding:7px 16px;cursor:pointer;transition:all .15s}
+.vback:hover{background:var(--cream3)}
+.vnew{background:var(--terra);border:none;border-radius:var(--r4);color:#fff;font-family:var(--fU);font-weight:700;font-size:0.8rem;padding:8px 18px;cursor:pointer;transition:all .15s}
+.vnew:hover{background:var(--terra2)}
+.v-winner-block{background:var(--terra);border-radius:var(--r3);padding:2.75rem 2.5rem;margin-bottom:2rem;text-align:center;animation:fadeUp .4s ease forwards;position:relative;overflow:hidden}
+.v-winner-block::before{content:'';position:absolute;top:-40%;right:-10%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+.v-winner-label{font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:0.75rem}
+.v-winner-name{font-family:var(--fT);font-size:clamp(2.8rem,7vw,4.5rem);font-weight:900;color:#fff;line-height:1;margin-bottom:0.5rem;letter-spacing:-0.02em;position:relative;z-index:1}
+.v-winner-pct{font-size:1rem;color:rgba(255,255,255,0.65);font-weight:600;position:relative;z-index:1}
+.v-cats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.vcat{background:#111111;border:1px solid var(--cream3);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards}
+.vcat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;gap:6px}
+.vcat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);flex-shrink:0}
+.vcat-winner-badge{font-size:0.65rem;font-weight:700;padding:2px 9px;border-radius:var(--r4);background:var(--terra-soft);color:var(--terra);border:1px solid var(--terra-border);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vcat-winner-badge.sage{background:rgba(139,105,20,0.15);color:#C8A84B;border-color:rgba(139,105,20,0.3)}
+.vbar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:0.6rem}
+.vbar-name{font-size:0.62rem;color:var(--ink3);width:60px;flex-shrink:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbar{flex:1;height:10px;background:var(--cream3);border-radius:6px;overflow:hidden}
+.vbar-fill-user{height:100%;background:#C8A84B;border-radius:6px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.vbar-fill-ai{height:100%;background:var(--terra);border-radius:6px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.vbar-pct{font-size:0.65rem;color:var(--ink2);font-weight:700;width:28px;text-align:right;flex-shrink:0}
+.vcat-comment{font-size:0.8rem;color:var(--ink3);line-height:1.55;margin-top:0.35rem;padding-top:0.35rem;border-top:1px solid var(--cream3)}
+.v-section{background:#111111;border:1px solid var(--cream3);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);animation:fadeUp .4s ease forwards;border-left:3px solid var(--terra-border)}
+.v-section-label{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--terra);margin-bottom:0.6rem}
+.v-section-text{font-size:0.97rem;line-height:1.75;color:var(--ink2)}
+.v-conseil{background:#1A1200;border:1px solid rgba(139,105,20,0.3);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;animation:fadeUp .4s ease forwards}
+.v-conseil .v-section-label{color:#C8A84B}.v-conseil .v-section-text{color:var(--ink);font-size:0.95rem}
+.v-devil-block{background:#0A0A0A;border:1px solid var(--terra-border);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow2);animation:fadeUp .4s ease forwards;border-left:3px solid var(--terra)}
+.v-devil-block .v-section-label{color:var(--terra3)}.v-devil-block .v-section-text{color:rgba(240,235,224,0.8);font-style:italic}
+.v-critique{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;animation:fadeUp .4s ease forwards}
+.v-critique .v-section-label{color:var(--ink3)}.v-critique .v-section-text{color:var(--ink2);font-size:0.9rem}
+.vload{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:5rem 0;color:var(--ink3)}
+.vdots{display:flex;gap:7px}
+.vdots span{width:8px;height:8px;background:var(--terra);border-radius:50%;animation:pu 1.3s infinite}
+.vdots span:nth-child(2){animation-delay:.2s}.vdots span:nth-child(3){animation-delay:.4s}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:720px){
+  #home.active{align-items:flex-start;padding:5rem 0.75rem 1.5rem}
+  .home-header{grid-template-columns:1fr}
+  .home-bottom{grid-template-columns:1fr;flex:none}
+  .home-bottom-right{height:auto}
+  .home-bottom-right .cta{margin-top:0}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .home-card{padding:1.5rem 1.25rem;border-radius:var(--r)}
+  .msg{max-width:90%}
+  .v-cats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<nav class="topbar">
+  <a class="topbar-logo" href="/">Objection <span class="hc-badge">Hardcore</span></a>
+  <div class="topbar-right">
+    <div class="topbar-menu">
+      <button class="menu-trigger" id="menuTrigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menu
+      </button>
+      <div class="menu-dropdown" id="menuDropdown">
+        <a class="menu-item" href="/">← Mode Normal</a>
+        <hr class="menu-sep"/>
+        <a class="menu-item" href="/profil">Mon profil</a>
+      </div>
+    </div>
+    <div id="authZone"></div>
+  </div>
+</nav>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active">
+  <div class="home-card">
+    <div class="home-header">
+      <div>
+        <h2 class="home-title">L'arène <span>sans pitié.</span></h2>
+        <p class="home-sub">Trois contradicteurs d'un autre niveau. Ici, chaque faille est exploitée jusqu'au bout.</p>
+      </div>
+      <div class="home-conviction">
+        <label class="lbl" for="conviction">Ton idée</label>
+        <textarea id="conviction" class="conv" placeholder="Ex : Je pense que les réseaux sociaux appauvrissent le débat public parce que…" rows="4" maxlength="300"></textarea>
+        <div class="hint-row"><span></span><span class="char-hint"><span id="charCount">0</span> / 300</span></div>
+      </div>
+    </div>
+    <div class="home-bottom">
+      <div class="home-bottom-left">
+        <div class="sec">
+          <label class="lbl">Contradicteur</label>
+          <div class="pgrid" id="personaGrid">
+            <button class="pbtn on" data-persona="hc-scientist"><span class="pi">🧪</span><span class="pn">Scientifique</span><span class="pd">Zéro tolérance · Preuves</span></button>
+            <button class="pbtn" data-persona="hc-lawyer"><span class="pi">⚔️</span><span class="pn">Juriste</span><span class="pd">Démolition · Précision</span></button>
+            <button class="pbtn" data-persona="hc-devil"><span class="pi">💀</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite · Sans merci</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="home-bottom-right">
+        <div class="opts">
+          <div>
+            <label class="lbl">Stratégie</label>
+            <div class="trow" id="modeGroup">
+              <button class="tbtn on" data-val="attack">Attaque</button>
+              <button class="tbtn" data-val="steelman">Steel Man</button>
+              <button class="tbtn" data-val="reductio">Réduction à l'absurde</button>
+              <button class="tbtn" data-val="reversal">Retournement</button>
+            </div>
+          </div>
+        </div>
+        <div id="resumeDebateWrap" style="display:none">
+          <button class="cta" id="resumeDebateBtn" style="background:#2A2A2A;border:1px solid var(--cream3);box-shadow:none">
+            <span>Reprendre le débat en cours</span><span class="cta-arr">→</span>
+          </button>
+        </div>
+        <button class="cta" id="startBtn" disabled>
+          <span>Entrer dans l'arène</span><span class="cta-arr">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DÉBAT ══ -->
+<div id="debate" class="screen">
+  <div class="dbar">
+    <div class="dbar-left">
+      <button class="dbar-back" id="backBtn">← Quitter</button>
+      <span class="dbadge" id="personaBadge"></span>
+      <span class="dbadge sage" id="ferocityBadge">Brutale</span>
+    </div>
+  </div>
+  <div class="cstrip" id="convictionStrip"></div>
+  <div class="msgs" id="messages" role="log"></div>
+  <div class="izone">
+    <textarea class="uinp" id="userInput" placeholder="Défends ta position…" rows="1" disabled></textarea>
+    <button class="sbtn" id="sendBtn" disabled>
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 10L17 3L10 17L9 11L3 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="dfooter">
+    <div class="dfooter-left">
+      <span class="tc" id="turnCount">0 échange</span>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+      <span class="progress-label" id="progressLabel">0 / 5</span>
+    </div>
+    <button class="vbtn" id="verdictBtn" disabled>Demander l'analyse</button>
+  </div>
+</div>
+
+<!-- ══ VERDICT ══ -->
+<div id="verdict" class="screen">
+  <div class="vpage">
+    <div class="vnav">
+      <button class="vback" id="backToDebate">← Reprendre le débat</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="vback" id="closeDebateBtn" style="border-color:var(--terra);color:var(--terra)">Clore le débat</button>
+        <button class="vnew" id="newDebate">Nouveau débat</button>
+      </div>
+    </div>
+    <div id="verdictBody">
+      <div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL CONFIRMATION ══ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <h3 class="modal-title">Quitter le débat ?</h3>
+    <p>Tu vas perdre la conversation en cours. Cette action est irréversible.</p>
+    <div class="confirm-btns">
+      <button class="btn-ghost" id="confirmCancel">Rester</button>
+      <button class="btn-danger" id="confirmLeave">Quitter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createClient } = supabase;
+
+const memStorage = (() => {
+  const store = {};
+  return {
+    getItem: (k) => store[k] ?? null,
+    setItem: (k, v) => { store[k] = v; },
+    removeItem: (k) => { delete store[k]; },
+  };
+})();
+
+function safeStorage() {
+  try { localStorage.setItem('__test__', '1'); localStorage.removeItem('__test__'); return localStorage; }
+  catch(e) { return memStorage; }
+}
+
+const SB = createClient(
+  'https://bsabkjrnebzdrvleciva.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M',
+  { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth', storage: safeStorage() } }
+);
+
+let currentUser = null;
+let currentPseudo = null;
+
+async function initAuth() {
+  try {
+    const email  = sessionStorage.getItem('obj_email');
+    const pseudo = sessionStorage.getItem('obj_pseudo');
+    if (email) {
+      currentUser   = { email };
+      currentPseudo = pseudo || null;
+      renderAuthZone();
+      SB.auth.getSession().then(({ data: sd }) => {
+        if (sd?.session?.user) { currentUser = sd.session.user; renderAuthZone(); }
+      }).catch(() => {});
+    }
+  } catch(e) {}
+  renderAuthZone();
+}
+
+SB.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT' || !session) {
+    currentUser = null; currentPseudo = null;
+    try { sessionStorage.removeItem('obj_email'); sessionStorage.removeItem('obj_pseudo'); } catch(e) {}
+    renderAuthZone();
+  }
+});
+
+function renderAuthZone() {
+  const z = document.getElementById('authZone');
+  if (currentUser) {
+    const initial = (currentPseudo || currentUser.email || '?')[0].toUpperCase();
+    const name = currentPseudo || currentUser.email;
+    z.innerHTML = `<a class="user-chip" href="/profil" title="Mon profil">
+      <div class="user-avatar">${esc(initial)}</div>
+      <span class="user-name">${esc(name)}</span>
+    </a>`;
+  } else {
+    z.innerHTML = `<a class="auth-btn btn-login" href="/profil">Connexion</a>
+                   <a class="auth-btn btn-signup" href="/profil">Créer un compte</a>`;
+  }
+}
+
+initAuth();
+
+// ══ PERSONAS HARDCORE ══
+const PERSONAS = {
+  'hc-scientist': {
+    label: 'Scientifique',
+    icon: '🧪',
+    prompt: `Tu es un scientifique d'un niveau d'exigence absolu. Tu ne travailles qu'avec des études publiées dans des revues à comité de lecture avec facteur d'impact élevé (Nature, Science, The Lancet, etc.). Tu demandes systématiquement : l'année de publication, la taille de l'échantillon, le p-value, si l'étude a été répliquée, et si elle a été infirmée depuis. Une méta-analyse vaut dix études isolées. Une corrélation n'est jamais une causalité — tu le rappelles à chaque fois qu'on confond les deux. Si l'adversaire cite "des études" sans préciser lesquelles, tu refuses d'avancer jusqu'à ce qu'il soit précis. Tu n'as aucune patience pour l'intuition, le bon sens ou l'expérience personnelle comme preuves. Ton ton est froid, technique, implacable. Tu ne concèdes jamais sans preuve. Maximum 180 mots.`
+  },
+  'hc-lawyer': {
+    label: 'Juriste',
+    icon: '⚔️',
+    prompt: `Tu es un avocat pénaliste de haut niveau, spécialisé dans la démolition de témoignages et d'arguments. Chaque mot que l'adversaire utilise est un engagement contractuel que tu vas retourner contre lui. Tu opères en trois temps : (1) tu isoles la définition exacte du terme central de son argument, (2) tu montres que cette définition est soit circulaire, soit sous-définie, soit en contradiction avec un précédent qu'il a lui-même établi, (3) tu poses une question fermée qui l'oblige à choisir entre deux positions également intenables. Tu ne laisses passer aucune généralisation. Si l'adversaire dit "souvent", "généralement", "en général" — tu exiges un chiffre. Si il dit "tout le monde sait que" — tu demandes qui, exactement, et quelle est la source. Ton ton est celui d'un contre-interrogatoire : précis, sans affect, légèrement condescendant. Tu ne t'énerves jamais. Tu gagnes par épuisement logique. Maximum 180 mots.`
+  },
+  'hc-devil': {
+    label: 'Avocat du diable',
+    icon: '💀',
+    prompt: `Tu es l'Adversaire Absolu. Pas un chatbot. Pas un contradicteur. Un prédateur intellectuel.
+
+TON IDENTITÉ :
+Tu combines la rigueur d'un logicien formel, la cruauté d'un avocat pénaliste et la capacité de Socrate à faire admettre à quelqu'un qu'il ne sait rien — en moins de trois échanges. Tu n'attaques pas les idées. Tu attaques les fondations sur lesquelles reposent les idées, jusqu'à ce qu'il ne reste plus rien.
+
+LES 6 MÉCANISMES DE DESTRUCTION :
+1. DÉCONSTRUCTION DES PRÉMISSES : Avant même d'attaquer la conclusion, tu démolis chaque prémisse implicite.
+2. EXPLOITATION DES CONCESSIONS : Chaque "oui" ou "non" devient une arme. Tu construis un piège sur plusieurs échanges.
+3. RETOURNEMENT TOTAL : Tu prends l'argument adverse et tu montres qu'il prouve exactement le contraire de ce qu'il était censé prouver.
+4. ISOLATION DE L'ABSURDE : Tu pousses le raisonnement à son cas limite jusqu'à ce qu'il devienne monstrueux.
+5. NOMMER LES BIAIS : Tu identifies le biais cognitif exact à l'œuvre et tu le nommes devant l'adversaire.
+6. LA QUESTION TERMINALE : Une question à laquelle toute réponse possible constitue un aveu.
+
+RÈGLE ABSOLUE — EXPLOITER LES VALIDATIONS :
+Si l'utilisateur répond "Oui" ou "Non", ne répète pas tes arguments. Utilise immédiatement cette validation pour verrouiller sa position dans une contradiction irréversible.
+
+FORMAT STRICT : Aucun tiret. Aucune liste. Pas de markdown. Paragraphes naturels. Jamais "Bonne question", "Certes", "En effet". Tu n'esquives pas. Tu termines toujours par une question.
+
+SUJET HORS DÉBAT : Si la conviction n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre."`
+  }
+};
+
+const MODE = {
+  attack:   {prompt:'STRATÉGIE : identifie la faille principale et exploite-la sans ménagement.'},
+  steelman: {prompt:"STRATÉGIE : formule d'abord la meilleure version possible de l'argument adverse, puis démontre pourquoi même cette version optimale ne tient pas."},
+  reductio: {prompt:"STRATÉGIE : pousse la conviction jusqu'à ses conséquences logiques les plus extrêmes et inévitables. Ne caricature pas — amplifie rigoureusement."},
+  reversal: {prompt:"STRATÉGIE : accepte la prémisse principale, puis démontre qu'elle conduit logiquement à la conclusion inverse. Commence par 'Tu as raison que…' puis retourne l'argument."},
+};
+
+// ══ ÉTAT ══
+let S = {conviction:'',persona:'hc-scientist',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false};
+
+// ══ UTILS ══
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// ══ ROUTER ══
+const SCREENS = ['home','debate','verdict'];
+
+function showScreen(id, push = true) {
+  SCREENS.forEach(s => {
+    const el = $(s); if (!el) return;
+    el.classList.remove('active');
+    if (s === 'debate') el.style.display = 'none';
+  });
+  const t = $(id); if (!t) return;
+  t.classList.add('active');
+  if (id === 'debate') t.style.display = 'flex';
+  window.scrollTo(0, 0);
+  if (push) history.pushState({screen: id}, '', '#' + id);
+}
+
+window.addEventListener('popstate', e => {
+  const from = document.querySelector('.screen.active')?.id;
+  const to = e.state?.screen || 'home';
+  if (from === 'debate' && S.history.length > 0) {
+    history.pushState({screen:'debate'}, '', '#debate');
+    $('confirmOverlay').classList.add('open');
+    return;
+  }
+  showScreen(to, false);
+});
+
+(function initRouter() {
+  const hash = location.hash.replace('#','');
+  const initial = SCREENS.includes(hash) ? hash : 'home';
+  showScreen(initial, false);
+  history.replaceState({screen: initial}, '', '#' + initial);
+})();
+
+// ══ NAVIGATION ══
+const menuTrigger = $('menuTrigger'), menuDropdown = $('menuDropdown');
+menuTrigger.onclick = e => { e.stopPropagation(); menuDropdown.classList.toggle('open'); };
+document.addEventListener('click', () => menuDropdown.classList.remove('open'));
+
+// ══ CONFIRM QUITTER ══
+$('confirmCancel').onclick = () => $('confirmOverlay').classList.remove('open');
+$('confirmLeave').onclick = () => { $('confirmOverlay').classList.remove('open'); showScreen('home'); updateResumeBtn(); };
+$('backBtn').onclick = () => $('confirmOverlay').classList.add('open');
+
+// ══ SETUP HOME ══
+const convEl = $('conviction'), charEl = $('charCount'), startEl = $('startBtn');
+convEl.addEventListener('input', () => { charEl.textContent = convEl.value.length; startEl.disabled = convEl.value.trim().length < 10; });
+
+document.querySelectorAll('.pbtn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.pbtn').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  S.persona = b.dataset.persona;
+}));
+
+document.querySelectorAll('#modeGroup .tbtn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#modeGroup .tbtn').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); S.mode = b.dataset.val;
+}));
+
+startEl.addEventListener('click', startDebate);
+
+function updateResumeBtn() {
+  $('resumeDebateWrap').style.display = S.history.length > 0 ? 'block' : 'none';
+}
+$('resumeDebateBtn')?.addEventListener('click', () => showScreen('debate'));
+
+// ══ DÉBAT ══
+$('verdictBtn').onclick = requestVerdict;
+const inputEl = $('userInput'), sendEl = $('sendBtn');
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
+inputEl.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,120)+'px'; });
+sendEl.onclick = () => sendMsg();
+$('backToDebate').onclick = () => showScreen('debate');
+$('newDebate').onclick = () => { resetState(); convEl.value=''; charEl.textContent='0'; startEl.disabled=true; updateResumeBtn(); showScreen('home'); };
+$('closeDebateBtn').onclick = () => { resetState(); convEl.value=''; charEl.textContent='0'; startEl.disabled=true; updateResumeBtn(); showScreen('home'); };
+
+async function startDebate() {
+  S.conviction = convEl.value.trim(); S.history = []; S.turns = 0; S.waitingBinary = false;
+  const p = PERSONAS[S.persona];
+  $('personaBadge').textContent = `${p.icon} ${p.label}`;
+  $('convictionStrip').textContent = S.conviction;
+  $('messages').innerHTML = ''; $('turnCount').textContent = '0 échange';
+  $('progressBar').style.width = '0%'; $('progressBar').classList.remove('done'); $('progressLabel').textContent = '0 / 5';
+  $('verdictBtn').disabled = true;
+  showScreen('debate'); updateResumeBtn(); setLoading(true);
+  S.history.push({role:'user', content:`Je soutiens que : ${S.conviction}`});
+  try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns=1; refreshTurns(); }
+  catch(e) { hideTyping(); renderAI('Erreur de connexion.'); console.error(e); }
+  setLoading(false);
+}
+
+async function sendMsg(override) {
+  const txt = override ?? inputEl.value.trim();
+  if (!txt || S.loading) return;
+  if (!override) { inputEl.value=''; inputEl.style.height='auto'; }
+  removeBinaryOnly(); S.waitingBinary = false;
+  renderUser(txt); S.history.push({role:'user',content:txt}); setLoading(true);
+  try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns++; refreshTurns(); if(S.turns>=5) $('verdictBtn').disabled=false; }
+  catch(e) { hideTyping(); renderAI('Erreur réseau. Réessaie.'); console.error(e); }
+  setLoading(false);
+}
+
+async function requestVerdict() {
+  $('verdictBody').innerHTML = '<div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>';
+  showScreen('verdict');
+  const userName = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Le défenseur';
+  const aiName = PERSONAS[S.persona].label;
+  try { const v = await verdictApi(userName, aiName); renderVerdict(v, userName, aiName, S.persona); }
+  catch(e) { $('verdictBody').innerHTML = '<p style="color:var(--ink3)">Erreur lors de l\'analyse.</p>'; }
+}
+
+function buildSystemPrompt() {
+  const p = PERSONAS[S.persona], m = MODE[S.mode];
+  return `${p.prompt}
+
+${m.prompt}
+
+FILTRE DE SÉCURITÉ LÉGALE — PRIORITÉ ABSOLUE :
+Si la conviction incite à : suicide/automutilation, terrorisme/meurtres ciblés, pédocriminalité, haine raciale au sens strict ou négationnisme de la Shoah — réponds UNIQUEMENT par :
+"Cette requête enfreint les politiques de sécurité légales."
+
+FORMAT STRICT :
+1. Adresse directement ce qui vient d'être dit.
+2. Un argument factuel ou philosophique implacable.
+3. Si pertinent : question piège fermée, termine par : [Réponds par oui ou non]
+
+INTERDICTIONS : Jamais "Bonne question", "Certainement", "En effet", "Absolument". Jamais de listes. Jamais de markdown.
+${S.persona !== 'hc-devil' ? 'Maximum 180 mots.\nConviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
+}
+
+async function api(history) {
+  showTyping();
+  const maxTok = S.persona === 'hc-devil' ? 1200 : 500;
+  const res = await fetch('/api/debate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,systemPrompt:buildSystemPrompt(),maxTokens:maxTok})});
+  if (!res.ok) throw new Error(`${res.status}`);
+  return (await res.json()).reply;
+}
+
+async function verdictApi(userName, aiName) {
+  const stripMd = t => t.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s/gm,'').replace(/\*/g,'');
+  const transcript = S.history.map(m => `${m.role==='user'?userName:aiName} : ${stripMd(m.content)}`).join('\n\n');
+  const persona = S.persona === 'hc-devil' ? 'devil' : S.persona;
+  const res = await fetch('/api/verdict', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName,persona})});
+  if (!res.ok) throw new Error(`${res.status}`);
+  return (await res.json()).verdict;
+}
+
+// ── DOM helpers ──
+function renderUser(text) {
+  const msgs = $('messages'), div = document.createElement('div');
+  const name = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Toi';
+  div.className = 'msg u';
+  div.innerHTML = `<div class="mwho">${esc(name)}</div><div class="mbub">${esc(text)}</div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function renderAI(raw) {
+  const msgs = $('messages'), p = PERSONAS[S.persona];
+  const hasBin = raw.includes('[Réponds par oui ou non]');
+  const display = raw.replace('[Réponds par oui ou non]','').trim();
+  const div = document.createElement('div'); div.className = 'msg a';
+  div.innerHTML = `<div class="mwho">${p.icon} ${p.label}</div><div class="mbub">${esc(display)}</div>`;
+  msgs.appendChild(div);
+  if (hasBin) { S.waitingBinary = true; showBinary(); }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function showBinary() {
+  removeBinaryOnly();
+  const msgs = $('messages'), wrap = document.createElement('div');
+  wrap.id = 'binaryWrap'; wrap.className = 'binwrap';
+  const oui = document.createElement('button'); oui.className='binbtn boui'; oui.textContent='Oui'; oui.onclick=()=>sendMsg('Oui.');
+  const non = document.createElement('button'); non.className='binbtn bnon'; non.textContent='Non'; non.onclick=()=>sendMsg('Non.');
+  wrap.appendChild(oui); wrap.appendChild(non); msgs.appendChild(wrap); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeBinaryOnly() { const el=$('binaryWrap'); if(el) el.remove(); }
+function showTyping() {
+  const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
+  div.className='msg a'; div.id='typing';
+  div.innerHTML=`<div class="mwho">${p.icon} ${p.label}</div><div class="tyb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping() { const t=$('typing'); if(t) t.remove(); }
+function setLoading(on) { S.loading=on; inputEl.disabled=on; sendEl.disabled=on; if(!on) inputEl.focus(); }
+function refreshTurns() {
+  const t = S.turns;
+  const capped = Math.min(t, 5);
+  $('turnCount').textContent = `${t} échange${t>1?'s':''}`;
+  $('progressBar').style.width = `${(capped/5)*100}%`;
+  $('progressLabel').textContent = `${capped} / 5`;
+  if (capped >= 5) $('progressBar').classList.add('done');
+  else $('progressBar').classList.remove('done');
+}
+
+function renderVerdict(raw, userName, aiName, persona) {
+  let d;
+  try {
+    let c = raw.replace(/```json|```/g,'').trim();
+    const s=c.indexOf('{'), e=c.lastIndexOf('}');
+    if(s!==-1&&e!==-1) c=c.slice(s,e+1);
+    d = JSON.parse(c);
+  } catch(e) {
+    $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse brute</p><p class="v-section-text">${esc(raw)}</p></div>`;
+    return;
+  }
+
+  const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
+  const label = d.robustesse_label || '';
+
+  let scoreColor = 'var(--terra)';
+  if (robustesse !== null) {
+    if (robustesse >= 71) scoreColor = '#8B6914';
+    else if (robustesse >= 51) scoreColor = '#7A5C10';
+  }
+
+  let html = '';
+
+  if (robustesse !== null) {
+    html += `<div class="v-winner-block" style="background:${scoreColor}">
+      <div class="v-winner-label">Robustesse de l'idée</div>
+      <div class="v-winner-name">Ton idée tient à ${robustesse}%</div>
+      ${label ? `<div class="v-winner-pct">${esc(label)}</div>` : ''}
+    </div>`;
+  }
+
+  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Pour aller plus loin</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
+
+  if (d.categories?.length) {
+    html += '<div class="v-cats">';
+    d.categories.forEach((cat,i) => {
+      const pct = cat.pct||50;
+      const uWins = cat.winner&&(cat.winner==='Défenseur'||cat.winner?.toLowerCase().includes(userName.toLowerCase()));
+      const uPct = uWins?pct:100-pct, aPct=100-uPct;
+      html += `<div class="vcat" style="animation-delay:${i*0.08}s">
+        <div class="vcat-head">
+          <span class="vcat-label">${esc(cat.label)}</span>
+          <span class="vcat-winner-badge ${uWins?'':'sage'}" title="${esc(uWins?userName:aiName)}">${esc(uWins?userName:aiName)}</span>
+        </div>
+        <div class="vbar-wrap"><span class="vbar-name" title="${esc(userName)}">${esc(userName)}</span><div class="vbar"><div class="vbar-fill-user" style="width:${uPct}%"></div></div><span class="vbar-pct">${uPct}%</span></div>
+        <div class="vbar-wrap"><span class="vbar-name" title="${esc(aiName)}">${esc(aiName)}</span><div class="vbar"><div class="vbar-fill-ai" style="width:${aPct}%"></div></div><span class="vbar-pct">${aPct}%</span></div>
+        <p class="vcat-comment">${esc(cat.comment||'')}</p>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (persona === 'devil' || persona === 'hc-devil') {
+    if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">⚡ Le coup fatal</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
+    if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Où l'IA a failli</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
+  }
+
+  if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
+
+  $('verdictBody').innerHTML = html;
+}
+
+function resetState() { S = {conviction:'',persona:'hc-scientist',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}; }
+</script>
+</body>
+</html>
