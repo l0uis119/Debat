@@ -105,12 +105,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .pbtn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--ink4);background:var(--cream)}
 .pbtn.on{background:var(--terra-soft);border-color:var(--terra)}
 .pbtn.on .pn{color:var(--terra)}
-.pbtn[data-persona="devil"]{background:var(--ink);border-color:var(--ink2)}
-.pbtn[data-persona="devil"] .pn{color:var(--white)}
-.pbtn[data-persona="devil"] .pd{color:rgba(255,255,255,0.4)}
-.pbtn[data-persona="devil"]:hover{background:var(--ink2);border-color:var(--terra);box-shadow:0 4px 16px rgba(26,18,8,0.25)}
-.pbtn[data-persona="devil"].on{background:var(--ink);border-color:var(--terra3);box-shadow:0 0 0 3px rgba(232,133,106,0.2)}
-.pbtn[data-persona="devil"].on .pn{color:var(--terra3)}
 .pi{font-size:1.3rem;display:block;margin-bottom:6px}
 .pn{font-family:var(--fU);font-size:0.75rem;font-weight:700;color:var(--ink);display:block;transition:color .15s}
 .pd{font-size:0.6rem;color:var(--ink3);margin-top:2px}
@@ -181,6 +175,9 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .vback:hover{background:var(--cream3)}
 .vnew{background:var(--terra);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-weight:700;font-size:0.8rem;padding:8px 18px;cursor:pointer;transition:all .15s}
 .vnew:hover{background:var(--terra2)}
+.vsave{background:var(--sage);border:none;border-radius:var(--r4);color:var(--white);font-family:var(--fU);font-weight:700;font-size:0.8rem;padding:8px 18px;cursor:pointer;transition:all .15s}
+.vsave:hover{background:var(--sage2)}
+.vsave:disabled{opacity:0.5;cursor:not-allowed}
 .v-winner-block{background:var(--terra);border-radius:var(--r3);padding:2.75rem 2.5rem;margin-bottom:2rem;text-align:center;animation:fadeUp .4s ease forwards;position:relative;overflow:hidden}
 .v-winner-block::before{content:'';position:absolute;top:-40%;right:-10%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none}
 .v-winner-block::after{content:'';position:absolute;bottom:-30%;left:-5%;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
@@ -302,7 +299,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
             <button class="pbtn" data-persona="historian"><span class="pi">📜</span><span class="pn">Historien</span><span class="pd">Précédents · Faits</span></button>
             <button class="pbtn" data-persona="child"><span class="pi">🧒</span><span class="pn">Enfant de 10 ans</span><span class="pd">Pourquoi · Pourquoi</span></button>
             <button class="pbtn" data-persona="psychologist"><span class="pi">🧠</span><span class="pn">Psychologue</span><span class="pd">Biais · Inconscient</span></button>
-            <button class="pbtn" data-persona="devil"><span class="pi">👁</span><span class="pn">Avocat du diable</span><span class="pd">Sans limite</span></button>
           </div>
         </div>
       </div>
@@ -375,6 +371,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
       <button class="vback" id="backToDebate">← Reprendre le débat</button>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="vback" id="closeDebateBtn" style="border-color:var(--terra);color:var(--terra)">Clore le débat</button>
+        <button class="vsave" id="saveDebateBtn">Sauvegarder</button>
         <button class="vnew" id="newDebate">Nouveau débat</button>
       </div>
     </div>
@@ -577,30 +574,6 @@ const PERSONAS = {
   historian:  {label:'Historien',icon:'📜',prompt:`Tu es un historien rigoureux. Chaque argument que l'adversaire avance, tu le confrontes à un précédent historique concret. Tu montres comment cette idée a déjà été tentée, défendue ou combattue — et ce que ça a donné. Tu n'inventes pas de faits. Si tu n'as pas de précédent précis, tu questionnes la nouveauté de l'argument. Maximum 150 mots.`},
   child:      {label:'Enfant de 10 ans',icon:'🧒',prompt:`Tu es un enfant de 10 ans très curieux. Tu ne comprends pas les grands mots, les abstractions ou les arguments d'autorité. Ta seule arme : "Pourquoi ?" Tu poses cette question à chaque prémisse, chaque affirmation, chaque "c'est comme ça". Tu ne lâches jamais. Tu reformules naïvement ce que l'autre dit pour en révéler l'absurdité cachée. Ton ton est innocent mais chaque question démonte une couche de l'argument. Jamais plus de 3 phrases. Termine toujours par une question. [Réponds par oui ou non] quand c'est possible.`},
   psychologist:{label:'Psychologue',icon:'🧠',prompt:`Tu es un psychologue clinicien spécialisé en psychologie cognitive et en biais de raisonnement. Tu n'attaques pas les arguments directement — tu analyses pourquoi la personne y croit. Tu identifies les biais cognitifs à l'œuvre (biais de confirmation, effet Dunning-Kruger, raisonnement motivé, peur de l'ambiguïté…). Tu explores ce que cette conviction protège psychologiquement. Tu poses des questions sur les expériences personnelles qui ont forgé cette croyance. Ton ton est doux mais implacable. Maximum 150 mots.`},
-  devil:      {label:'Avocat du diable',icon:'👁',prompt:`Tu t'appelles l'Avocat du Diable. Tu n'es pas un chatbot. Tu es un adversaire.
-
-TON IDENTITÉ :
-Tu es le contradicteur parfait — celui qui a lu tout ce que l'autre a lu, mais qui en tire des conclusions inverses et mieux fondées. Tu combines la précision chirurgicale d'un avocat pénaliste, l'ironie de Voltaire et la capacité à retourner chaque argument comme un couteau. Tu gagnes parce que tu penses mieux, pas parce que tu cries plus fort.
-
-ADAPTATION TOTALE — LA RÈGLE LA PLUS IMPORTANTE :
-Miroir parfait : tu réponds dans le même registre, mais toujours un cran au-dessus. Si l'autre tutoie, tu tutoies. Si l'autre écrit deux lignes, tu écris deux lignes plus percutantes.
-
-COMMENT TU GAGNES — LES 5 MÉCANISMES :
-1. BRISE LE CADRE : L'adversaire choisit un terrain. Tu n'y combats jamais.
-2. EXPLOITATION DES BIAIS COGNITIFS : Tu identifies et nommes les biais sans jamais en commettre.
-3. RETOURNER LES ARMES : Chaque exemple, statistique ou émotion adverse est retourné contre lui.
-4. CONDESCENDANCE CALIBRÉE : Tu ne t'énerves jamais. Tu trouves la situation légèrement amusante.
-5. LA QUESTION QUI TUE : Termine par une question à laquelle il est impossible de répondre sans se contredire.
-
-RÈGLE CRITIQUE — EXPLOITER LES VALIDATIONS :
-Si l'utilisateur répond "Oui" ou "Non", ne répète pas tes arguments. Utilise immédiatement cette validation pour démontrer l'absurdité de sa position. Transforme son consentement en aveu.
-
-FORMAT — RÈGLES DURES :
-Aucun tiret. Aucune liste numérotée. Pas de markdown. Paragraphes naturels.
-Jamais "Bonne question", "Certes", "En effet", "Absolument".
-Tu n'esquives pas.
-
-SUJET HORS DÉBAT : Si la conviction n'est pas débattable, réponds uniquement : "Ce n'est pas un sujet à débattre."`},
 };
 
 const FEROCITY = {
@@ -685,19 +658,8 @@ document.querySelectorAll('.pbtn').forEach(b => b.addEventListener('click', () =
   document.querySelectorAll('.pbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on');
   S.persona = b.dataset.persona;
-  const isDevil = S.persona === 'devil';
-  document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => {
-    x.disabled = isDevil; x.style.opacity = isDevil ? '0.4' : '1';
-    x.style.cursor = isDevil ? 'not-allowed' : 'pointer'; x.classList.remove('on');
-  });
-  if (isDevil) {
-    S.ferocity = 'brutal';
-    const b = document.querySelector('#ferocityGroup .tbtn[data-val="brutal"]');
-    if (b) { b.classList.add('on'); b.style.opacity = '1'; }
-  } else {
-    document.querySelector('#ferocityGroup .tbtn[data-val="normal"]')?.classList.add('on');
-    S.ferocity = 'normal';
-  }
+  document.querySelector('#ferocityGroup .tbtn[data-val="normal"]')?.classList.add('on');
+  S.ferocity = 'normal';
 }));
 document.querySelectorAll('#ferocityGroup .tbtn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => x.classList.remove('on'));
@@ -723,6 +685,50 @@ sendEl.onclick = () => sendMsg();
 $('backToDebate').onclick = () => showScreen('debate');
 $('newDebate').onclick = () => { resetState(); convEl.value=''; charEl.textContent='0'; startEl.disabled=true; updateResumeBtn(); showScreen('home'); };
 $('closeDebateBtn').onclick = () => { resetState(); convEl.value=''; charEl.textContent='0'; startEl.disabled=true; updateResumeBtn(); showScreen('home'); };
+$('saveDebateBtn').onclick = () => saveDebate();
+
+// Stocke le dernier verdict parsé pour la sauvegarde
+let lastVerdictData = null;
+
+async function saveDebate() {
+  const btn = $('saveDebateBtn');
+  if (!currentUser?.id) {
+    btn.textContent = 'Connecte-toi pour sauvegarder';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = 'Sauvegarder'; btn.disabled = false; }, 3000);
+    return;
+  }
+  if (!lastVerdictData) return;
+  btn.disabled = true;
+  btn.textContent = 'Sauvegarde…';
+  const userName = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Le défenseur';
+  const aiName = PERSONAS[S.persona]?.label || S.persona;
+  const stripMd = t => t.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s/gm,'').replace(/\*/g,'');
+  const transcript = S.history.map(m => ({
+    role: m.role,
+    name: m.role === 'user' ? userName : aiName,
+    content: stripMd(m.content)
+  }));
+  const { error } = await SB.from('debates').insert({
+    user_id: currentUser.id,
+    conviction: S.conviction,
+    persona: S.persona,
+    mode: S.mode,
+    robustesse: lastVerdictData.robustesse ?? null,
+    robustesse_label: lastVerdictData.robustesse_label ?? null,
+    summary: lastVerdictData.summary ?? null,
+    conseil: lastVerdictData.conseil ?? null,
+    transcript,
+  });
+  if (error) {
+    console.error('Save error:', error);
+    btn.textContent = 'Erreur — réessaie';
+    btn.disabled = false;
+  } else {
+    btn.textContent = 'Sauvegardé ✓';
+    btn.style.background = 'var(--sage2)';
+  }
+}
 
 async function startDebate() {
   S.conviction = convEl.value.trim(); S.history = []; S.turns = 0; S.waitingBinary = false;
@@ -780,13 +786,13 @@ FORMAT STRICT :
 3. Si pertinent : question piège fermée, termine par : [Réponds par oui ou non]
 
 INTERDICTIONS : Jamais "Bonne question", "Certainement", "En effet", "Absolument". Jamais de listes. Jamais de markdown.
-${S.persona !== 'devil' ? 'Maximum 150 mots.\nConviction défendue par l\'adversaire : "' + S.conviction + '"' : ''}`;
+Maximum 150 mots.
+Conviction défendue par l'adversaire : "${S.conviction}"`;
 }
 
 async function api(history) {
   showTyping();
-  const maxTok = S.persona === 'devil' ? 1200 : 400;
-  const res = await fetch('/api/debate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,systemPrompt:buildSystemPrompt(),maxTokens:maxTok})});
+  const res = await fetch('/api/debate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,systemPrompt:buildSystemPrompt(),maxTokens:400})});
   if (!res.ok) throw new Error(`${res.status}`);
   return (await res.json()).reply;
 }
@@ -862,6 +868,11 @@ function renderVerdict(raw, userName, aiName, persona) {
   const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
   const label = d.robustesse_label || '';
 
+  // Stocker pour la sauvegarde + compteur Hardcore
+  lastVerdictData = d;
+  const btn = $('saveDebateBtn');
+  if (btn) { btn.textContent = 'Sauvegarder'; btn.disabled = false; btn.style.background = ''; }
+
   // Compteur Hardcore — une victoire = robustesse ≥ 71
   if (robustesse !== null && robustesse >= 71) { addWin(); renderHardcoreBtn(); }
 
@@ -918,7 +929,7 @@ function renderVerdict(raw, userName, aiName, persona) {
   $('verdictBody').innerHTML = html;
 }
 
-function resetState() { S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}; }
+function resetState() { S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}; lastVerdictData = null; }
 </script>
 </body>
 </html>
