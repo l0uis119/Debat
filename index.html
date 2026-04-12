@@ -63,6 +63,10 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--sage-soft);border:1px solid var(--sage-border);border-radius:var(--r4);cursor:pointer;text-decoration:none;max-width:180px}
 .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--sage);color:var(--white);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .user-name{font-size:0.82rem;font-weight:600;color:var(--sage2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.hc-btn{padding:7px 14px;border-radius:var(--r4);font-family:var(--fU);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid var(--ink4);background:transparent;color:var(--ink3)}
+.hc-btn.locked{opacity:0.45;cursor:not-allowed}
+.hc-btn.unlocked{background:var(--ink);color:var(--white);border-color:var(--ink2)}
+.hc-btn.unlocked:hover{background:var(--terra);border-color:var(--terra);color:var(--white);transform:translateY(-1px)}
 
 /* ── LANDING ── */
 #landing{display:none}
@@ -243,6 +247,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 <nav class="topbar">
   <a class="topbar-logo" href="/">Objection</a>
   <div class="topbar-right">
+    <button class="hc-btn" id="hardcoreBtn" title="Débloque après 3 analyses solides (≥ 71%)">💀 Hardcore</button>
     <div class="topbar-menu">
       <button class="menu-trigger" id="menuTrigger">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -507,6 +512,31 @@ function renderAuthZone() {
 }
 
 initAuth();
+
+// ══ HARDCORE UNLOCK ══
+function getWins() { try { return parseInt(localStorage.getItem('hc_wins') || '0', 10); } catch(e) { return 0; } }
+function addWin() { try { localStorage.setItem('hc_wins', Math.min(getWins() + 1, 3)); } catch(e) {} }
+function isHardcoreUnlocked() { return getWins() >= 3; }
+
+function renderHardcoreBtn() {
+  const btn = $('hardcoreBtn');
+  if (!btn) return;
+  if (isHardcoreUnlocked()) {
+    btn.classList.remove('locked'); btn.classList.add('unlocked');
+    btn.title = 'Mode Hardcore débloqué';
+    btn.onclick = () => window.location.href = '/hardcore';
+  } else {
+    const remaining = 3 - getWins();
+    btn.classList.add('locked'); btn.classList.remove('unlocked');
+    btn.title = `Encore ${remaining} analyse${remaining > 1 ? 's' : ''} solide${remaining > 1 ? 's' : ''} (≥ 71%) pour débloquer`;
+    btn.onclick = () => {
+      const r = 3 - getWins();
+      alert(`Mode Hardcore verrouillé.\nEncore ${r} analyse${r > 1 ? 's' : ''} solide${r > 1 ? 's' : ''} (score ≥ 71%) pour débloquer.`);
+    };
+  }
+}
+
+renderHardcoreBtn();
 
 // ══ PERSONAS ══
 const PERSONAS = {
@@ -795,6 +825,9 @@ function renderVerdict(raw, userName, aiName, persona) {
 
   const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
   const label = d.robustesse_label || '';
+
+  // Compteur Hardcore — une victoire = robustesse ≥ 71
+  if (robustesse !== null && robustesse >= 71) { addWin(); renderHardcoreBtn(); }
 
   // Couleur du score selon le niveau
   let scoreColor = 'var(--terra)';
