@@ -5,27 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Mon profil · Basanos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --cream:#FAF7F2;--cream2:#F2EDE4;--cream3:#E8E0D4;
-  --terra:#C4613A;--terra2:#A84E2D;
-  --terra-soft:rgba(196,97,58,0.1);--terra-border:rgba(196,97,58,0.25);
-  --sage:#5B7C6B;--sage2:#3D5C4D;
-  --sage-soft:rgba(91,124,107,0.1);--sage-border:rgba(91,124,107,0.25);
-  --ink:#1A1208;--ink2:#3D2E1A;--ink3:rgba(26,18,8,0.55);
-  --ink4:rgba(26,18,8,0.12);--ink5:rgba(26,18,8,0.05);
-  --white:#FFFFFF;--ok:#2D7A4F;--ok-soft:rgba(45,122,79,0.1);
+  --cream:#1B3A4B;--cream2:#243F52;--cream3:#2E4F63;
+  --terra:#C9A84C;--terra2:#A8863A;
+  --terra-soft:rgba(201,168,76,0.12);--terra-border:rgba(201,168,76,0.3);
+  --sage:#2E6B8A;--sage2:#1E4F6A;
+  --sage-soft:rgba(46,107,138,0.15);--sage-border:rgba(46,107,138,0.35);
+  --ink:#F0EBE0;--ink2:#D4CFC5;--ink3:rgba(240,235,224,0.55);
+  --ink4:rgba(240,235,224,0.1);--ink5:rgba(240,235,224,0.05);
+  --white:#243F52;--ok:#4A9B6F;--ok-soft:rgba(74,155,111,0.15);
   --r:14px;--r3:24px;--r4:50px;
-  --fT:'Fraunces',serif;--fU:'Nunito',sans-serif;
-  --shadow:0 2px 16px rgba(26,18,8,0.08);--shadow2:0 4px 32px rgba(26,18,8,0.12);
+  --fT:'Bebas Neue',sans-serif;--fU:'Barlow Condensed',sans-serif;
+  --shadow:0 2px 16px rgba(0,0,0,0.2);--shadow2:0 4px 32px rgba(0,0,0,0.35);
 }
 html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased}
 
 /* ── TOPBAR ── */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(250,247,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(27,58,75,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
 .logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);cursor:pointer;text-decoration:none}
 .back-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-size:0.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s}
 .back-btn:hover{background:var(--cream3)}
