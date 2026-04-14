@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#1B3A4B"/>
+<title>Les contradicteurs · Basanos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#1B3A4B;--cream2:#243F52;--cream3:#2E4F63;
+  --terra:#C9A84C;--terra2:#A8863A;
+  --terra-soft:rgba(201,168,76,0.12);--terra-border:rgba(201,168,76,0.3);
+  --sage:#2E6B8A;--sage2:#1E4F6A;
+  --sage-soft:rgba(46,107,138,0.15);--sage-border:rgba(46,107,138,0.35);
+  --ink:#F0EBE0;--ink2:#D4CFC5;--ink3:rgba(240,235,224,0.55);
+  --ink4:rgba(240,235,224,0.1);--ink5:rgba(240,235,224,0.05);
+  --white:#243F52;
+  --r:14px;--r3:24px;--r4:50px;
+  --fT:'Bebas Neue',sans-serif;--fU:'Barlow Condensed',sans-serif;
+  --shadow:0 2px 16px rgba(0,0,0,0.2);--shadow2:0 4px 32px rgba(0,0,0,0.35);
+}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;background:rgba(27,58,75,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--ink4)}
+.topbar-logo{font-family:var(--fT);font-size:1.3rem;font-weight:900;color:var(--terra);text-decoration:none}
+.back-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r4);color:var(--ink2);font-family:var(--fU);font-size:0.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s}
+.back-btn:hover{background:var(--cream3)}
+.content-page{max-width:680px;margin:0 auto;padding:6rem 1.5rem 5rem}
+.page-title{font-family:var(--fT);font-size:2.5rem;font-weight:900;color:var(--ink);margin-bottom:0.4rem}
+.page-sub{font-size:0.95rem;color:var(--ink3);margin-bottom:2.5rem;line-height:1.55}
+.cat-card{background:var(--white);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);border-left:4px solid var(--terra)}
+.cat-card.sage-border{border-left-color:var(--sage)}
+.cat-name{font-family:var(--fU);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem;display:flex;align-items:center;gap:8px}
+.cat-desc{font-size:0.88rem;color:var(--ink3);line-height:1.6}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <a class="topbar-logo" href="/">Basanos</a>
+  <a class="back-btn" href="/">← Retour</a>
+</nav>
+<div class="content-page">
+  <h2 class="page-title">Les contradicteurs</h2>
+  <p class="page-sub">Huit façons d'avoir tort. Choisis celle qui te fait le plus peur.</p>
+  <div class="cat-card"><div class="cat-name"><span>🏛</span> Philosophe</div><div class="cat-desc">Il ne cherche pas à avoir raison, il cherche à savoir si tu as réfléchi. Avant d'attaquer ta conclusion, il démonte tes prémisses une par une. Si ta conviction repose sur un mot flou ou une idée jamais questionnée, il le trouvera.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>📊</span> Économiste</div><div class="cat-desc">Pour lui, une opinion sans chiffre est une anecdote. Il traque les incitations cachées, les effets de bord que tu n'as pas anticipés, et les causalités que tu confonds avec des coïncidences. Cite un chiffre sans source précise, et il t'attendra là.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>🔬</span> Scientifique</div><div class="cat-desc">Il ne croit que ce qui a été mesuré, reproduit et publié dans une revue à comité de lecture. Un article de presse, un documentaire ou une intuition ne comptent pas comme preuve. Il est poli, mais il ne lâche rien.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>⚖</span> Juriste</div><div class="cat-desc">Chaque mot que tu utilises est un engagement. Il repère les généralisations abusives, les exceptions que tu as ignorées, les définitions que tu n'as pas données. Parle avec précision ou donne-lui une ouverture.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>✊</span> Militant</div><div class="cat-desc">Les idées abstraites l'ennuient. Ce qui l'intéresse, c'est à qui ça fait du mal concrètement. Il ramène chaque argument au niveau humain : qui paie le prix de cette conviction, et est-ce que tu l'as seulement regardé en face.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>📜</span> Historien</div><div class="cat-desc">Ton idée n'est pas nouvelle. Elle a déjà été défendue, appliquée, combattue. Il sait ce que ça a donné. Il ne juge pas, il contextualise, et parfois c'est bien plus dévastateur qu'une réfutation directe.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>🧒</span> Enfant de 10 ans</div><div class="cat-desc">Sa seule arme : "Pourquoi ?" Il la pose sur chaque affirmation, chaque évidence, chaque "c'est comme ça". Plus ton argument est sophistiqué, plus il a l'air ridicule quand un enfant te demande de l'expliquer simplement.</div></div>
+  <div class="cat-card"><div class="cat-name"><span>🧠</span> Psychologue</div><div class="cat-desc">Il ne conteste pas ce que tu dis, il s'intéresse à pourquoi tu le crois. Biais de confirmation, raisonnement motivé, peur de l'incertitude : il met un nom sur ce qui oriente ta pensée avant même que tu ouvres la bouche.</div></div>
+  <div class="cat-card sage-border"><div class="cat-name"><span>👁</span> Avocat du diable</div><div class="cat-desc">Le plus difficile à battre. Disponible uniquement en mode Hardcore. Il retourne tes propres arguments contre toi, utilise l'ironie comme un scalpel, et transforme chaque "oui" que tu lui accordes en aveu. Pas de règles. Pas de concessions.</div></div>
+</div>
+</body>
+</html>
