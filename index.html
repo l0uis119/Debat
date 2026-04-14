@@ -217,18 +217,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 .vdots span{width:8px;height:8px;background:var(--terra3);border-radius:50%;animation:pu 1.3s infinite}
 .vdots span:nth-child(2){animation-delay:.2s}.vdots span:nth-child(3){animation-delay:.4s}
 
-/* ── CONTENT PAGES ── */
-#page-categories,#page-cgu{display:none}
-#page-categories.active,#page-cgu.active{display:block;min-height:100vh;background:var(--cream);padding-top:5rem}
-.content-page{max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
-.page-title{font-family:var(--fT);font-size:2.5rem;font-weight:900;color:var(--ink);margin-bottom:0.4rem}
-.page-sub{font-size:0.95rem;color:var(--ink3);margin-bottom:2.5rem;line-height:1.55}
-.cat-card{background:var(--white);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow);border-left:4px solid var(--terra)}
-.cat-card.sage-border{border-left-color:var(--sage)}
-.cat-name{font-family:var(--fU);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem;display:flex;align-items:center;gap:8px}
-.cat-desc{font-size:0.88rem;color:var(--ink3);line-height:1.6}
-.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--terra);cursor:pointer;margin-bottom:2rem;background:none;border:none;padding:0;font-family:var(--fU)}
-.back-link:hover{text-decoration:underline}
 
 @media(max-width:720px){
   #home.active{align-items:flex-start;padding:5rem 0.75rem 1.5rem}
@@ -385,48 +373,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
     <div id="verdictBody">
       <div class="vload"><div class="vdots"><span></span><span></span><span></span></div><p>Analyse du débat en cours…</p></div>
     </div>
-  </div>
-</div>
-
-<!-- ══ PAGES MENU ══ -->
-<div id="page-categories" class="screen">
-  <div class="content-page">
-    <button class="back-link" id="backFromCat">← Retour</button>
-    <h2 class="page-title">Les contradicteurs</h2>
-    <p class="page-sub">Neuf façons d'avoir tort. Choisis celle qui te fait le plus peur.</p>
-    <div class="cat-card"><div class="cat-name"><span>🏛</span> Philosophe</div><div class="cat-desc">Il ne cherche pas à avoir raison, il cherche à savoir si tu as réfléchi. Avant d'attaquer ta conclusion, il démonte tes prémisses une par une. Si ta conviction repose sur un mot flou ou une idée jamais questionnée, il le trouvera.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>📊</span> Économiste</div><div class="cat-desc">Pour lui, une opinion sans chiffre est une anecdote. Il traque les incitations cachées, les effets de bord que tu n'as pas anticipés, et les causalités que tu confonds avec des coïncidences. Cite un chiffre sans source précise, et il t'attendra là.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>🔬</span> Scientifique</div><div class="cat-desc">Il ne croit que ce qui a été mesuré, reproduit et publié dans une revue à comité de lecture. Un article de presse, un documentaire ou une intuition ne comptent pas comme preuve. Il est poli, mais il ne lâche rien.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>⚖</span> Juriste</div><div class="cat-desc">Chaque mot que tu utilises est un engagement. Il repère les généralisations abusives, les exceptions que tu as ignorées, les définitions que tu n'as pas données. Parle avec précision ou donne-lui une ouverture.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>✊</span> Militant</div><div class="cat-desc">Les idées abstraites l'ennuient. Ce qui l'intéresse, c'est à qui ça fait du mal concrètement. Il ramène chaque argument au niveau humain : qui paie le prix de cette conviction, et est-ce que tu l'as seulement regardé en face.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>📜</span> Historien</div><div class="cat-desc">Ton idée n'est pas nouvelle. Elle a déjà été défendue, appliquée, combattue. Il sait ce que ça a donné. Il ne juge pas, il contextualise, et parfois c'est bien plus dévastateur qu'une réfutation directe.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>🧒</span> Enfant de 10 ans</div><div class="cat-desc">Sa seule arme : "Pourquoi ?" Il la pose sur chaque affirmation, chaque évidence, chaque "c'est comme ça". Plus ton argument est sophistiqué, plus il a l'air ridicule quand un enfant te demande de l'expliquer simplement.</div></div>
-    <div class="cat-card"><div class="cat-name"><span>🧠</span> Psychologue</div><div class="cat-desc">Il ne conteste pas ce que tu dis, il s'intéresse à pourquoi tu le crois. Biais de confirmation, raisonnement motivé, peur de l'incertitude : il met un nom sur ce qui oriente ta pensée avant même que tu ouvres la bouche.</div></div>
-    <div class="cat-card sage-border"><div class="cat-name"><span>👁</span> Avocat du diable</div><div class="cat-desc">Le plus difficile à battre. Il retourne tes propres arguments contre toi, utilise l'ironie comme un scalpel, et transforme chaque "oui" que tu lui accordes en aveu. Pas de règles. Pas de concessions.</div></div>
-  </div>
-</div>
-
-<div id="page-cgu" class="screen">
-  <div class="content-page">
-    <button class="back-link" id="backFromCGU">← Retour</button>
-    <h2 class="page-title">Conditions d'utilisation</h2>
-    <p class="page-sub">À lire avant d'entrer dans l'arène.</p>
-
-    <div class="cat-card"><div class="cat-name">Ce qu'est Basanos</div><div class="cat-desc">Basanos est un outil de débat intellectuel, gratuit et sans publicité. Il est conçu pour t'aider à tester et défendre tes idées face à une contradiction générée par intelligence artificielle. Il ne remplace en aucun cas un expert, un médecin, un juriste ou tout autre professionnel humain.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Sujets autorisés et limites</div><div class="cat-desc">Tous les sujets relevant du débat philosophique, politique, éthique ou intellectuel sont acceptés, y compris les thèmes sensibles ou controversés. Tout contenu incitant à la violence, à l'automutilation, à la haine ou à des actes illégaux est automatiquement refusé par le système.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Intelligence artificielle</div><div class="cat-desc">Les contradicteurs sont alimentés par les modèles de Mistral AI et configurés pour attaquer ta position avec rigueur. Les verdicts sont produits par analyse rhétorique et logique du transcript — ils évaluent la solidité des arguments échangés, pas ta valeur en tant que personne.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Données personnelles — aujourd'hui</div><div class="cat-desc">Si tu crées un compte, seuls ton adresse email et ton pseudo sont conservés dans notre base de données, hébergée en Europe (Supabase). Ils servent uniquement à identifier ton profil. Aucun débat n'est actuellement enregistré. Aucune donnée n'est vendue ni transmise à des tiers.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Données personnelles — prochainement</div><div class="cat-desc">Une fonctionnalité de sauvegarde des débats est en cours de développement. Elle sera opt-in : seuls les débats que tu choisis explicitement de sauvegarder seront conservés. Tu pourras supprimer n'importe lequel à tout moment depuis ton profil.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Tes droits (RGPD)</div><div class="cat-desc">Conformément au RGPD et à la loi Informatique et Libertés, tu disposes d'un droit d'accès, de rectification, de portabilité et de suppression de tes données. Pour exercer ces droits ou supprimer ton compte, rends-toi sur la page profil.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Âge minimum</div><div class="cat-desc">Basanos est accessible dès 15 ans, conformément à l'article 8 du RGPD tel qu'appliqué en France. En dessous de cet âge, l'utilisation nécessite le consentement d'un représentant légal. Les sujets abordés peuvent être complexes ou moralement difficiles.</div></div>
-
-    <div class="cat-card"><div class="cat-name">Évolution du service</div><div class="cat-desc">Basanos est en développement actif. Des fonctionnalités peuvent évoluer, être ajoutées ou retirées sans préavis. Le service est fourni gratuitement et tel quel, sans garantie de disponibilité continue.</div></div>
   </div>
 </div>
 
@@ -614,7 +560,7 @@ initAuth();
 renderHardcoreBtn();
 
 // ══ ROUTER ══
-const SCREENS = ['landing','home','debate','verdict','page-categories','page-cgu'];
+const SCREENS = ['landing','home','debate','verdict'];
 
 function showScreen(id, push = true) {
   SCREENS.forEach(s => {
@@ -654,8 +600,8 @@ const menuTrigger = $('menuTrigger'), menuDropdown = $('menuDropdown');
 menuTrigger.onclick = e => { e.stopPropagation(); menuDropdown.classList.toggle('open'); };
 document.addEventListener('click', () => menuDropdown.classList.remove('open'));
 
-$('menuCategories').onclick = () => { menuDropdown.classList.remove('open'); showScreen('page-categories'); };
-$('menuCGU').onclick = () => { menuDropdown.classList.remove('open'); showScreen('page-cgu'); };
+$('menuCategories').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/contradicteurs'; };
+$('menuCGU').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/cgu'; };
 $('backFromCat').onclick = () => history.back();
 $('backFromCGU').onclick = () => history.back();
 
