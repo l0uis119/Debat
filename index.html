@@ -389,7 +389,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 </div>
 
 <script>
-// ══ SUPABASE (lecture seule pour récupérer le pseudo affiché dans les messages) ══
+// ══ SUPABASE ══
 const { createClient } = supabase;
 
 const memStorage = (() => {
@@ -415,8 +415,6 @@ const SB = createClient(
 let currentUser = null;
 let currentPseudo = null;
 
-// Charge le pseudo depuis sessionStorage (écrit par profil.html au login)
-// C'est la méthode principale — sessionStorage n'est pas bloqué par Edge
 async function initAuth() {
   try {
     const email  = sessionStorage.getItem('obj_email');
@@ -425,7 +423,6 @@ async function initAuth() {
       currentUser   = { email };
       currentPseudo = pseudo || null;
       renderAuthZone();
-      // En parallèle, on essaie la session Supabase pour avoir le vrai user.id
       SB.auth.getSession().then(({ data: sd }) => {
         if (sd?.session?.user) {
           currentUser = sd.session.user;
@@ -461,7 +458,6 @@ function renderAuthZone() {
   } else {
     z.innerHTML = `<a class="auth-btn btn-login" href="/profil">Connexion</a>
                    <a class="auth-btn btn-signup" href="/profil">Créer un compte</a>`;
-    // Sur mobile, les mêmes liens apparaissent dans le menu
     if (mz) mz.innerHTML = `<hr class="menu-sep"/>
       <a class="menu-item" href="/profil">Connexion</a>
       <a class="menu-item" href="/profil" style="font-weight:700;color:var(--terra)">Créer un compte</a>`;
@@ -475,7 +471,6 @@ function isHardcoreUnlocked() { return getWins() >= 3; }
 async function addWin() {
   const newVal = Math.min(getWins() + 1, 3);
   try { localStorage.setItem('hc_wins', newVal); } catch(e) {}
-  // Si connecté, on persiste dans Supabase
   if (currentUser?.id) {
     try {
       await SB.from('profiles').update({ hc_wins: newVal }).eq('id', currentUser.id);
@@ -506,7 +501,6 @@ function renderHardcoreBtn() {
     btn.classList.add('locked'); btn.classList.remove('unlocked');
     btn.title = `Encore ${remaining} analyse${remaining > 1 ? 's' : ''} solide${remaining > 1 ? 's' : ''} (≥ 71%) pour débloquer`;
     btn.onclick = () => {
-      // Affiche une bulle temporaire sous le bouton
       const existing = document.getElementById('hcTooltip');
       if (existing) return;
       const r = 3 - getWins();
@@ -515,7 +509,6 @@ function renderHardcoreBtn() {
       tip.textContent = `Encore ${r} analyse${r > 1 ? 's' : ''} solide${r > 1 ? 's' : ''} (≥ 71%) pour débloquer`;
       tip.style.cssText = `position:fixed;background:var(--ink);color:var(--cream);font-size:0.75rem;font-weight:600;padding:7px 13px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;pointer-events:none;animation:fadeUp .2s ease forwards`;
       document.body.appendChild(tip);
-      // Positionner sous le bouton
       const rect = btn.getBoundingClientRect();
       tip.style.top = (rect.bottom + 8) + 'px';
       tip.style.left = (rect.left + rect.width/2 - tip.offsetWidth/2) + 'px';
@@ -555,7 +548,7 @@ let S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',his
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// Démarrage — placé ici pour garantir que $ et esc sont définis
+// Démarrage
 initAuth();
 renderHardcoreBtn();
 
@@ -602,8 +595,6 @@ document.addEventListener('click', () => menuDropdown.classList.remove('open'));
 
 $('menuCategories').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/contradicteurs'; };
 $('menuCGU').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/cgu'; };
-$('backFromCat').onclick = () => history.back();
-$('backFromCGU').onclick = () => history.back();
 
 // ══ CONFIRM QUITTER ══
 $('confirmCancel').onclick = () => $('confirmOverlay').classList.remove('open');
@@ -820,7 +811,6 @@ function renderVerdict(raw, userName, aiName, persona) {
     d = JSON.parse(c);
     if (typeof d !== 'object' || d === null) throw new Error('invalid');
   } catch(e) {
-    // Dernier recours : affiche le texte brut proprement
     $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(raw.replace(/```json|```/g,'').trim())}</p></div>`;
     return;
   }
@@ -828,15 +818,12 @@ function renderVerdict(raw, userName, aiName, persona) {
   const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
   const label = d.robustesse_label || '';
 
-  // Stocker pour la sauvegarde + compteur Hardcore
   lastVerdictData = d;
   const btn = $('saveDebateBtn');
   if (btn) { btn.textContent = 'Sauvegarder'; btn.disabled = false; btn.style.background = ''; }
 
-  // Compteur Hardcore — une victoire = robustesse ≥ 71
   if (robustesse !== null && robustesse >= 71) { addWin(); renderHardcoreBtn(); }
 
-  // Couleur du score selon le niveau
   let scoreColor = 'var(--terra)';
   if (robustesse !== null) {
     if (robustesse >= 71) scoreColor = 'var(--sage)';
@@ -845,7 +832,6 @@ function renderVerdict(raw, userName, aiName, persona) {
 
   let html = '';
 
-  // 1. Bloc score de robustesse
   if (robustesse !== null) {
     html += `<div class="v-winner-block" style="background:${scoreColor}">
       <div class="v-winner-label">Robustesse de l'idée</div>
@@ -854,10 +840,8 @@ function renderVerdict(raw, userName, aiName, persona) {
     </div>`;
   }
 
-  // 2. Conseil en premier
   if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Pour aller plus loin</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
 
-  // 3. Catégories avec barres
   if (d.categories?.length) {
     html += '<div class="v-cats">';
     d.categories.forEach((cat,i) => {
@@ -877,13 +861,11 @@ function renderVerdict(raw, userName, aiName, persona) {
     html += '</div>';
   }
 
-  // 4. Spécifique Avocat du diable
   if (persona === 'devil') {
     if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">⚡ Le coup fatal</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
     if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Où l'IA a failli</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
   }
 
-  // 5. Analyse en dernier
   if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
 
   $('verdictBody').innerHTML = html;
