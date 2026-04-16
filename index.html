@@ -6,14 +6,10 @@
 <meta name="theme-color" content="#1B3A4B"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Basanos"/>
-<link rel="manifest" href="/manifest.json"/>
-<link rel="apple-touch-icon" href="/icon-192.png"/>
 <title>Basanos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/core.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -393,7 +389,80 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 </div>
 
 <script>
+// ══ SUPABASE ══
+const { createClient } = supabase;
 
+const memStorage = (() => {
+  const store = {};
+  return {
+    getItem:    (k) => store[k] ?? null,
+    setItem:    (k, v) => { store[k] = v; },
+    removeItem: (k) => { delete store[k]; },
+  };
+})();
+
+function safeStorage() {
+  try { localStorage.setItem('__test__', '1'); localStorage.removeItem('__test__'); return localStorage; }
+  catch(e) { return memStorage; }
+}
+
+const SB = createClient(
+  'https://bsabkjrnebzdrvleciva.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWJranJuZWJ6ZHJ2bGVjaXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNjY0NDksImV4cCI6MjA5MDk0MjQ0OX0.eL7IKkb_KNJ3LSITFY2fzLtAQxWCghZiHLvB3IM6N9M',
+  { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'sb-objection-auth', storage: safeStorage() } }
+);
+
+let currentUser = null;
+let currentPseudo = null;
+
+async function initAuth() {
+  try {
+    const email  = sessionStorage.getItem('obj_email');
+    const pseudo = sessionStorage.getItem('obj_pseudo');
+    if (email) {
+      currentUser   = { email };
+      currentPseudo = pseudo || null;
+      renderAuthZone();
+      SB.auth.getSession().then(({ data: sd }) => {
+        if (sd?.session?.user) {
+          currentUser = sd.session.user;
+          renderAuthZone();
+          loadWinsFromSupabase();
+        }
+      }).catch(() => {});
+    }
+  } catch(e) {}
+  renderAuthZone();
+}
+
+SB.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT' || !session) {
+    currentUser = null; currentPseudo = null;
+    try { sessionStorage.removeItem('obj_email'); sessionStorage.removeItem('obj_pseudo'); } catch(e) {}
+    renderAuthZone();
+  }
+});
+
+function renderAuthZone() {
+  const z = document.getElementById('authZone');
+  const mz = document.getElementById('menuAuthZone');
+  if (currentUser) {
+    const initial = (currentPseudo || currentUser.email || '?')[0].toUpperCase();
+    const name = currentPseudo || currentUser.email;
+    const chip = `<a class="user-chip" href="/profil" title="Mon profil">
+      <div class="user-avatar">${esc(initial)}</div>
+      <span class="user-name">${esc(name)}</span>
+    </a>`;
+    z.innerHTML = chip;
+    if (mz) mz.innerHTML = '';
+  } else {
+    z.innerHTML = `<a class="auth-btn btn-login" href="/profil">Connexion</a>
+                   <a class="auth-btn btn-signup" href="/profil">Créer un compte</a>`;
+    if (mz) mz.innerHTML = `<hr class="menu-sep"/>
+      <a class="menu-item" href="/profil">Connexion</a>
+      <a class="menu-item" href="/profil" style="font-weight:700;color:var(--terra)">Créer un compte</a>`;
+  }
+}
 
 // ══ HARDCORE UNLOCK ══
 function getWins() { try { return parseInt(localStorage.getItem('hc_wins') || '0', 10); } catch(e) { return 0; } }
@@ -475,25 +544,62 @@ const MODE = {
 // ══ ÉTAT ══
 let S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false};
 
+// ══ UTILS ══
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 // Démarrage
-initAuth((user) => { loadWinsFromSupabase(); });
+initAuth();
 renderHardcoreBtn();
 
 // ══ ROUTER ══
 const SCREENS = ['landing','home','debate','verdict'];
-initRouter('landing');
+
+function showScreen(id, push = true) {
+  SCREENS.forEach(s => {
+    const el = $(s); if (!el) return;
+    el.classList.remove('active');
+    if (s === 'debate') el.style.display = 'none';
+  });
+  const t = $(id); if (!t) return;
+  t.classList.add('active');
+  if (id === 'debate') t.style.display = 'flex';
+  window.scrollTo(0, 0);
+  if (push) history.pushState({screen: id}, '', '#' + id);
+}
+
+window.addEventListener('popstate', e => {
+  const from = document.querySelector('.screen.active')?.id;
+  const to = e.state?.screen || 'landing';
+  if (from === 'debate' && S.history.length > 0) {
+    history.pushState({screen:'debate'}, '', '#debate');
+    $('confirmOverlay').classList.add('open');
+    return;
+  }
+  showScreen(to, false);
+});
+
+(function initRouter() {
+  const hash = location.hash.replace('#','');
+  const initial = SCREENS.includes(hash) ? hash : 'landing';
+  showScreen(initial, false);
+  history.replaceState({screen: initial}, '', '#' + initial);
+})();
 
 // ══ NAVIGATION ══
 $('exploreBtn').onclick = () => showScreen('home');
 
-setupMenu();
+const menuTrigger = $('menuTrigger'), menuDropdown = $('menuDropdown');
+menuTrigger.onclick = e => { e.stopPropagation(); menuDropdown.classList.toggle('open'); };
+document.addEventListener('click', () => menuDropdown.classList.remove('open'));
 
 $('menuCategories').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/contradicteurs'; };
 $('menuCGU').onclick = () => { menuDropdown.classList.remove('open'); window.location.href = '/cgu'; };
 
 // ══ CONFIRM QUITTER ══
-setupConfirmModal(() => { showScreen('home'); updateResumeBtn(); });
+$('confirmCancel').onclick = () => $('confirmOverlay').classList.remove('open');
+$('confirmLeave').onclick = () => { $('confirmOverlay').classList.remove('open'); showScreen('home'); updateResumeBtn(); };
+$('backBtn').onclick = () => $('confirmOverlay').classList.add('open');
 
 // ══ SETUP HOME ══
 const convEl = $('conviction'), charEl = $('charCount'), startEl = $('startBtn');
@@ -586,7 +692,7 @@ async function startDebate() {
   $('verdictBtn').disabled = true;
   showScreen('debate'); updateResumeBtn(); setLoading(true);
   S.history.push({role:'user', content:`Je soutiens que : ${S.conviction}`});
-  try { const r = await api(S.history, 400); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns=1; refreshTurns(); }
+  try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns=1; refreshTurns(); }
   catch(e) { hideTyping(); renderAI('Erreur de connexion.'); console.error(e); }
   setLoading(false);
 }
@@ -597,7 +703,7 @@ async function sendMsg(override) {
   if (!override) { inputEl.value=''; inputEl.style.height='auto'; }
   removeBinaryOnly(); S.waitingBinary = false;
   renderUser(txt); S.history.push({role:'user',content:txt}); setLoading(true);
-  try { const r = await api(S.history, 400); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns++; refreshTurns(); if(S.turns>=5) $('verdictBtn').disabled=false; }
+  try { const r = await api(S.history); S.history.push({role:'assistant',content:r}); hideTyping(); renderAI(r); S.turns++; refreshTurns(); if(S.turns>=5) $('verdictBtn').disabled=false; }
   catch(e) { hideTyping(); renderAI('Erreur réseau. Réessaie.'); console.error(e); }
   setLoading(false);
 }
@@ -607,18 +713,8 @@ async function requestVerdict() {
   showScreen('verdict');
   const userName = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Le défenseur';
   const aiName = PERSONAS[S.persona].label;
-  try {
-    const v = await verdictApi(userName, aiName);
-    renderVerdict(v, userName, aiName, S.persona,
-      { high: 'var(--sage)', mid: '#B07D2A', low: 'var(--terra)' },
-      (data, robustesse) => {
-        lastVerdictData = data;
-        const btn = $('saveDebateBtn');
-        if (btn) { btn.textContent = 'Sauvegarder'; btn.disabled = false; btn.style.background = ''; }
-        if (robustesse !== null && robustesse >= 71) { addWin(); renderHardcoreBtn(); }
-      }
-    );
-  } catch(e) { $('verdictBody').innerHTML = '<p style="color:var(--ink3)">Erreur lors du verdict.</p>'; }
+  try { const v = await verdictApi(userName, aiName); renderVerdict(v, userName, aiName, S.persona); }
+  catch(e) { $('verdictBody').innerHTML = '<p style="color:var(--ink3)">Erreur lors du verdict.</p>'; }
 }
 
 function buildSystemPrompt() {
@@ -645,7 +741,135 @@ Maximum 150 mots.
 Conviction défendue par l'adversaire : "${S.conviction}"`;
 }
 
+async function api(history) {
+  showTyping();
+  const res = await fetch('/api/debate', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,systemPrompt:buildSystemPrompt(),maxTokens:400})});
+  if (!res.ok) throw new Error(`${res.status}`);
+  return (await res.json()).reply;
+}
 
+async function verdictApi(userName, aiName) {
+  const stripMd = t => t.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s/gm,'').replace(/\*/g,'');
+  const transcript = S.history.map(m => `${m.role==='user'?userName:aiName} : ${stripMd(m.content)}`).join('\n\n');
+  const res = await fetch('/api/verdict', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conviction:S.conviction,transcript,userName,aiName,persona:S.persona})});
+  if (!res.ok) throw new Error(`${res.status}`);
+  return (await res.json()).verdict;
+}
+
+// ── DOM helpers ──
+function renderUser(text) {
+  const msgs = $('messages'), div = document.createElement('div');
+  const name = currentPseudo || (currentUser?.email?.split('@')[0]) || 'Toi';
+  div.className = 'msg u';
+  div.innerHTML = `<div class="mwho">${esc(name)}</div><div class="mbub">${esc(text)}</div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function renderAI(raw) {
+  const msgs = $('messages'), p = PERSONAS[S.persona];
+  const hasBin = raw.includes('[Réponds par oui ou non]');
+  const display = raw.replace('[Réponds par oui ou non]','').trim();
+  const div = document.createElement('div'); div.className = 'msg a';
+  div.innerHTML = `<div class="mwho">${p.icon} ${p.label}</div><div class="mbub">${esc(display)}</div>`;
+  msgs.appendChild(div);
+  if (hasBin) { S.waitingBinary = true; showBinary(); }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function showBinary() {
+  removeBinaryOnly();
+  const msgs = $('messages'), wrap = document.createElement('div');
+  wrap.id = 'binaryWrap'; wrap.className = 'binwrap';
+  const oui = document.createElement('button'); oui.className='binbtn boui'; oui.textContent='Oui'; oui.onclick=()=>sendMsg('Oui.');
+  const non = document.createElement('button'); non.className='binbtn bnon'; non.textContent='Non'; non.onclick=()=>sendMsg('Non.');
+  wrap.appendChild(oui); wrap.appendChild(non); msgs.appendChild(wrap); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeBinaryOnly() { const el=$('binaryWrap'); if(el) el.remove(); }
+function showTyping() {
+  const msgs=$('messages'),p=PERSONAS[S.persona],div=document.createElement('div');
+  div.className='msg a'; div.id='typing';
+  div.innerHTML=`<div class="mwho">${p.icon} ${p.label}</div><div class="tyb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping() { const t=$('typing'); if(t) t.remove(); }
+function setLoading(on) { S.loading=on; inputEl.disabled=on; sendEl.disabled=on; if(!on) inputEl.focus(); }
+function refreshTurns() {
+  const t = S.turns;
+  const capped = Math.min(t, 5);
+  $('turnCount').textContent = `${t} échange${t>1?'s':''}`;
+  $('progressBar').style.width = `${(capped/5)*100}%`;
+  $('progressLabel').textContent = `${capped} / 5`;
+  if (capped >= 5) $('progressBar').classList.add('done');
+  else $('progressBar').classList.remove('done');
+}
+
+function renderVerdict(raw, userName, aiName, persona) {
+  let d;
+  try {
+    let c = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+    const s=c.indexOf('{'), e=c.lastIndexOf('}');
+    if(s!==-1&&e!==-1) c=c.slice(s,e+1);
+    else throw new Error('no JSON');
+    d = JSON.parse(c);
+    if (typeof d !== 'object' || d === null) throw new Error('invalid');
+  } catch(e) {
+    $('verdictBody').innerHTML=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(raw.replace(/```json|```/g,'').trim())}</p></div>`;
+    return;
+  }
+
+  const robustesse = typeof d.robustesse === 'number' ? d.robustesse : null;
+  const label = d.robustesse_label || '';
+
+  lastVerdictData = d;
+  const btn = $('saveDebateBtn');
+  if (btn) { btn.textContent = 'Sauvegarder'; btn.disabled = false; btn.style.background = ''; }
+
+  if (robustesse !== null && robustesse >= 71) { addWin(); renderHardcoreBtn(); }
+
+  let scoreColor = 'var(--terra)';
+  if (robustesse !== null) {
+    if (robustesse >= 71) scoreColor = 'var(--sage)';
+    else if (robustesse >= 51) scoreColor = '#B07D2A';
+  }
+
+  let html = '';
+
+  if (robustesse !== null) {
+    html += `<div class="v-winner-block" style="background:${scoreColor}">
+      <div class="v-winner-label">Robustesse de l'idée</div>
+      <div class="v-winner-name">Ton idée tient à ${robustesse}%</div>
+      ${label ? `<div class="v-winner-pct">${esc(label)}</div>` : ''}
+    </div>`;
+  }
+
+  if(d.conseil) html+=`<div class="v-conseil"><p class="v-section-label">Pour aller plus loin</p><p class="v-section-text">${esc(d.conseil)}</p></div>`;
+
+  if (d.categories?.length) {
+    html += '<div class="v-cats">';
+    d.categories.forEach((cat,i) => {
+      const pct = cat.pct||50;
+      const uWins = cat.winner&&(cat.winner==='Défenseur'||cat.winner?.toLowerCase().includes(userName.toLowerCase()));
+      const uPct = uWins?pct:100-pct, aPct=100-uPct;
+      html += `<div class="vcat" style="animation-delay:${i*0.08}s">
+        <div class="vcat-head">
+          <span class="vcat-label">${esc(cat.label)}</span>
+          <span class="vcat-winner-badge ${uWins?'':'sage'}" title="${esc(uWins?userName:aiName)}">${esc(uWins?userName:aiName)}</span>
+        </div>
+        <div class="vbar-wrap"><span class="vbar-name" title="${esc(userName)}">${esc(userName)}</span><div class="vbar"><div class="vbar-fill-user" style="width:${uPct}%"></div></div><span class="vbar-pct">${uPct}%</span></div>
+        <div class="vbar-wrap"><span class="vbar-name" title="${esc(aiName)}">${esc(aiName)}</span><div class="vbar"><div class="vbar-fill-ai" style="width:${aPct}%"></div></div><span class="vbar-pct">${aPct}%</span></div>
+        <p class="vcat-comment">${esc(cat.comment||'')}</p>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (persona === 'devil') {
+    if(d.coup_fatal) html+=`<div class="v-devil-block"><p class="v-section-label">⚡ Le coup fatal</p><p class="v-section-text">${esc(d.coup_fatal)}</p></div>`;
+    if(d.analyse_faiblesses_ia) html+=`<div class="v-critique"><p class="v-section-label">Où l'IA a failli</p><p class="v-section-text">${esc(d.analyse_faiblesses_ia)}</p></div>`;
+  }
+
+  if(d.summary) html+=`<div class="v-section"><p class="v-section-label">Analyse</p><p class="v-section-text">${esc(d.summary)}</p></div>`;
+
+  $('verdictBody').innerHTML = html;
+}
 
 function resetState() { S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}; lastVerdictData = null; }
 </script>
