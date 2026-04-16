@@ -120,26 +120,25 @@ function showScreen(id, push = true) {
   if (push) history.pushState({ screen: id }, '', '#' + id);
 }
 
-// Intercepte le bouton retour du navigateur.
-// Si on est dans le débat avec des échanges en cours, on affiche
-// la modale de confirmation plutôt que de quitter directement.
-window.addEventListener('popstate', e => {
-  const to = e.state?.screen || SCREENS[0];
-  if (document.querySelector('.screen.active')?.id === 'debate' && S.history.length > 0) {
-    history.pushState({ screen: 'debate' }, '', '#debate');
-    $('confirmOverlay').classList.add('open');
-    return;
-  }
-  showScreen(to, false);
-});
-
-// initRouter() lit le hash dans l'URL et affiche l'écran correspondant.
-// defaultScreen est l'écran de repli si le hash est absent ou invalide.
+// initRouter() initialise le router et branche le bouton retour.
+// Appelé après que SCREENS et S sont définis dans le script inline.
+// Le listener popstate est enregistré ici — pas au chargement de core.js —
+// pour garantir que SCREENS et S existent déjà.
 function initRouter(defaultScreen) {
   const hash    = location.hash.replace('#', '');
   const initial = SCREENS.includes(hash) ? hash : (defaultScreen || SCREENS[0]);
   showScreen(initial, false);
   history.replaceState({ screen: initial }, '', '#' + initial);
+
+  window.addEventListener('popstate', e => {
+    const to = e.state?.screen || SCREENS[0];
+    if (document.querySelector('.screen.active')?.id === 'debate' && S.history.length > 0) {
+      history.pushState({ screen: 'debate' }, '', '#debate');
+      $('confirmOverlay').classList.add('open');
+      return;
+    }
+    showScreen(to, false);
+  });
 }
 
 // ── Menu hamburger ──
