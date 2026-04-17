@@ -1,141 +1,77 @@
 /* ════════════════════════════════════════════════════════════════
-   basanos.css — Système de design global
-   Étape 1 : Atmosphère · Fond · Grain · Typographie
-   À charger dans tous les HTML après le <link> Google Fonts
+   basanos.css — Système de design global Basanos
+   Chargé AVANT le <style> inline de chaque page.
+   Les variables :root des HTML ont donc priorité sur les nôtres —
+   ce fichier surcharge uniquement via des sélecteurs plus spécifiques
+   ou des propriétés non définies dans le inline.
    ════════════════════════════════════════════════════════════════ */
 
-/* ── Nouvelle police body : DM Sans (moderne, lisible, premium) ── */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Bebas+Neue&display=swap');
+/* ── Police body : DM Sans — chargée en @import ──
+   On redéclare aussi Bebas Neue pour éviter le double chargement. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 
-/* ── Variables enrichies ── */
-:root {
-  /* Palette normale — inchangée, enrichie */
-  --cream:  #0E2233;   /* plus sombre pour plus de profondeur */
-  --cream2: #152B3E;
-  --cream3: #1E3A52;
-  --terra:  #C9A84C;
-  --terra2: #A8863A;
-  --terra3: #E2C47A;
-  --terra-soft:   rgba(201,168,76,0.10);
-  --terra-border: rgba(201,168,76,0.22);
-  --sage:   #2E6B8A;
-  --sage2:  #1E4F6A;
-  --sage-soft:   rgba(46,107,138,0.12);
-  --sage-border: rgba(46,107,138,0.28);
-  --ink:    #F0EBE0;
-  --ink2:   #C8C3B8;
-  --ink3:   rgba(240,235,224,0.45);
-  --ink4:   rgba(240,235,224,0.08);
-  --ink5:   rgba(240,235,224,0.04);
-  --white:  #152B3E;
+/* ═══════════════════════════════════════════════════════════════
+   FOND : MESH GRADIENT ANIMÉ + GRAIN CINÉMATOGRAPHIQUE
+   body::before = halos lumineux qui dérivent lentement
+   body::after  = texture grain film en overlay
+   ═══════════════════════════════════════════════════════════════ */
 
-  /* Halos mesh — couleurs des points lumineux du gradient */
-  --halo-gold:  rgba(201,168,76,0.18);
-  --halo-blue:  rgba(46,107,138,0.22);
-  --halo-deep:  rgba(14,34,51,0.0);
-
-  /* Typographie */
-  --fT: 'Bebas Neue', sans-serif;
-  --fU: 'DM Sans', sans-serif;          /* remplace Barlow Condensed pour le body */
-
-  /* Rayons */
-  --r:  12px;
-  --r2: 8px;
-  --r3: 20px;
-  --r4: 50px;
-
-  /* Ombres glass */
-  --shadow:  0 2px 20px rgba(0,0,0,0.28);
-  --shadow2: 0 8px 48px rgba(0,0,0,0.45);
-  --glow-gold: 0 0 40px rgba(201,168,76,0.15);
-  --glow-blue: 0 0 40px rgba(46,107,138,0.18);
-}
-
-/* ── Reset minimal ── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ── Base html/body ── */
-html, body {
-  min-height: 100%;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: var(--fU);
+body {
+  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   line-height: 1.65;
   letter-spacing: 0.01em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   MESH GRADIENT ANIMÉ
-   Un pseudo-element fixe en position:fixed couvre tout l'écran.
-   Trois halos de lumière orbitent lentement à des vitesses
-   et directions différentes — or, bleu, ombre.
-   ═══════════════════════════════════════════════════════════════ */
+/* Mesh gradient — trois halos orbitent en 28s */
 body::before {
   content: '';
   position: fixed;
-  inset: -50%;              /* dépasse l'écran pour que les halos puissent bouger */
+  inset: -50%;
   width: 200%;
   height: 200%;
   z-index: 0;
   pointer-events: none;
-
   background:
-    /* Halo or — en haut à droite */
-    radial-gradient(ellipse 55% 40% at 72% 18%, var(--halo-gold) 0%, transparent 70%),
-    /* Halo bleu — en bas à gauche */
-    radial-gradient(ellipse 60% 45% at 20% 80%, var(--halo-blue) 0%, transparent 65%),
-    /* Halo secondaire or — centre bas */
-    radial-gradient(ellipse 35% 30% at 55% 65%, rgba(201,168,76,0.08) 0%, transparent 60%),
-    /* Fond de base */
-    var(--cream);
-
+    radial-gradient(ellipse 55% 40% at 72% 18%, rgba(201,168,76,0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 45% at 18% 78%, rgba(46,107,138,0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 30% at 55% 62%, rgba(201,168,76,0.07) 0%, transparent 60%);
   animation: meshDrift 28s ease-in-out infinite alternate;
   will-change: transform;
 }
 
+/* Hardcore : halos rouges */
+body.hc::before {
+  background:
+    radial-gradient(ellipse 50% 38% at 75% 15%, rgba(232,69,42,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 40% at 15% 80%, rgba(232,69,42,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 28% at 50% 60%, rgba(180,30,10,0.12) 0%, transparent 60%);
+}
+
 @keyframes meshDrift {
-  0%   { transform: translate(0%, 0%) scale(1); }
-  25%  { transform: translate(-3%, 2%) scale(1.02); }
-  50%  { transform: translate(2%, -3%) scale(0.99); }
-  75%  { transform: translate(-1%, 3%) scale(1.01); }
-  100% { transform: translate(3%, -1%) scale(1.02); }
+  0%   { transform: translate(0%,    0%)   scale(1);    }
+  25%  { transform: translate(-3%,   2%)   scale(1.02); }
+  50%  { transform: translate(2%,   -3%)   scale(0.99); }
+  75%  { transform: translate(-1%,   3%)   scale(1.01); }
+  100% { transform: translate(3%,   -1%)   scale(1.02); }
 }
 
-/* Tout le contenu doit être au-dessus du mesh */
-body > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   GRAIN / NOISE CINÉMATOGRAPHIQUE
-   SVG inline en data URI — pattern de bruit aléatoire.
-   Opacity très basse pour ne pas agresser l'œil,
-   juste assez pour casser l'aspect "plastique" des écrans.
-   ═══════════════════════════════════════════════════════════════ */
+/* Grain film — bruit SVG qui "clignote" */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 9998;            /* au-dessus de tout sauf les modals (z-index 9999+) */
+  z-index: 9998;
   pointer-events: none;
-  opacity: 0.032;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px 200px;
-  animation: grainShift 0.8s steps(1) infinite;
+  animation: grainShift 0.75s steps(1) infinite;
   mix-blend-mode: overlay;
 }
 
-/* Le grain "clignote" légèrement pour simuler le bruit film */
 @keyframes grainShift {
   0%  { background-position:   0px   0px; }
   10% { background-position: -42px -17px; }
@@ -150,459 +86,422 @@ body::after {
   100%{ background-position:  10px  38px; }
 }
 
+/* Tout le contenu au-dessus du mesh */
+body > * { position: relative; z-index: 1; }
+
 /* ═══════════════════════════════════════════════════════════════
-   TYPOGRAPHIE GLOBALE
-   Bebas Neue : titres uniquement
-   DM Sans    : tout le reste — plus lisible, plus premium
+   TYPOGRAPHIE
+   DM Sans pour le body — plus lisible, plus premium.
+   Bebas Neue reste sur les titres (déjà défini dans le inline).
    ═══════════════════════════════════════════════════════════════ */
 
-/* Titres display */
-h1, h2, h3,
-.home-title,
-.l-title,
-.auth-title,
-.page-title,
-.v-winner-name,
-.modal-title {
-  font-family: var(--fT);
-  letter-spacing: -0.01em;
-  line-height: 1.0;
-}
-
-/* Corps de texte : DM Sans avec interligne généreux */
-p, span, label, input, textarea, button,
-.home-sub, .l-desc, .auth-sub,
-.mbub,           /* bulles de débat */
-.v-section-text,
-.vcat-comment,
-.hint, .cat-desc {
-  font-family: var(--fU);
+/* Body text */
+p, span, label, button,
+.home-sub, .l-desc, .auth-sub, .page-sub,
+.v-section-text, .vcat-comment, .cat-desc,
+.mbub, .hint, .pd, .user-email, .hint-row {
+  font-family: 'DM Sans', sans-serif;
   line-height: 1.72;
   letter-spacing: 0.012em;
 }
 
-/* Badges et labels uppercase */
-.lbl, .card-title, .v-section-label,
-.vcat-label, .v-winner-label,
-.dbadge, .hc-badge {
-  font-family: var(--fU);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
-
-/* Bulles de chat — taille et lisibilité améliorées */
-.mbub {
-  font-size: 0.97rem;
-  line-height: 1.75;
-  letter-spacing: 0.015em;
-}
-
 /* Inputs et textareas */
-input, textarea {
-  font-family: var(--fU) !important;
+input, textarea, .uinp, .conv, .auth-inp, .inp {
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   line-height: 1.6;
 }
 
+/* Bulles de chat */
+.mbub {
+  font-size: 0.97rem;
+  line-height: 1.78;
+  letter-spacing: 0.014em;
+}
+
 /* ═══════════════════════════════════════════════════════════════
-   GLASSMORPHISM — Base
-   Les composants vont overrider ces valeurs avec leurs propres
-   backgrounds, mais on pose ici les fondations :
-   backdrop-filter disponible partout, border ultra-fine.
+   TOPBAR — glassmorphism
    ═══════════════════════════════════════════════════════════════ */
-.glass {
-  background: rgba(21, 43, 62, 0.55);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+nav.topbar {
+  background: rgba(14, 34, 51, 0.75);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border-bottom: 1px solid rgba(201,168,76,0.12);
+}
+
+/* Hardcore : topbar noir */
+.hc nav.topbar,
+body.hc .topbar {
+  background: rgba(8, 8, 8, 0.85);
+  border-bottom: 1px solid rgba(232,69,42,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MENU DROPDOWN — glass
+   ═══════════════════════════════════════════════════════════════ */
+.menu-dropdown {
+  background: rgba(10, 26, 40, 0.92);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border: 1px solid rgba(240,235,224,0.08);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.50);
 }
 
-/* Topbar glass */
-.topbar {
-  background: rgba(14, 34, 51, 0.72) !important;
-  backdrop-filter: blur(20px) saturate(1.6) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important;
-  border-bottom: 1px solid rgba(201,168,76,0.12) !important;
+.menu-item:hover {
+  background: rgba(30, 58, 82, 0.55);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MICRO-INTERACTIONS — Base
-   Transition universelle sur tous les éléments interactifs.
-   Les composants peuvent surcharger avec leur propre transform.
+   HOME CARD — grande carte principale
    ═══════════════════════════════════════════════════════════════ */
-button, a, input, textarea, .pbtn, .tbtn, .card, .vcat {
+.home-card {
+  background: rgba(14, 34, 51, 0.65);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(201,168,76,0.12);
+  box-shadow:
+    0 0 0 1px rgba(240,235,224,0.03) inset,
+    0 24px 64px rgba(0,0,0,0.40);
+}
+
+/* Hardcore home-card */
+body.hc .home-card {
+  background: rgba(8, 8, 8, 0.70);
+  border: 1px solid rgba(232,69,42,0.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARTES PERSONA (.pbtn)
+   ═══════════════════════════════════════════════════════════════ */
+.pbtn {
+  background: rgba(21, 43, 62, 0.48);
+  border: 1px solid rgba(240,235,224,0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition:
-    background-color 0.2s ease,
-    border-color     0.2s ease,
-    box-shadow       0.25s ease,
-    transform        0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity          0.2s ease,
-    color            0.15s ease;
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Boutons CTA : légère élévation + glow au hover */
-.cta:hover:not(:disabled),
-.btn:hover:not(:disabled),
-.l-cta:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: var(--shadow2), var(--glow-gold);
-}
-
-/* Cartes personas : lift au hover */
 .pbtn:hover {
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3), var(--glow-blue);
+  background: rgba(30, 58, 82, 0.62);
+  border-color: rgba(201,168,76,0.22);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.30), 0 0 16px rgba(46,107,138,0.12);
+  transform: translateY(-2px);
 }
 
-/* Boutons toggle (férocité, stratégie) */
+.pbtn.on {
+  background: rgba(201,168,76,0.09);
+  border-color: rgba(201,168,76,0.32);
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.10) inset;
+}
+
+/* Hardcore pbtn */
+body.hc .pbtn {
+  background: rgba(16, 16, 16, 0.55);
+  border: 1px solid rgba(240,235,224,0.06);
+}
+
+body.hc .pbtn:hover {
+  border-color: rgba(232,69,42,0.30);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.40), 0 0 20px rgba(232,69,42,0.10);
+}
+
+body.hc .pbtn.on {
+  background: rgba(232,69,42,0.10);
+  border-color: rgba(232,69,42,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOUTONS TOGGLE (férocité, stratégie)
+   ═══════════════════════════════════════════════════════════════ */
+.tbtn {
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .tbtn:hover {
   transform: translateY(-1px);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLLBAR CUSTOM — subtile, dans le thème
+   BOUTONS CTA PRINCIPAUX
    ═══════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.45); }
-
-/* ═══════════════════════════════════════════════════════════════
-   SÉLECTION DE TEXTE — dans le thème
-   ═══════════════════════════════════════════════════════════════ */
-::selection {
-  background: rgba(201,168,76,0.28);
-  color: #F0EBE0;
+button.cta,
+a.cta {
+  transition:
+    background 0.2s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   ÉTAPE 2 : GLASSMORPHISM — Composants
-   Tous les fonds opaques deviennent semi-transparents.
-   Le backdrop-filter laisse transparaître le mesh du fond.
-   ════════════════════════════════════════════════════════════════ */
-
-/* ── Mixin réutilisable (valeurs de référence) ──
-   glass-dark   : rgba(14,34,51, 0.62) — surfaces profondes
-   glass-mid    : rgba(21,43,62, 0.55) — surfaces standard
-   glass-light  : rgba(30,58,82, 0.45) — surfaces secondaires
-   blur         : 20px standard, 28px pour modals
-   border       : 1px solid rgba(240,235,224, 0.07~0.14)
-*/
-
-/* ═══════════════════════════════════════════════════════════════
-   A. HOME CARD — grande carte principale
-   ═══════════════════════════════════════════════════════════════ */
-.home-card {
-  background: rgba(14, 34, 51, 0.65) !important;
-  backdrop-filter: blur(24px) saturate(1.5) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.5) !important;
-  border: 1px solid rgba(201,168,76,0.13) !important;
-  box-shadow:
-    0 0 0 1px rgba(240,235,224,0.04) inset,
-    0 24px 64px rgba(0,0,0,0.45) !important;
+button.cta:hover:not(:disabled),
+a.cta:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(201,168,76,0.25);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   B. CARTES PERSONA (.pbtn)
+   TEXTAREA CONVICTION
    ═══════════════════════════════════════════════════════════════ */
-.pbtn {
-  background: rgba(21, 43, 62, 0.50) !important;
-  border: 1px solid rgba(240,235,224,0.08) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+textarea.conv {
+  background: rgba(21, 43, 62, 0.45);
+  border: 1px solid rgba(240,235,224,0.10);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.pbtn:hover {
-  background: rgba(30, 58, 82, 0.65) !important;
-  border-color: rgba(201,168,76,0.25) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 20px rgba(46,107,138,0.15) !important;
-}
-
-/* Sélectionné : lueur dorée intérieure */
-.pbtn.on {
-  background: rgba(201,168,76,0.10) !important;
-  border-color: rgba(201,168,76,0.35) !important;
-  box-shadow:
-    0 0 0 1px rgba(201,168,76,0.12) inset,
-    0 4px 20px rgba(201,168,76,0.12) !important;
-}
-
-.pbtn.on .pn { color: var(--terra) !important; }
-
-/* ═══════════════════════════════════════════════════════════════
-   C. BULLES DE DÉBAT
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Bulle utilisateur — bleu glass */
-.msg.u .mbub {
-  background: rgba(46, 107, 138, 0.30) !important;
-  border: 1px solid rgba(46,107,138,0.35) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.25) !important;
-}
-
-/* Bulle IA — glass sombre avec touche terra */
-.msg.a .mbub {
-  background: rgba(14, 34, 51, 0.68) !important;
-  border: 1px solid rgba(201,168,76,0.14) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.30) !important;
-}
-
-/* Indicateur de frappe (typing dots) */
-.tyb {
-  background: rgba(14, 34, 51, 0.68) !important;
-  border: 1px solid rgba(201,168,76,0.14) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+textarea.conv:focus {
+  background: rgba(21, 43, 62, 0.65);
+  border-color: rgba(201,168,76,0.40);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.07);
+  outline: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   D. BARRE DE DÉBAT — hiérarchie verticale par opacité
+   DÉBAT — barre, bulles, saisie
    ═══════════════════════════════════════════════════════════════ */
 
-/* Barre titre du débat */
+/* Barre titre */
 .dbar {
-  background: rgba(10, 24, 36, 0.85) !important;
-  backdrop-filter: blur(24px) saturate(1.5) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.5) !important;
-  border-bottom: 1px solid rgba(240,235,224,0.07) !important;
+  background: rgba(10, 24, 36, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(240,235,224,0.06);
 }
 
 /* Bandeau conviction */
 .cstrip {
-  background: rgba(14, 34, 51, 0.60) !important;
-  border-bottom: 1px solid rgba(201,168,76,0.10) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(14, 34, 51, 0.60);
+  border-bottom: 1px solid rgba(201,168,76,0.09);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* Zone de saisie */
 .izone {
-  background: rgba(10, 24, 36, 0.88) !important;
-  border-top: 1px solid rgba(240,235,224,0.07) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  background: rgba(10, 24, 36, 0.90);
+  border-top: 1px solid rgba(240,235,224,0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 /* Pied de page débat */
 .dfooter {
-  background: rgba(10, 24, 36, 0.80) !important;
-  border-top: 1px solid rgba(240,235,224,0.06) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: rgba(10, 24, 36, 0.82);
+  border-top: 1px solid rgba(240,235,224,0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-/* Input textarea dans la zone de saisie */
-.uinp {
-  background: rgba(21, 43, 62, 0.55) !important;
-  border: 1px solid rgba(240,235,224,0.10) !important;
+/* Input textarea saisie */
+textarea.uinp {
+  background: rgba(21, 43, 62, 0.52);
+  border: 1px solid rgba(240,235,224,0.09);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
-.uinp:focus {
-  background: rgba(21, 43, 62, 0.75) !important;
-  border-color: rgba(201,168,76,0.40) !important;
-  box-shadow: 0 0 0 3px rgba(201,168,76,0.08) !important;
+
+textarea.uinp:focus {
+  background: rgba(21, 43, 62, 0.72);
+  border-color: rgba(201,168,76,0.38);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.07);
+  outline: none;
+}
+
+/* Bulle utilisateur */
+.msg.u .mbub {
+  background: rgba(46, 107, 138, 0.28);
+  border: 1px solid rgba(46,107,138,0.32);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.22);
+}
+
+/* Bulle IA */
+.msg.a .mbub {
+  background: rgba(14, 34, 51, 0.70);
+  border: 1px solid rgba(201,168,76,0.13);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 2px 18px rgba(0,0,0,0.28);
+}
+
+/* Typing dots */
+.tyb {
+  background: rgba(14, 34, 51, 0.70);
+  border: 1px solid rgba(201,168,76,0.13);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Hardcore : bulles rouges */
+body.hc .msg.u .mbub {
+  background: rgba(232,69,42,0.15);
+  border-color: rgba(232,69,42,0.25);
+}
+
+body.hc .msg.a .mbub,
+body.hc .tyb {
+  background: rgba(10, 10, 10, 0.80);
+  border-color: rgba(232,69,42,0.12);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   E. VERDICT — cartes de résultats
+   VERDICT — cartes résultats
    ═══════════════════════════════════════════════════════════════ */
 
-/* Cartes catégories */
 .vcat {
-  background: rgba(14, 34, 51, 0.62) !important;
-  border: 1px solid rgba(240,235,224,0.08) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.30) !important;
+  background: rgba(14, 34, 51, 0.60);
+  border: 1px solid rgba(240,235,224,0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.28);
 }
 
-/* Section analyse */
 .v-section {
-  background: rgba(14, 34, 51, 0.58) !important;
-  border: 1px solid rgba(240,235,224,0.07) !important;
-  border-left: 3px solid rgba(201,168,76,0.35) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: rgba(14, 34, 51, 0.55);
+  border: 1px solid rgba(240,235,224,0.06);
+  border-left: 3px solid rgba(201,168,76,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 /* Conseil — teinte bleue */
 .v-conseil {
-  background: rgba(46, 107, 138, 0.22) !important;
-  border: 1px solid rgba(46,107,138,0.30) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 0 30px rgba(46,107,138,0.12) !important;
+  background: rgba(46, 107, 138, 0.20);
+  border: 1px solid rgba(46,107,138,0.28);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 28px rgba(46,107,138,0.10);
 }
-.v-conseil .v-section-label { color: rgba(240,235,224,0.55) !important; }
-.v-conseil .v-section-text  { color: var(--ink) !important; }
 
-/* Bloc avocat du diable — noir profond */
+.v-conseil .v-section-label { color: rgba(240,235,224,0.50); }
+.v-conseil .v-section-text  { color: #F0EBE0; }
+
+/* Avocat du diable */
 .v-devil-block {
-  background: rgba(6, 12, 18, 0.80) !important;
-  border: 1px solid rgba(201,168,76,0.18) !important;
-  border-left: 3px solid rgba(201,168,76,0.50) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  box-shadow: 0 0 40px rgba(201,168,76,0.07) inset !important;
+  background: rgba(6, 10, 16, 0.82);
+  border: 1px solid rgba(201,168,76,0.16);
+  border-left: 3px solid rgba(201,168,76,0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 /* Critique IA */
 .v-critique {
-  background: rgba(21, 43, 62, 0.45) !important;
-  border: 1px solid rgba(240,235,224,0.07) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  background: rgba(21, 43, 62, 0.42);
+  border: 1px solid rgba(240,235,224,0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   F. MODALS ET CARTES AUTH
+   MODALS
    ═══════════════════════════════════════════════════════════════ */
-
-/* Modal confirmation quitter */
 .modal {
-  background: rgba(10, 24, 36, 0.88) !important;
-  border: 1px solid rgba(240,235,224,0.10) !important;
-  backdrop-filter: blur(32px) saturate(1.8) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(1.8) !important;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.60) !important;
-}
-
-/* Cartes auth (login/signup dans profil.html) */
-.auth-card {
-  background: rgba(10, 24, 36, 0.82) !important;
-  border: 1px solid rgba(240,235,224,0.09) !important;
-  backdrop-filter: blur(28px) saturate(1.6) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.6) !important;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.55) !important;
-}
-
-/* Inputs dans les formulaires auth */
-.auth-inp, .inp {
-  background: rgba(21, 43, 62, 0.50) !important;
-  border: 1px solid rgba(240,235,224,0.10) !important;
-  color: var(--ink) !important;
-}
-.auth-inp:focus, .inp:focus {
-  background: rgba(21, 43, 62, 0.70) !important;
-  border-color: rgba(201,168,76,0.40) !important;
-  box-shadow: 0 0 0 3px rgba(201,168,76,0.08) !important;
-}
-
-/* Modal transcript (profil.html) */
-.transcript-modal {
-  background: rgba(10, 24, 36, 0.90) !important;
-  border: 1px solid rgba(240,235,224,0.09) !important;
-  backdrop-filter: blur(32px) saturate(1.8) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(1.8) !important;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.65) !important;
+  background: rgba(10, 24, 36, 0.90);
+  border: 1px solid rgba(240,235,224,0.09);
+  backdrop-filter: blur(32px) saturate(1.7);
+  -webkit-backdrop-filter: blur(32px) saturate(1.7);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.58);
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   G. PROFIL — cards du profil
+   PROFIL — cards, auth, transcript
    ═══════════════════════════════════════════════════════════════ */
 .card {
-  background: rgba(14, 34, 51, 0.62) !important;
-  border: 1px solid rgba(240,235,224,0.08) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.28) !important;
+  background: rgba(14, 34, 51, 0.60);
+  border: 1px solid rgba(240,235,224,0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 
-/* Cartes contradicteurs / CGU */
-.cat-card {
-  background: rgba(14, 34, 51, 0.60) !important;
-  border-left: 4px solid rgba(201,168,76,0.45) !important;
-  border-top: 1px solid rgba(240,235,224,0.07) !important;
-  border-right: 1px solid rgba(240,235,224,0.07) !important;
-  border-bottom: 1px solid rgba(240,235,224,0.07) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
-}
-.cat-card.sage-border {
-  border-left-color: rgba(46,107,138,0.55) !important;
+.auth-card {
+  background: rgba(10, 24, 36, 0.84);
+  border: 1px solid rgba(240,235,224,0.08);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.52);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   H. MENU DROPDOWN
-   ═══════════════════════════════════════════════════════════════ */
-.menu-dropdown {
-  background: rgba(10, 24, 36, 0.90) !important;
-  border: 1px solid rgba(240,235,224,0.09) !important;
-  backdrop-filter: blur(24px) saturate(1.6) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.6) !important;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.50) !important;
-}
-.menu-item:hover {
-  background: rgba(21, 43, 62, 0.60) !important;
+.auth-inp, .inp {
+  background: rgba(21, 43, 62, 0.48);
+  border: 1px solid rgba(240,235,224,0.09);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   I. DÉBAT — cartes débat dans historique profil
-   ═══════════════════════════════════════════════════════════════ */
+.auth-inp:focus, .inp:focus {
+  background: rgba(21, 43, 62, 0.68);
+  border-color: rgba(201,168,76,0.38);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.07);
+  outline: none;
+}
+
+.transcript-modal {
+  background: rgba(10, 24, 36, 0.92);
+  border: 1px solid rgba(240,235,224,0.08);
+  backdrop-filter: blur(32px) saturate(1.7);
+  -webkit-backdrop-filter: blur(32px) saturate(1.7);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.62);
+}
+
+/* Cartes débats dans l'historique */
 .debate-card {
-  background: rgba(21, 43, 62, 0.48) !important;
-  border: 1px solid rgba(240,235,224,0.08) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(21, 43, 62, 0.45);
+  border: 1px solid rgba(240,235,224,0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
 }
+
 .debate-card:hover {
-  background: rgba(30, 58, 82, 0.60) !important;
-  border-color: rgba(201,168,76,0.22) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.30) !important;
+  background: rgba(30, 58, 82, 0.58);
+  border-color: rgba(201,168,76,0.20);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.28);
+  transform: translateY(-1px);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   ÉTAPE 3 : ICÔNES SVG — Personas
-   Remplace les emojis dans les grilles de personas et
-   la page contradicteurs.
-   ════════════════════════════════════════════════════════════════ */
-
-/* Icône dans les boutons persona (.pbtn) */
-.pi {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 10px;
+/* ═══════════════════════════════════════════════════════════════
+   PAGES CGU / CONTRADICTEURS — cat-card
+   ═══════════════════════════════════════════════════════════════ */
+.cat-card {
+  background: rgba(14, 34, 51, 0.58);
+  border-top: 1px solid rgba(240,235,224,0.06);
+  border-right: 1px solid rgba(240,235,224,0.06);
+  border-bottom: 1px solid rgba(240,235,224,0.06);
+  border-left: 4px solid rgba(201,168,76,0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
 }
 
-.pi-svg {
-  width: 22px;
-  height: 22px;
-  color: var(--ink3);
-  stroke: currentColor;
-  flex-shrink: 0;
-  transition: color 0.2s ease, stroke 0.2s ease;
+.cat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
 }
 
-/* Au survol et à l'état sélectionné : l'icône prend la couleur terra */
-.pbtn:hover .pi-svg,
-.pbtn.on .pi-svg {
-  color: var(--terra);
+.cat-card.sage-border {
+  border-left-color: rgba(46,107,138,0.52);
 }
 
-/* Icône dans la page contradicteurs (.cat-name) */
-.cat-name .pi-svg {
-  width: 18px;
-  height: 18px;
-  color: var(--terra);
-  flex-shrink: 0;
-  margin-right: 2px;
-}
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR — fine, dorée
+   ═══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.22); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.42); }
 
-/* Cas particulier : Avocat du diable (sage-border) */
-.cat-card.sage-border .cat-name .pi-svg {
-  color: var(--sage);
-}
-
-/* HC Devil — icône en rouge terra hardcore */
-.pbtn[data-persona="hc-devil"] .pi-svg {
-  color: var(--terra);
-}
-.pbtn[data-persona="hc-devil"]:hover .pi-svg,
-.pbtn[data-persona="hc-devil"].on .pi-svg {
-  color: #FF6B50;
+/* ═══════════════════════════════════════════════════════════════
+   SÉLECTION DE TEXTE
+   ═══════════════════════════════════════════════════════════════ */
+::selection {
+  background: rgba(201,168,76,0.25);
+  color: #F0EBE0;
 }
