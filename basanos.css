@@ -554,3 +554,55 @@ button, a, input, textarea, .pbtn, .tbtn, .card, .vcat {
   border-color: rgba(201,168,76,0.22) !important;
   box-shadow: 0 4px 20px rgba(0,0,0,0.30) !important;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   ÉTAPE 3 : ICÔNES SVG — Personas
+   Remplace les emojis dans les grilles de personas et
+   la page contradicteurs.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Icône dans les boutons persona (.pbtn) */
+.pi {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.pi-svg {
+  width: 22px;
+  height: 22px;
+  color: var(--ink3);
+  stroke: currentColor;
+  flex-shrink: 0;
+  transition: color 0.2s ease, stroke 0.2s ease;
+}
+
+/* Au survol et à l'état sélectionné : l'icône prend la couleur terra */
+.pbtn:hover .pi-svg,
+.pbtn.on .pi-svg {
+  color: var(--terra);
+}
+
+/* Icône dans la page contradicteurs (.cat-name) */
+.cat-name .pi-svg {
+  width: 18px;
+  height: 18px;
+  color: var(--terra);
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+/* Cas particulier : Avocat du diable (sage-border) */
+.cat-card.sage-border .cat-name .pi-svg {
+  color: var(--sage);
+}
+
+/* HC Devil — icône en rouge terra hardcore */
+.pbtn[data-persona="hc-devil"] .pi-svg {
+  color: var(--terra);
+}
+.pbtn[data-persona="hc-devil"]:hover .pi-svg,
+.pbtn[data-persona="hc-devil"].on .pi-svg {
+  color: #FF6B50;
+}
