@@ -10,8 +10,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="/basanos.css"/>
 <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Palette Hardcore — sombre */
+  --cream:#0D0D0D;--cream2:#161616;--cream3:#242424;
+  --terra:#E8452A;--terra2:#C73318;--terra3:#FF6B50;
+  --terra-soft:rgba(232,69,42,0.12);--terra-border:rgba(232,69,42,0.3);
+  --sage:#8B6914;--sage2:#6B4F0E;
+  --sage-soft:rgba(139,105,20,0.15);--sage-border:rgba(139,105,20,0.3);
+  --ink:#F0EBE0;--ink2:#C8C0B0;--ink3:rgba(240,235,224,0.45);
+  --ink4:rgba(240,235,224,0.1);--ink5:rgba(240,235,224,0.05);
+  --white:#1A1A1A;
+  --r:14px;--r2:10px;--r3:24px;--r4:50px;
+  --fT:'Bebas Neue',sans-serif;--fU:'Barlow Condensed',sans-serif;
+  --shadow:0 2px 16px rgba(0,0,0,0.4);--shadow2:0 4px 32px rgba(0,0,0,0.6);
+}
+html,body{min-height:100%;background:#0D0D0D;color:var(--ink);font-family:var(--fU);font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
 /* ── CONFIRM MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:1rem}
 .overlay.open{display:flex}
