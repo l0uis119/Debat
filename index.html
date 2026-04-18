@@ -230,26 +230,10 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   .v-cats{grid-template-columns:1fr}
 }
 
-/* ── EXEMPLES DE SUJETS ── */
 .examples-list{display:flex;flex-direction:column;gap:6px;margin-top:0.45rem}
-.example-chip{
-  display:block;width:100%;text-align:left;
-  padding:8px 13px;
-  background:rgba(240,235,224,0.04);
-  border:1px solid rgba(240,235,224,0.08);
-  border-radius:var(--r);
-  color:var(--ink3);
-  font-family:var(--fU);font-size:0.78rem;line-height:1.4;
-  cursor:pointer;
-  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s cubic-bezier(0.34,1.56,0.64,1);
-}
-.example-chip:hover{
-  background:rgba(201,168,76,0.08);
-  border-color:rgba(201,168,76,0.25);
-  color:var(--ink);
-  transform:translateX(3px);
-}
-.example-chip::before{content:'→ ';color:var(--terra);opacity:0.7;font-size:0.7rem}
+.example-chip{display:block;width:100%;text-align:left;padding:8px 13px;background:rgba(240,235,224,0.04);border:1px solid rgba(240,235,224,0.08);border-radius:var(--r);color:var(--ink3);font-family:var(--fU);font-size:0.78rem;line-height:1.4;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s cubic-bezier(0.34,1.56,0.64,1)}
+.example-chip:hover{background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.25);color:var(--ink);transform:translateX(3px)}
+.example-chip::before{content:"→ ";color:var(--terra);opacity:0.7;font-size:0.7rem}
 </style>
 </head>
 <body>
@@ -339,7 +323,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
           </div>
         </div>
         <div id="examplesBlock">
-          <label class="lbl">Essaie avec…</label>
+          <label class="lbl">Essaie avec&hellip;</label>
           <div id="examplesList" class="examples-list"></div>
         </div>
         <div id="resumeDebateWrap" style="display:none">
@@ -641,22 +625,21 @@ document.querySelectorAll('#ferocityGroup .tbtn').forEach(b => b.addEventListene
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.ferocity = b.dataset.val;
 }));
-// ══ EXEMPLES PAR STRATÉGIE ══
 const EXAMPLES = {
-  attack:   ['Les réseaux sociaux détruisent la démocratie.','Le véganisme est la seule alimentation éthique.','L'école n'a pas réussi à réduire les inégalités.'],
-  steelman: ['La surveillance de masse peut être justifiée.','Le revenu universel découragerait le travail.','La peine de mort a une valeur dissuasive.'],
-  reductio: ['Chacun devrait pouvoir tout dire sans filtre.','La croissance économique est toujours positive.','L'État ne doit pas interférer dans les choix personnels.'],
-  reversal: ['Les réformes éducatives améliorent le niveau.','La mondialisation profite aux pays pauvres.','Interdire les drogues réduit leur consommation.'],
+  attack:   ["Les réseaux sociaux détruisent la démocratie.","Le véganisme est la seule alimentation éthique.","La méritocratie est un mythe."],
+  steelman: ["La surveillance de masse peut être justifiée.","Le revenu universel découragerait le travail.","La peine de mort a une valeur dissuasive."],
+  reductio: ["Chacun devrait pouvoir tout dire sans filtre.","La croissance économique est toujours positive.","Les lois ne devraient pas interférer dans les choix personnels."],
+  reversal: ["Les réformes éducatives améliorent le niveau.","La mondialisation profite aux pays pauvres.","Interdire les drogues réduit leur consommation."],
 };
 
 function renderExamples(mode) {
   const list = document.getElementById('examplesList');
   if (!list) return;
-  list.innerHTML = (EXAMPLES[mode] || []).map(ex =>
-    `<button class="example-chip" type="button">${ex}</button>`
-  ).join('');
-  list.querySelectorAll('.example-chip').forEach(btn => {
-    btn.onclick = () => {
+  list.innerHTML = (EXAMPLES[mode] || []).map(function(ex) {
+    return '<button class="example-chip" type="button">' + ex + '</button>';
+  }).join('');
+  list.querySelectorAll('.example-chip').forEach(function(btn) {
+    btn.onclick = function() {
       convEl.value = btn.textContent;
       charEl.textContent = convEl.value.length;
       startEl.disabled = convEl.value.trim().length < 10;
@@ -671,7 +654,6 @@ document.querySelectorAll('#modeGroup .tbtn').forEach(b => b.addEventListener('c
   renderExamples(b.dataset.val);
 }));
 
-// Init exemples après que convEl est défini
 renderExamples('attack');
 startEl.addEventListener('click', startDebate);
 
