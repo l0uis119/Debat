@@ -214,7 +214,6 @@ html,body{min-height:100%;background:#0D0D0D;color:var(--ink);font-family:var(--
   .v-cats{grid-template-columns:1fr}
 }
 </style>
-<link rel="stylesheet" href="/basanos.css"/>
 </head>
 <body>
 
@@ -575,7 +574,11 @@ async function requestVerdict() {
 
 function buildSystemPrompt() {
   const p = PERSONAS[S.persona], m = MODE[S.mode];
-  return `${p.prompt}
+  return `SUJET VERROUILLÉ — NE JAMAIS DÉRIVER :
+La conviction à attaquer, et uniquement celle-ci, est : "${S.conviction}"
+Chaque réponse doit attaquer CETTE conviction. Si l'échange dérive, reviens-y immédiatement.
+
+${p.prompt}
 
 ${m.prompt}
 
