@@ -241,7 +241,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   color:var(--ink3);
   font-family:var(--fU);font-size:0.78rem;line-height:1.4;
   cursor:pointer;
-  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .18s cubic-bezier(0.34,1.56,0.64,1);
+  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s cubic-bezier(0.34,1.56,0.64,1);
 }
 .example-chip:hover{
   background:rgba(201,168,76,0.08);
@@ -249,12 +249,7 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   color:var(--ink);
   transform:translateX(3px);
 }
-.example-chip::before{
-  content:'→ ';
-  color:var(--terra);
-  opacity:0.7;
-  font-size:0.7rem;
-}
+.example-chip::before{content:'→ ';color:var(--terra);opacity:0.7;font-size:0.7rem}
 </style>
 </head>
 <body>
@@ -646,10 +641,38 @@ document.querySelectorAll('#ferocityGroup .tbtn').forEach(b => b.addEventListene
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.ferocity = b.dataset.val;
 }));
+// ══ EXEMPLES PAR STRATÉGIE ══
+const EXAMPLES = {
+  attack:   ['Les réseaux sociaux détruisent la démocratie.','Le véganisme est la seule alimentation éthique.','L'école n'a pas réussi à réduire les inégalités.'],
+  steelman: ['La surveillance de masse peut être justifiée.','Le revenu universel découragerait le travail.','La peine de mort a une valeur dissuasive.'],
+  reductio: ['Chacun devrait pouvoir tout dire sans filtre.','La croissance économique est toujours positive.','L'État ne doit pas interférer dans les choix personnels.'],
+  reversal: ['Les réformes éducatives améliorent le niveau.','La mondialisation profite aux pays pauvres.','Interdire les drogues réduit leur consommation.'],
+};
+
+function renderExamples(mode) {
+  const list = document.getElementById('examplesList');
+  if (!list) return;
+  list.innerHTML = (EXAMPLES[mode] || []).map(ex =>
+    `<button class="example-chip" type="button">${ex}</button>`
+  ).join('');
+  list.querySelectorAll('.example-chip').forEach(btn => {
+    btn.onclick = () => {
+      convEl.value = btn.textContent;
+      charEl.textContent = convEl.value.length;
+      startEl.disabled = convEl.value.trim().length < 10;
+      convEl.focus();
+    };
+  });
+}
+
 document.querySelectorAll('#modeGroup .tbtn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#modeGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.mode = b.dataset.val;
+  renderExamples(b.dataset.val);
 }));
+
+// Init exemples après que convEl est défini
+renderExamples('attack');
 startEl.addEventListener('click', startDebate);
 
 function updateResumeBtn() {
@@ -902,58 +925,6 @@ function renderVerdict(raw, userName, aiName, persona) {
 }
 
 function resetState() { S = {conviction:'',persona:'philosopher',ferocity:'normal',mode:'attack',history:[],turns:0,loading:false,waitingBinary:false}; lastVerdictData = null; }
-
-// ══ EXEMPLES PAR STRATÉGIE ══
-const EXAMPLES = {
-  attack: [
-    'Les réseaux sociaux détruisent la démocratie.',
-    'Le véganisme est la seule alimentation éthique.',
-    'L'école publique a échoué à réduire les inégalités.',
-  ],
-  steelman: [
-    'La surveillance de masse peut être justifiée.',
-    'Le revenu universel découragerait le travail.',
-    'La peine de mort a une valeur dissuasive.',
-  ],
-  reductio: [
-    'Chacun devrait pouvoir dire ce qu'il pense sans filtre.',
-    'La croissance économique est toujours une bonne nouvelle.',
-    'L'État ne devrait pas interférer dans les choix personnels.',
-  ],
-  reversal: [
-    'Les réformes éducatives améliorent le niveau scolaire.',
-    'La mondialisation profite aux pays pauvres.',
-    'Interdire les drogues réduit leur consommation.',
-  ],
-};
-
-function renderExamples(mode) {
-  const list = $('examplesList');
-  if (!list) return;
-  const examples = EXAMPLES[mode] || [];
-  list.innerHTML = examples.map(ex =>
-    `<button class="example-chip" type="button">${ex}</button>`
-  ).join('');
-  // Clic sur un exemple → le colle dans le textarea conviction
-  list.querySelectorAll('.example-chip').forEach(btn => {
-    btn.onclick = () => {
-      convEl.value = btn.textContent;
-      charEl.textContent = convEl.value.length;
-      startEl.disabled = convEl.value.trim().length < 10;
-      convEl.focus();
-    };
-  });
-}
-
-// Initialiser avec la stratégie par défaut
-renderExamples(S.mode);
-
-// Mettre à jour quand on change de stratégie
-document.querySelectorAll('#modeGroup .tbtn').forEach(b => {
-  const originalClick = b.onclick;
-  b.addEventListener('click', () => renderExamples(b.dataset.val));
-});
-
 </script>
 </body>
 </html>
