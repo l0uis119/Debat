@@ -229,11 +229,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
   .msg{max-width:90%}
   .v-cats{grid-template-columns:1fr}
 }
-
-.examples-list{display:flex;flex-direction:column;gap:6px;margin-top:0.45rem}
-.example-chip{display:block;width:100%;text-align:left;padding:8px 13px;background:rgba(240,235,224,0.04);border:1px solid rgba(240,235,224,0.08);border-radius:var(--r);color:var(--ink3);font-family:var(--fU);font-size:0.78rem;line-height:1.4;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s cubic-bezier(0.34,1.56,0.64,1)}
-.example-chip:hover{background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.25);color:var(--ink);transform:translateX(3px)}
-.example-chip::before{content:"→ ";color:var(--terra);opacity:0.7;font-size:0.7rem}
 </style>
 </head>
 <body>
@@ -321,10 +316,6 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
               <button class="tbtn" data-val="reversal">Retournement</button>
             </div>
           </div>
-        </div>
-        <div id="examplesBlock">
-          <label class="lbl">Essaie avec&hellip;</label>
-          <div id="examplesList" class="examples-list"></div>
         </div>
         <div id="resumeDebateWrap" style="display:none">
           <button class="cta" id="resumeDebateBtn" style="background:var(--sage);box-shadow:0 4px 16px rgba(91,124,107,0.25)">
@@ -625,36 +616,10 @@ document.querySelectorAll('#ferocityGroup .tbtn').forEach(b => b.addEventListene
   document.querySelectorAll('#ferocityGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.ferocity = b.dataset.val;
 }));
-const EXAMPLES = {
-  attack:   ["Les réseaux sociaux détruisent la démocratie.","Le véganisme est la seule alimentation éthique.","La méritocratie est un mythe."],
-  steelman: ["La surveillance de masse peut être justifiée.","Le revenu universel découragerait le travail.","La peine de mort a une valeur dissuasive."],
-  reductio: ["Chacun devrait pouvoir tout dire sans filtre.","La croissance économique est toujours positive.","Les lois ne devraient pas interférer dans les choix personnels."],
-  reversal: ["Les réformes éducatives améliorent le niveau.","La mondialisation profite aux pays pauvres.","Interdire les drogues réduit leur consommation."],
-};
-
-function renderExamples(mode) {
-  const list = document.getElementById('examplesList');
-  if (!list) return;
-  list.innerHTML = (EXAMPLES[mode] || []).map(function(ex) {
-    return '<button class="example-chip" type="button">' + ex + '</button>';
-  }).join('');
-  list.querySelectorAll('.example-chip').forEach(function(btn) {
-    btn.onclick = function() {
-      convEl.value = btn.textContent;
-      charEl.textContent = convEl.value.length;
-      startEl.disabled = convEl.value.trim().length < 10;
-      convEl.focus();
-    };
-  });
-}
-
 document.querySelectorAll('#modeGroup .tbtn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#modeGroup .tbtn').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); S.mode = b.dataset.val;
-  renderExamples(b.dataset.val);
 }));
-
-renderExamples('attack');
 startEl.addEventListener('click', startDebate);
 
 function updateResumeBtn() {
@@ -754,7 +719,11 @@ async function requestVerdict() {
 
 function buildSystemPrompt() {
   const p = PERSONAS[S.persona], f = FEROCITY[S.ferocity], m = MODE[S.mode];
-  return `${p.prompt}
+  return `SUJET VERROUILLÉ — NE JAMAIS DÉRIVER :
+La conviction à attaquer, et uniquement celle-ci, est : "${S.conviction}"
+Chaque réponse doit attaquer CETTE conviction. Si l'échange dérive, reviens-y immédiatement.
+
+${p.prompt}
 
 ${f.prompt}
 
@@ -772,8 +741,7 @@ FORMAT STRICT :
 3. Si pertinent : question piège fermée, termine par : [Réponds par oui ou non]
 
 INTERDICTIONS : Jamais "Bonne question", "Certainement", "En effet", "Absolument". Jamais de listes. Jamais de markdown.
-Maximum 150 mots.
-Conviction défendue par l'adversaire : "${S.conviction}"`;
+Maximum 150 mots.`;
 }
 
 async function api(history) {
